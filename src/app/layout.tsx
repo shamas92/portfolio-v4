@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
+import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -9,18 +9,11 @@ import { profile, siteUrl } from "@/content";
    generates the fallback metrics, so there is no layout shift).
    latin-ext covers ä ö ü ß. The italic serif used by the case-study
    quote lives in CaseStudy.tsx, so it is only loaded on case pages. */
-const newsreader = Newsreader({
+const geist = Geist({
   subsets: ["latin", "latin-ext"],
-  weight: ["500", "600"],
+  weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-newsreader",
-});
-
-const interTight = Inter_Tight({
-  subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600"],
-  display: "swap",
-  variable: "--font-inter-tight",
+  variable: "--font-geist",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -67,8 +60,8 @@ export const metadata: Metadata = {
 
 export const viewport: Viewport = {
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
-    { media: "(prefers-color-scheme: dark)", color: "#16130f" },
+    { media: "(prefers-color-scheme: light)", color: "#faf9f7" },
+    { media: "(prefers-color-scheme: dark)", color: "#0c0c0b" },
   ],
 };
 
@@ -87,6 +80,14 @@ const personJsonLd = {
   sameAs: [profile.github, profile.linkedin],
 };
 
+/* No-flash theme script: runs in <head> before first paint, so a
+   stored dark preference never flashes light. It also marks the
+   document as scripted, which gates the scroll-reveal hidden state
+   (without JS, reveal targets stay visible). The html element
+   carries suppressHydrationWarning because this script may change
+   data-theme before React hydrates. */
+const themeScript = `(function(){try{document.documentElement.classList.add('js');var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: {
@@ -95,8 +96,13 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${newsreader.variable} ${interTight.variable} ${jetbrainsMono.variable}`}
+      data-theme="light"
+      suppressHydrationWarning
+      className={`${geist.variable} ${jetbrainsMono.variable}`}
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+      </head>
       <body>
         <script
           type="application/ld+json"

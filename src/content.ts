@@ -1,0 +1,413 @@
+// Single typed content module for the portfolio.
+// Every fact here comes from PRODUCT.md or the verified project records.
+// Nothing is invented. Where a fact is missing, the content lists it in
+// `contentTodos` and the UI renders a visible TODO(content) marker in
+// development and omits the line in production.
+
+export const siteUrl = "https://portfolio-v4-rosy-five.vercel.app";
+
+export const profile = {
+  name: "Shamas Ur Rehman",
+  role: "Software Engineer",
+  location: "Dresden, Germany",
+  claim: "I build data & ML systems — and prove every claim on this page.",
+  intro: "MSc Computer Science, TU Dresden. Software engineer in Dresden.",
+  email: "shamasrehman249@gmail.com",
+  github: "https://github.com/shamas92",
+  linkedin: "https://linkedin.com/in/shamasrehman",
+  workEligibility: "Working-student eligible, 20 hours a week.",
+};
+
+/** Missing facts. Rendered as TODO(content) markers in dev, omitted in prod. */
+export const contentTodos = [
+  {
+    id: "cv",
+    label: "CV download — the user supplies the CV file",
+  },
+  {
+    id: "availability",
+    label: "Availability line — the user supplies the wording",
+  },
+  {
+    id: "oratorpath-demo",
+    label: "OratorPath live dashboard URL",
+  },
+];
+
+/** A paragraph is a list of plain strings and annotated claims.
+ *  A claim renders highlighted; its note opens in the margin column. */
+export type Inline = string | { claim: string; note: string };
+export type Prose = Inline[][];
+
+export type Project = {
+  slug: string;
+  title: string;
+  year: number;
+  /** One-sentence outcome for the Work row. */
+  rowOutcome: string;
+  /** One proof statement for the Work row. */
+  rowProof: string;
+  stack: string[];
+  problem: Prose;
+  architecture: Prose;
+  outcome: Prose;
+  /** The one verified figure, when one exists. */
+  figure?: { value: string; label: string };
+  /** The one specimen that proves it — a quote or a citation. */
+  specimen?: {
+    kind: "quote" | "citation";
+    text: string;
+    /** English gloss for a German quote. */
+    gloss?: string;
+    /** Attribution line under the specimen. */
+    cite: string;
+  };
+  image?: {
+    src: string;
+    width: number;
+    height: number;
+    alt: string;
+    caption: string;
+  };
+  /** The five-jurisdiction registry, LeaseLens only. */
+  registry?: { jurisdiction: string; rule: string }[];
+  /** Honest limits, stated where they exist. */
+  limits?: string[];
+  /** Shown when no figure was measured for the project. */
+  noFigureNote?: string;
+  links: { label: string; href: string }[];
+  /** Links that are known to exist but whose URL is missing. */
+  todoLinks?: { label: string }[];
+};
+
+export const projects: Project[] = [
+  {
+    slug: "leaselens",
+    title: "LeaseLens",
+    year: 2026,
+    rowOutcome:
+      "A tenant evidence workspace that checks deposit claims against the lease and the law.",
+    rowProof:
+      "86.1% registered IoU on the v7 demo pairing, measured live twice identically.",
+    stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
+    problem: [
+      [
+        "A tenant who rents in another country signs a lease, pays a deposit, and months later gets a claim for damage or cleaning. The question is simple: does the claim match the lease and the law? Answering it means reading a long document in a foreign language, and the deposit cap changes at every border.",
+      ],
+      [
+        "German law caps the deposit at ",
+        {
+          claim: "three times the monthly cold rent",
+          note: "BGB §551. The registry holds the rule for five jurisdictions: Germany, the UK, New York, France, and Japan. Japan has no cap figure.",
+        },
+        ". The UK caps it at five weeks' rent, New York at one month, and France at one or two months, depending on whether the flat is furnished. A tenant needs the lease text and the local rule next to each other, and a check that ties the two together.",
+      ],
+    ],
+    architecture: [
+      [
+        "The frontend is Next.js and TypeScript. The backend is FastAPI and Python. The model reads the lease and flags the passages that matter. A deterministic validator then ",
+        {
+          claim: "checks every flagged quote verbatim against the lease text",
+          note: "The model flags passages. The validator, not the model, decides whether a quote matches the lease word for word.",
+        },
+        " and every citation against a five-jurisdiction registry. ",
+        {
+          claim: "Deposit math runs in Python, never in the model",
+          note: "The cap and the excess are computed from the lease figures in Python. The model never touches the arithmetic.",
+        },
+        ", so a number the model invents cannot reach the result.",
+      ],
+      [
+        "Photo evidence comes from SAM 3.1, which segments the damage in the move-in and move-out photos, and the two outlines are aligned first and then compared. That alignment is what “registered” means in the IoU figure.",
+      ],
+    ],
+    outcome: [
+      [
+        "Version 1.0.0 shipped on 2026-11-09 with ",
+        {
+          claim: "197 tests",
+          note: "132 backend, 65 frontend, at v1.0.0.",
+        },
+        ". The project was accepted into the Meta Global AI Developer Hackathon 2026, Indie Developer Track, as Team Shamas, Team Number 4919, though it was not a top finalist.",
+      ],
+      [
+        "The dorm demo runs the check on a real lease. The deposit in the lease is €950.00. The legal cap for that flat is €535.41, so the excess is €414.59. The photo evidence for the same flat scored ",
+        {
+          claim: "86.1% registered IoU",
+          note: "Registered IoU measures overlap after the two photos are aligned, so the score compares the same wall instead of two photos taken from different spots. The v7 demo pairing scored 86.1%, measured live twice identically. Aligned 1588, move-out 1722.",
+        },
+        " on the v7 demo pairing.",
+      ],
+    ],
+    figure: {
+      value: "86.1%",
+      label: "registered IoU, v7 demo pairing, measured live twice identically",
+    },
+    specimen: {
+      kind: "quote",
+      text: "Die vor dem Einzug zu zahlende Kaution beträgt 950,00 EUR.",
+      gloss: "The deposit to be paid before moving in is €950.00.",
+      cite: "Verified verbatim excerpt from the dorm lease. German deposit cap: 3× monthly cold rent (BGB §551).",
+    },
+    image: {
+      src: "/images/leaselens-sam-exhibit.png",
+      width: 740,
+      height: 640,
+      alt: "Dorm lease photo with SAM 3.1 segmentation overlay",
+      caption:
+        "SAM 3.1 segmentation burn from the v7 demo pairing, the dorm photo itself. 86.1% registered IoU, measured live twice identically.",
+    },
+    registry: [
+      { jurisdiction: "Germany", rule: "BGB §551: at most 3× monthly cold rent" },
+      { jurisdiction: "United Kingdom", rule: "Tenant Fees Act 2019: 5 weeks' rent" },
+      { jurisdiction: "New York, US", rule: "GOL §7-108: 1 month" },
+      {
+        jurisdiction: "France",
+        rule: "Loi 89-462, art. 22: 1 month unfurnished, 2 months furnished",
+      },
+      {
+        jurisdiction: "Japan",
+        rule: "Civil Code art. 622-2: no deposit-cap figure exists",
+      },
+    ],
+    limits: [
+      "SAM cannot isolate the door-frame dent or capture small burn specks.",
+      "The socket needs a click, not a concept phrase.",
+      "The QR handoff was never scan-tested on a real phone.",
+      "No hosted live-demo URL is verified.",
+    ],
+    links: [
+      { label: "GitHub", href: "https://github.com/shamas92/leaselens" },
+      { label: "Demo film", href: "https://youtu.be/le_KM97lm5w" },
+    ],
+  },
+  {
+    slug: "sales-etl-pipeline",
+    title: "Sales ETL Pipeline",
+    year: 2026,
+    rowOutcome:
+      "Sales data from several sources, loaded into one trustworthy shape.",
+    rowProof: "One DAG, three tasks, four tables.",
+    stack: ["Apache Airflow", "Docker Compose", "PostgreSQL", "MinIO", "Parquet"],
+    problem: [
+      [
+        "Sales data arrived from several sources with no single, trustworthy shape for analysis.",
+      ],
+    ],
+    architecture: [
+      [
+        "One Airflow DAG runs three tasks. Raw files land as Parquet in MinIO, then load into a Kimball star schema in PostgreSQL with four tables: dim_date, dim_customer, dim_product, fact_sales. Upserts use psycopg2 ON CONFLICT, so a rerun does not duplicate rows, and Mailpit sends an alert when a run fails.",
+      ],
+    ],
+    outcome: [
+      [
+        "The pipeline runs with ",
+        {
+          claim: "one DAG, three tasks, and four tables",
+          note: "dim_date, dim_customer, dim_product, fact_sales. Verified in the repository.",
+        },
+        ". There are no stored procedures. The upserts live in Python.",
+      ],
+    ],
+    image: {
+      src: "/images/etl-diagram.png",
+      width: 1728,
+      height: 1440,
+      alt: "Diagram of the ETL pipeline: one DAG, three tasks, four tables",
+      caption:
+        "Pipeline diagram: three tasks, four tables. Airflow TaskFlow, Parquet/MinIO staging, PostgreSQL.",
+    },
+    links: [
+      { label: "GitHub", href: "https://github.com/shamas92/sales-etl-pipeline" },
+    ],
+  },
+  {
+    slug: "oratorpath",
+    title: "OratorPath",
+    year: 2025,
+    rowOutcome: "Measured feedback for developers who speak in public.",
+    rowProof: "Peer-reviewed publication, 2025.",
+    stack: ["PyTorch", "Hugging Face", "NLP"],
+    problem: [
+      [
+        "Public-speaking feedback for software developers was anecdotal, not measured.",
+      ],
+    ],
+    architecture: [
+      [
+        "OratorPath is an AI public-speaking coach built with PyTorch, Hugging Face, and NLP, with a live dashboard. It was the final-year thesis project, and the coach analyses speech and returns measured feedback instead of impressions.",
+      ],
+    ],
+    outcome: [
+      [
+        "The work was co-authored as a paper and published in a ",
+        {
+          claim: "peer-reviewed journal",
+          note: "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
+        },
+        ".",
+      ],
+    ],
+    specimen: {
+      kind: "citation",
+      text: "An AI-driven speech analysis for enhancing communication and public speaking in global software development.",
+      cite: "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
+    },
+    links: [],
+    todoLinks: [{ label: "Live dashboard URL" }],
+  },
+  {
+    slug: "quality-crm",
+    title: "Quality Management & Defect-Tracking CRM",
+    year: 2024,
+    rowOutcome: "Defects and quality issues in one record, not informal notes.",
+    rowProof: "Shipped as an academic project.",
+    stack: ["Laravel", "MySQL", "PHP"],
+    problem: [
+      [
+        "Defects and quality issues were tracked informally, with no single record.",
+      ],
+    ],
+    architecture: [
+      [
+        "A Laravel and MySQL CRM for quality management and defect tracking, built as an academic project in 2024.",
+      ],
+    ],
+    outcome: [
+      ["Shipped as an academic project."],
+    ],
+    noFigureNote: "No figures were measured for this project, so none are shown.",
+    links: [],
+  },
+  {
+    slug: "upliftu",
+    title: "UpliftU",
+    year: 2024,
+    rowOutcome: "Conversational support for students, in a structured form.",
+    rowProof: "Shipped as an academic project.",
+    stack: ["Python", "Hugging Face", "NLP"],
+    problem: [
+      [
+        "Conversational support for students had no structured, measured form.",
+      ],
+    ],
+    architecture: [
+      [
+        "Python conversational support built with Hugging Face NLP, for students.",
+      ],
+    ],
+    outcome: [
+      ["Shipped as an academic project."],
+    ],
+    noFigureNote: "No figures were measured for this project, so none are shown.",
+    links: [],
+  },
+];
+
+export const background = {
+  education: [
+    {
+      degree: "MSc Computer Science",
+      school: "TU Dresden",
+      period: "Oct 2026 – present",
+      note: "Scalable Data Engineering, Data Visualization, Requirements Engineering.",
+    },
+    {
+      degree: "BSc Software Engineering",
+      school: "HITEC University Taxila",
+      period: "Sep 2021 – Aug 2025",
+      note: "CGPA 3.48/4.00 (German grade 1.7).",
+    },
+  ],
+  experience: [
+    {
+      role: "IT Department Intern",
+      org: "HITEC University",
+      period: "May – Oct 2025",
+      note: "C#/ASP.NET MVC portal modules; RAG support chatbot in Python/Hugging Face over university docs.",
+    },
+    {
+      role: "Intern",
+      org: "Heavy Industries Taxila",
+      period: "Jul – Aug 2024",
+      note: "Real-time C#/.NET + SQL Server process monitoring with live dashboards. The CV credits this work with cutting manual logging errors by 20%.",
+    },
+  ],
+  languages: [
+    { language: "English", level: "C1 (IELTS 7.5)" },
+    { language: "German", level: "A1/A2 (TU Dresden course)" },
+    { language: "Urdu", level: "Native" },
+  ],
+  certifications: {
+    items: [
+      "Google Advanced Data Analytics",
+      "Google Data Analytics",
+      "Google IT Automation with Python",
+      "Google Project Management",
+    ],
+    period: "Nov 2025 – Sep 2026",
+  },
+};
+
+/** Each skill appears once. `project` links it to the case study that used it. */
+export type SkillGroup = {
+  title: string;
+  skills: { name: string; project?: string }[];
+};
+
+export const skillGroups: SkillGroup[] = [
+  {
+    title: "Languages",
+    skills: [
+      { name: "Python", project: "leaselens" },
+      { name: "SQL", project: "sales-etl-pipeline" },
+      { name: "C#" },
+      { name: "TypeScript", project: "leaselens" },
+      { name: "JavaScript" },
+      { name: "PHP", project: "quality-crm" },
+    ],
+  },
+  {
+    title: "Data & BI",
+    skills: [
+      { name: "Pandas" },
+      { name: "NumPy" },
+      { name: "Matplotlib" },
+      { name: "scikit-learn" },
+      { name: "time-series analysis" },
+      { name: "anomaly detection" },
+      { name: "Tableau" },
+      { name: "Excel" },
+    ],
+  },
+  {
+    title: "Frameworks & AI",
+    skills: [
+      { name: "FastAPI", project: "leaselens" },
+      { name: "ASP.NET MVC" },
+      { name: "Next.js", project: "leaselens" },
+      { name: "React", project: "leaselens" },
+      { name: "PyTorch", project: "oratorpath" },
+      { name: "Hugging Face", project: "oratorpath" },
+      { name: "RAG" },
+      { name: "NLP", project: "oratorpath" },
+    ],
+  },
+  {
+    title: "Databases",
+    skills: [
+      { name: "SQL Server" },
+      { name: "MySQL", project: "quality-crm" },
+      { name: "PostgreSQL", project: "sales-etl-pipeline" },
+    ],
+  },
+  {
+    title: "Tools",
+    skills: [
+      { name: "Git" },
+      { name: "Docker", project: "sales-etl-pipeline" },
+      { name: "Linux (Ubuntu)" },
+      { name: "REST APIs" },
+    ],
+  },
+];

@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import Script from "next/script";
 import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -80,13 +81,11 @@ const personJsonLd = {
   sameAs: [profile.github, profile.linkedin],
 };
 
-/* No-flash theme script: runs in <head> before first paint, so a
-   stored dark preference never flashes light. It also marks the
-   document as scripted, which gates the scroll-reveal hidden state
-   (without JS, reveal targets stay visible). The html element
-   carries suppressHydrationWarning because this script may change
-   data-theme before React hydrates. */
-const themeScript = `(function(){try{document.documentElement.classList.add('js');var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
+/* No-flash theme script: injected before hydration, so a stored
+ *  dark preference never flashes light. The html element carries
+ *  suppressHydrationWarning because this script may change
+ *  data-theme before React hydrates. */
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -101,7 +100,9 @@ export default function RootLayout({
       className={`${geist.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <Script id="theme" strategy="beforeInteractive">
+          {themeScript}
+        </Script>
       </head>
       <body>
         <script

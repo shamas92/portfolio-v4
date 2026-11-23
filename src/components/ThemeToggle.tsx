@@ -14,6 +14,14 @@ function getTheme(): "light" | "dark" {
     : "light";
 }
 
+/** The server always renders light: the stored theme is only known
+ *  on the client. Returning the live DOM value here would render a
+ *  different icon during hydration than the server sent, which is
+ *  a hydration mismatch (React error 418). */
+function getServerTheme(): "light" | "dark" {
+  return "light";
+}
+
 function subscribeTheme(onChange: () => void): () => void {
   const observer = new MutationObserver(onChange);
   observer.observe(document.documentElement, {
@@ -24,7 +32,7 @@ function subscribeTheme(onChange: () => void): () => void {
 }
 
 export function ThemeToggle() {
-  const theme = useSyncExternalStore(subscribeTheme, getTheme, getTheme);
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, getServerTheme);
 
   function toggle() {
     const next = theme === "dark" ? "light" : "dark";

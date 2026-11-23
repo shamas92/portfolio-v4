@@ -482,20 +482,22 @@ footer[id] {
   animation-delay: var(--entrance-delay, 0ms);
 }
 
-/* ---- Scroll reveals: hidden only when JS runs (the theme script
-   adds .js before first paint), so no-JS readers see everything.
-   Once visible, the class stays. ---- */
-.js .reveal {
-  opacity: 0;
-  transform: translateY(16px);
-}
+/* ---- Scroll reveals: hidden only when scripting is enabled,
+   so no-JS readers see everything. Once visible, the class
+   stays. ---- */
+@media (scripting: enabled) {
+  .reveal {
+    opacity: 0;
+    transform: translateY(16px);
+  }
 
-.js .reveal.is-visible {
-  opacity: 1;
-  transform: translateY(0);
-  transition:
-    opacity var(--dur-reveal) var(--ease),
-    transform var(--dur-reveal) var(--ease);
+  .reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--dur-reveal) var(--ease),
+      transform var(--dur-reveal) var(--ease);
+  }
 }
 
 /* ---- Sections ---- */
@@ -1423,12 +1425,12 @@ footer[id] {
     animation: none;
   }
 
-  .js .reveal {
+  .reveal {
     opacity: 1;
     transform: none;
   }
 
-  .js .reveal.is-visible {
+  .reveal.is-visible {
     transition: none;
   }
 

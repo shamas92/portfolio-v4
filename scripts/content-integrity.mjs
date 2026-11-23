@@ -182,28 +182,28 @@ lines.push("");
 lines.push("## Removed sentences (allowlisted)");
 lines.push("");
 for (const s of missing) {
-  lines.push(`- “${s}” — ${allowedRemoved.get(s) ?? "NO REASON — UNEXPLAINED"}`);
+  lines.push(`- “${s}”: ${allowedRemoved.get(s) ?? "NO REASON: UNEXPLAINED"}`);
 }
 lines.push("");
 lines.push("## Added sentences (allowlisted)");
 lines.push("");
 for (const s of added) {
-  lines.push(`- “${s}” — ${allowedAdded.get(s) ?? "NO REASON — UNEXPLAINED"}`);
+  lines.push(`- “${s}”: ${allowedAdded.get(s) ?? "NO REASON: UNEXPLAINED"}`);
 }
 lines.push("");
 lines.push("## Links");
 lines.push("");
 for (const l of [...oldLinks].sort()) {
-  lines.push(`- ${l} — ${newLinks.has(l) ? "kept" : "MISSING"}`);
+  lines.push(`- ${l}: ${newLinks.has(l) ? "kept" : "MISSING"}`);
 }
-for (const l of addedLinks) lines.push(`- ${l} — ADDED`);
+for (const l of addedLinks) lines.push(`- ${l}: ADDED`);
 lines.push("");
 lines.push("## Images");
 lines.push("");
 for (const i of [...oldImages].sort()) {
-  lines.push(`- ${i} — ${newImages.has(i) ? "kept" : "MISSING"}`);
+  lines.push(`- ${i}: ${newImages.has(i) ? "kept" : "MISSING"}`);
 }
-for (const i of addedImages) lines.push(`- ${i} — ADDED`);
+for (const i of addedImages) lines.push(`- ${i}: ADDED`);
 lines.push("");
 lines.push("## Component copy outside content.ts (manual check)");
 lines.push("");
@@ -214,7 +214,7 @@ lines.push(
   "- Footer location line “Dresden, Germany” is new as a separate line; the fact was in the old intro (“Software engineer in Dresden.”) and the document title.",
 );
 lines.push(
-  "- Section order changed Work, Stack, Background → Work, Background, Stack (per the redesign brief). Section intros are unchanged.",
+  "- Section order changed Work, Stack, Background to Work, Background, Stack (per the redesign brief). Section intros are unchanged.",
 );
 lines.push(
   "- “Spoken languages” replaces the “Languages” heading in the timeline (allowed: label-clash fix); the programming group keeps “Languages”.",

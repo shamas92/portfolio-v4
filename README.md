@@ -10,24 +10,24 @@ engineering report. Oxide-red accent (#9A3324 light / #E07856 dark),
 Newsreader headings, Inter Tight body, JetBrains Mono for years, figures
 and labels. Theme follows the system setting only
 (`prefers-color-scheme`); there is no toggle. Tokens live in
-`src/app/globals.css` — one hand-written stylesheet, CSS custom
+`src/app/globals.css`: one hand-written stylesheet, CSS custom
 properties, hairline rules instead of boxes and shadows.
 
 ## Structure
 
-- `src/content.ts` — every fact on the site: profile, projects,
+- `src/content.ts`: every fact on the site: profile, projects,
   background, stack groups. Content lives here, never in components.
-- `src/app/` — routes: `/` (hero, work ledger, background, stack),
+- `src/app/`: routes: `/` (hero, work ledger, background, stack),
   `/work/[slug]` (five static case-study pages), sitemap, robots.
-- `src/components/` — one small component per piece: `ProjectRow`,
+- `src/components/`: one small component per piece: `ProjectRow`,
   `CaseStudy` (with the evidence blocks), `Timeline`, `StackGroup`,
   `SiteFooter` (contact), `CopyEmailButton`, `ProofNote`, `Rail`.
-- `src/app/globals.css` — the only stylesheet. All spacing, colour,
+- `src/app/globals.css`: the only stylesheet. All spacing, colour,
   radii and durations come from tokens; no magic numbers.
-- `public/images/` — the two evidence images (LeaseLens SAM exhibit,
+- `public/images/`: the two evidence images (LeaseLens SAM exhibit,
   ETL diagram) and the OG image.
-- `scripts/` — `content-integrity.mjs` (see below), `make-og-image.py`.
-- `docs/` — `redesign-baseline.md` (audit of the previous design),
+- `scripts/`: `content-integrity.mjs` (see below), `make-og-image.py`.
+- `docs/`: `redesign-baseline.md` (audit of the previous design),
   `redesign-report.md` (this redesign, with measurements),
   `content-integrity.md` (content diff report).
 
@@ -35,7 +35,7 @@ properties, hairline rules instead of boxes and shadows.
 
 1. Add one entry to `projects` in `src/content.ts`: `slug`, `title`,
    `year`, `tagline`, `rowOutcome`, `rowProof`, `stack`, `problem`,
-   `architecture`, `outcome`. Blocks are optional fields — leave out
+   `architecture`, `outcome`. Blocks are optional fields: leave out
    what has no verified content (`figure`, `evidence`, `image`,
    `registry`, `limits`, `links`); a project with no verified
    evidence gets the plain status line `evidenceStatus`.

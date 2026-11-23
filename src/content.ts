@@ -332,8 +332,7 @@ export const projects: Project[] = [
       ],
     ],
     outcome: [["Shipped as an academic project."]],
-    scope:
-      "Structured NLP student support in Python/Hugging Face.",
+    scope: "Structured NLP student support in Python/Hugging Face.",
     evidenceStatus: "No figures were measured for this project.",
     links: [],
   },

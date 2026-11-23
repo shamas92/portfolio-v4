@@ -17,9 +17,7 @@ export function LeaseLensAsset() {
       role="img"
       aria-label="Split-frame schematic: move-in and move-out room boundaries aligned, with an 86.1 percent IoU reticle"
     >
-      <title>
-        Move-in and move-out room boundaries aligned, 86.1% IoU
-      </title>
+      <title>Move-in and move-out room boundaries aligned, 86.1% IoU</title>
       {/* room outline */}
       <rect
         x="28"
@@ -227,7 +225,9 @@ export function OratorPathAsset() {
       role="img"
       aria-label="Speech waveform with structured metric bars for pace, filler words, and clarity"
     >
-      <title>Speech waveform with metric bars: pace, filler words, clarity</title>
+      <title>
+        Speech waveform with metric bars: pace, filler words, clarity
+      </title>
       {/* waveform */}
       <polyline
         points="20,65 28,52 36,78 44,44 52,86 60,58 68,70 76,48 84,80 92,62 100,55 108,74 116,40 124,88 132,60 140,68 148,50 156,82 164,58 172,66 180,46 188,84 196,62 204,56 212,76 220,44 228,86 236,60 244,70 252,52 260,80 268,64 276,58 284,72 292,48 300,84 308,62 316,56 324,74 332,42 340,88 348,60 356,68 364,54 372,76 380,65"

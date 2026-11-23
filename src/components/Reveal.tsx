@@ -13,10 +13,9 @@ export function useReveal<T extends HTMLElement>() {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      setVisible(true);
-      return;
-    }
+    /* No reduced-motion branch here: the stylesheet already shows
+       reveal targets instantly under prefers-reduced-motion, so
+       the observer only ever adds the visible class. */
     const observer = new IntersectionObserver(
       (entries) => {
         if (entries[0]?.isIntersecting) {
@@ -42,7 +41,10 @@ export function Reveal({
 }) {
   const { ref, className: revealClass } = useReveal<HTMLDivElement>();
   return (
-    <div ref={ref} className={`${revealClass}${className ? ` ${className}` : ""}`}>
+    <div
+      ref={ref}
+      className={`${revealClass}${className ? ` ${className}` : ""}`}
+    >
       {children}
     </div>
   );

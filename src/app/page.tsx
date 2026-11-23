@@ -21,8 +21,7 @@ export default function Home() {
       <header className="hero">
         <h1 className="hero-name">{profile.name}</h1>
         <p className="hero-claim" data-entrance style={delay(40)}>
-          I build data &amp; ML systems — and prove every claim on this
-          page.
+          I build data &amp; ML systems — and prove every claim on this page.
         </p>
         <p className="hero-pill" data-entrance style={delay(80)}>
           <span className="status-dot" aria-hidden="true" />
@@ -63,8 +62,8 @@ export default function Home() {
             Work
           </h2>
           <p className="section-intro">
-            Three flagship systems, each with its architecture and its
-            proof. Two earlier systems follow in a compact index.
+            Three flagship systems, each with its architecture and its proof.
+            Two earlier systems follow in a compact index.
           </p>
         </Reveal>
         <WorkSection />
@@ -95,8 +94,8 @@ export default function Home() {
             Stack
           </h2>
           <p className="section-intro">
-            Every skill, grouped by what it does. The pills above the
-            projects filter them by stack.
+            Every skill, grouped by what it does. The pills above the projects
+            filter them by stack.
           </p>
         </Reveal>
         <CapabilitiesMatrix />

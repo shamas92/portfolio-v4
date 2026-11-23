@@ -47,9 +47,7 @@ function matches(project: Project, pill: Pill): boolean {
   if (stack.includes(p)) return true;
   if (p === "docker") return stack.includes("docker compose");
   if (p === "sql")
-    return stack.some((s) =>
-      ["postgresql", "mysql", "sql server"].includes(s),
-    );
+    return stack.some((s) => ["postgresql", "mysql", "sql server"].includes(s));
   return false;
 }
 
@@ -69,8 +67,8 @@ export function WorkSection() {
     return map;
   }, []);
 
-  const flagships = FLAGSHIPS.map(
-    (slug) => projects.find((p) => p.slug === slug)!,
+  const flagships = FLAGSHIPS.map((slug) =>
+    projects.find((p) => p.slug === slug)!,
   );
   const tier2 = TIER2.map((slug) => projects.find((p) => p.slug === slug)!);
   const matched = projects.filter((p) => matches(p, active)).length;

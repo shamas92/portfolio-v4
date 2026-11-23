@@ -1,17 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useSyncExternalStore } from "react";
 
 /** Manual theme toggle. The value persists in localStorage; the
  *  inline script in the document head applies it before first
- *  paint, so the toggle never flashes the wrong theme. */
-export function ThemeToggle() {
-  const [theme, setTheme] = useState<"light" | "dark">("light");
+ *  paint, so the toggle never flashes the wrong theme. The theme
+ *  is external DOM state (data-theme on <html>), so it is read
+ *  with useSyncExternalStore rather than an effect. */
+function getTheme(): "light" | "dark" {
+  if (typeof document === "undefined") return "light";
+  return document.documentElement.getAttribute("data-theme") === "dark"
+    ? "dark"
+    : "light";
+}
 
-  useEffect(() => {
-    const current = document.documentElement.getAttribute("data-theme");
-    if (current === "dark" || current === "light") setTheme(current);
-  }, []);
+function subscribeTheme(onChange: () => void): () => void {
+  const observer = new MutationObserver(onChange);
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ["data-theme"],
+  });
+  return () => observer.disconnect();
+}
+
+export function ThemeToggle() {
+  const theme = useSyncExternalStore(subscribeTheme, getTheme, getTheme);
 
   function toggle() {
     const next = theme === "dark" ? "light" : "dark";
@@ -22,7 +35,6 @@ export function ThemeToggle() {
       /* Storage unavailable (private mode): the toggle still works
          for this page load. */
     }
-    setTheme(next);
   }
 
   return (

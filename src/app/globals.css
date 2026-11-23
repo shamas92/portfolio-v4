@@ -42,8 +42,8 @@
   /* type roles */
   --font-display: var(--font-geist), "Geist", system-ui, sans-serif;
   --font-body: var(--font-geist), "Geist", system-ui, sans-serif;
-  --font-mono: var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace,
-    monospace;
+  --font-mono:
+    var(--font-jetbrains-mono), "JetBrains Mono", ui-monospace, monospace;
 
   /* type scale — five steps, fluid where it matters */
   --text-display: clamp(2.5rem, 6vw, 3.5rem);
@@ -284,7 +284,8 @@ footer[id] {
   border: 1px solid var(--rule);
   color: var(--ink);
   cursor: pointer;
-  transition: border-color var(--dur-med) var(--ease),
+  transition:
+    border-color var(--dur-med) var(--ease),
     color var(--dur-med) var(--ease);
 }
 
@@ -427,8 +428,10 @@ footer[id] {
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
-  transition: background-color var(--dur-med) var(--ease),
-    color var(--dur-med) var(--ease), border-color var(--dur-med) var(--ease);
+  transition:
+    background-color var(--dur-med) var(--ease),
+    color var(--dur-med) var(--ease),
+    border-color var(--dur-med) var(--ease);
 }
 
 .btn:active {
@@ -490,7 +493,8 @@ footer[id] {
 .js .reveal.is-visible {
   opacity: 1;
   transform: translateY(0);
-  transition: opacity var(--dur-reveal) var(--ease),
+  transition:
+    opacity var(--dur-reveal) var(--ease),
     transform var(--dur-reveal) var(--ease);
 }
 
@@ -534,7 +538,8 @@ footer[id] {
   background: transparent;
   color: var(--ink-muted);
   cursor: pointer;
-  transition: background-color var(--dur-fast) var(--ease),
+  transition:
+    background-color var(--dur-fast) var(--ease),
     border-color var(--dur-fast) var(--ease),
     color var(--dur-fast) var(--ease);
 }
@@ -590,7 +595,8 @@ footer[id] {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  transition: border-color var(--dur-med) var(--ease),
+  transition:
+    border-color var(--dur-med) var(--ease),
     opacity var(--dur-med) var(--ease);
 }
 
@@ -1357,7 +1363,8 @@ footer[id] {
   min-height: 44px;
   padding: var(--space-1) var(--space-2);
   cursor: pointer;
-  transition: border-color var(--dur-med) var(--ease),
+  transition:
+    border-color var(--dur-med) var(--ease),
     color var(--dur-med) var(--ease);
 }
 

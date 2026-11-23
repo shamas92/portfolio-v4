@@ -1,4 +1,3 @@
-import Link from "next/link";
 import { background } from "@/content";
 
 export function Timeline() {

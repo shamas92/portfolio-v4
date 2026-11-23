@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import type { Inline, Prose } from "@/content";
+import type { Prose } from "@/content";
 
 function CheckIcon() {
   return (

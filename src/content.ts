@@ -47,6 +47,8 @@ export type Project = {
   rowOutcome: string;
   /** One proof statement for the Work row. */
   rowProof: string;
+  /** Evidence for the row proof statement, shown in the margin note. */
+  rowProofNote: string;
   stack: string[];
   problem: Prose;
   architecture: Prose;
@@ -89,6 +91,8 @@ export const projects: Project[] = [
       "A tenant evidence workspace that checks deposit claims against the lease and the law.",
     rowProof:
       "86.1% registered IoU on the v7 demo pairing, measured live twice identically.",
+    rowProofNote:
+      "Registered IoU measures overlap after the two photos are aligned, so the score compares the same wall instead of two photos taken from different spots. Aligned 1588, move-out 1722.",
     stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
     problem: [
       [
@@ -188,6 +192,8 @@ export const projects: Project[] = [
     rowOutcome:
       "Sales data from several sources, loaded into one trustworthy shape.",
     rowProof: "One DAG, three tasks, four tables.",
+    rowProofNote:
+      "dim_date, dim_customer, dim_product, fact_sales. Verified in the repository.",
     stack: ["Apache Airflow", "Docker Compose", "PostgreSQL", "MinIO", "Parquet"],
     problem: [
       [
@@ -227,6 +233,8 @@ export const projects: Project[] = [
     year: 2025,
     rowOutcome: "Measured feedback for developers who speak in public.",
     rowProof: "Peer-reviewed publication, 2025.",
+    rowProofNote:
+      "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
     stack: ["PyTorch", "Hugging Face", "NLP"],
     problem: [
       [
@@ -262,6 +270,7 @@ export const projects: Project[] = [
     year: 2024,
     rowOutcome: "Defects and quality issues in one record, not informal notes.",
     rowProof: "Shipped as an academic project.",
+    rowProofNote: "No figures were measured for this project, so none are shown.",
     stack: ["Laravel", "MySQL", "PHP"],
     problem: [
       [
@@ -285,6 +294,7 @@ export const projects: Project[] = [
     year: 2024,
     rowOutcome: "Conversational support for students, in a structured form.",
     rowProof: "Shipped as an academic project.",
+    rowProofNote: "No figures were measured for this project, so none are shown.",
     stack: ["Python", "Hugging Face", "NLP"],
     problem: [
       [

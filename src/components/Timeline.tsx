@@ -54,15 +54,11 @@ export function Timeline() {
 
       <div className="timeline-group">
         <h3 className="timeline-group-head">Certificates</h3>
+        <p className="cert-period">{background.certifications.period}</p>
         <ul className="cert-list">
           {background.certifications.items.map((c) => (
             <li key={c}>{c}</li>
           ))}
-          <li>
-            <span className="cert-period">
-              {background.certifications.period}
-            </span>
-          </li>
         </ul>
       </div>
     </>

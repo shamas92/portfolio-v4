@@ -896,7 +896,7 @@ a:hover {
 }
 
 .cert-list {
-  margin-top: var(--space-8);
+  margin-top: var(--space-4);
   list-style: none;
   padding: 0;
   display: grid;
@@ -914,7 +914,9 @@ a:hover {
 }
 
 .cert-period {
+  margin-top: var(--space-1);
   color: var(--secondary);
+  font-size: 0.9375rem;
 }
 
 /* ---- Footer / contact ---- */

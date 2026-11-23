@@ -8,13 +8,13 @@ import type { Project } from "@/content";
 export function ProjectRow({ project }: { project: Project }) {
   return (
     <li className="work-row">
-      <div className="work-row-title">
-        <Link className="work-row-link" href={`/work/${project.slug}`}>
-          {project.title}
-        </Link>
-        <span className="work-row-year">{project.year}</span>
-      </div>
-      <div className="work-row-body">
+      <span className="work-row-year">{project.year}</span>
+      <div className="work-row-main">
+        <h3 className="work-row-title">
+          <Link className="work-row-link" href={`/work/${project.slug}`}>
+            {project.title}
+          </Link>
+        </h3>
         <p className="work-row-outcome">{project.rowOutcome}</p>
         <p className="work-row-proof">{project.rowProof}</p>
         <ul className="work-row-stack" aria-label="Stack">

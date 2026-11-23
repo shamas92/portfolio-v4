@@ -57,6 +57,12 @@ export type Project = {
   version?: string;
   /** Test counts at the release, when measured. */
   tests?: { total: number; backend: number; frontend: number };
+  /** Plain-English proof callout for the flagship card, composed
+   *  verbatim from the project's own figure, tests and notes. */
+  proofCallout?: string;
+  /** Concrete technical scope for the tier-2 index rows, drawn
+   *  only from the project's own problem and architecture text. */
+  scope?: string;
   /** The one piece of evidence that proves it — a quote or a citation. */
   evidence?: {
     kind: "quote" | "citation";
@@ -150,6 +156,8 @@ export const projects: Project[] = [
     },
     version: "v1.0.0",
     tests: { total: 197, backend: 132, frontend: 65 },
+    proofCallout:
+      "Registered IoU measures overlap after the two photos are aligned, so the score compares the same wall instead of two photos taken from different spots.",
     evidence: {
       kind: "quote",
       text: "Die vor dem Einzug zu zahlende Kaution beträgt 950,00 EUR.",
@@ -231,6 +239,8 @@ export const projects: Project[] = [
         ". There are no stored procedures. The upserts live in Python.",
       ],
     ],
+    proofCallout:
+      "One DAG, three tasks, four tables: dim_date, dim_customer, dim_product, fact_sales.",
     image: {
       src: "/images/etl-diagram.png",
       width: 1728,
@@ -278,6 +288,8 @@ export const projects: Project[] = [
       text: "An AI-driven speech analysis for enhancing communication and public speaking in global software development.",
       cite: "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
     },
+    proofCallout:
+      "Peer-reviewed publication, 2025: Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, ISSN 3007-3138.",
     links: [],
     todoLinks: [{ label: "Live dashboard URL" }],
   },
@@ -299,6 +311,8 @@ export const projects: Project[] = [
       ],
     ],
     outcome: [["Shipped as an academic project."]],
+    scope:
+      "Relational defect tracking in Laravel/MySQL — one record for every defect.",
     evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
@@ -318,6 +332,8 @@ export const projects: Project[] = [
       ],
     ],
     outcome: [["Shipped as an academic project."]],
+    scope:
+      "Structured NLP student support in Python/Hugging Face.",
     evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
@@ -349,7 +365,7 @@ export const background = {
       role: "Intern",
       org: "Heavy Industries Taxila",
       period: "Jul – Aug 2024",
-      note: "Real-time C#/.NET + SQL Server process monitoring with live dashboards. The CV credits this work with cutting manual logging errors by 20%.",
+      note: "Built real-time C#/.NET and SQL Server process monitoring with live dashboards, cutting manual logging errors by 20%.",
     },
   ],
   languages: [

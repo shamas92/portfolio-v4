@@ -1,48 +1,39 @@
 import Link from "next/link";
-import { profile, projects } from "@/content";
-import { ProjectRow } from "@/components/ProjectRow";
-import { StackGroup } from "@/components/StackGroup";
-import { Timeline } from "@/components/Timeline";
-import { Todo } from "@/components/Todo";
-import { Rail } from "@/components/Rail";
+import type { CSSProperties } from "react";
+import { profile } from "@/content";
 import { CopyEmailButton } from "@/components/CopyEmailButton";
+import { Todo } from "@/components/Todo";
+import { Reveal } from "@/components/Reveal";
+import { WorkSection } from "@/components/WorkSection";
+import { Background } from "@/components/Background";
+import { CapabilitiesMatrix } from "@/components/CapabilitiesMatrix";
 
 const isProd = process.env.NODE_ENV === "production";
 
-const leaselens = projects.find((p) => p.slug === "leaselens");
+/** Entrance delays: the h1 never animates (it is the LCP element);
+ *  the claim, pill, status line and actions rise in at 40ms steps. */
+const delay = (ms: number) =>
+  ({ "--entrance-delay": `${ms}ms` }) as CSSProperties;
 
 export default function Home() {
   return (
     <div className="page">
-      <Rail
-        items={[
-          { href: "#work", label: "Work" },
-          { href: "#background", label: "Background" },
-          { href: "#stack", label: "Stack" },
-          { href: "#contact", label: "Contact" },
-        ]}
-      />
-
       <header className="hero">
         <h1 className="hero-name">{profile.name}</h1>
-        <p className="hero-claim">
-          I build data &amp; ML systems — and{" "}
-          <span className="hero-claim-mark">prove every claim</span> on this
+        <p className="hero-claim" data-entrance style={delay(40)}>
+          I build data &amp; ML systems — and prove every claim on this
           page.
         </p>
-        <p className="hero-status">{profile.statusLine}</p>
-        {leaselens?.figure && leaselens.tests && leaselens.version && (
-          <p className="hero-proof">
-            <span className="hero-proof-label">LeaseLens</span>
-            <span className="hero-proof-figures">
-              {leaselens.figure.value} registered IoU · {leaselens.tests.total}{" "}
-              tests · {leaselens.version}
-            </span>
-          </p>
-        )}
-        <div className="hero-actions">
+        <p className="hero-pill" data-entrance style={delay(80)}>
+          <span className="status-dot" aria-hidden="true" />
+          Dresden · Werkstudent eligible, 20h/wk
+        </p>
+        <p className="hero-status" data-entrance style={delay(120)}>
+          {profile.statusLine}
+        </p>
+        <div className="hero-actions" data-entrance style={delay(160)}>
           <Link className="btn btn-primary" href="#work">
-            See projects
+            View Flagship Work
           </Link>
           <CopyEmailButton />
           {!isProd && (
@@ -67,18 +58,16 @@ export default function Home() {
         aria-labelledby="work-head"
         tabIndex={-1}
       >
-        <h2 className="section-head" id="work-head">
-          Work
-        </h2>
-        <p className="section-intro">
-          Five shipped systems. Each row states what it does and the strongest
-          proof for it.
-        </p>
-        <ul className="work-list">
-          {projects.map((p) => (
-            <ProjectRow key={p.slug} project={p} />
-          ))}
-        </ul>
+        <Reveal>
+          <h2 className="section-head" id="work-head">
+            Work
+          </h2>
+          <p className="section-intro">
+            Three flagship systems, each with its architecture and its
+            proof. Two earlier systems follow in a compact index.
+          </p>
+        </Reveal>
+        <WorkSection />
       </section>
 
       <section
@@ -87,10 +76,12 @@ export default function Home() {
         aria-labelledby="background-head"
         tabIndex={-1}
       >
-        <h2 className="section-head" id="background-head">
-          Background
-        </h2>
-        <Timeline />
+        <Reveal>
+          <h2 className="section-head" id="background-head">
+            Background
+          </h2>
+        </Reveal>
+        <Background />
       </section>
 
       <section
@@ -99,13 +90,16 @@ export default function Home() {
         aria-labelledby="stack-head"
         tabIndex={-1}
       >
-        <h2 className="section-head" id="stack-head">
-          Stack
-        </h2>
-        <p className="section-intro">
-          Each skill appears once. A linked skill was used in that project.
-        </p>
-        <StackGroup />
+        <Reveal>
+          <h2 className="section-head" id="stack-head">
+            Stack
+          </h2>
+          <p className="section-intro">
+            Every skill, grouped by what it does. The pills above the
+            projects filter them by stack.
+          </p>
+        </Reveal>
+        <CapabilitiesMatrix />
       </section>
     </div>
   );

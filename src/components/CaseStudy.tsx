@@ -3,7 +3,6 @@ import Link from "next/link";
 import { Newsreader } from "next/font/google";
 import type { Project } from "@/content";
 import { Annotated } from "./ProofNote";
-import { Rail } from "./Rail";
 import { Todo } from "./Todo";
 
 /* The italic serif for quotes and citations. Loaded only on case
@@ -19,7 +18,9 @@ const newsreaderItalic = Newsreader({
 /** One case-study page: the same six blocks for every project —
  *  Problem, Architecture, Outcome, Evidence, Stack, Links.
  *  A block is omitted when the project has no verified content for
- *  it; the plain status line stays where Evidence would be empty. */
+ *  it; the plain status line stays where Evidence would be empty.
+ *  Sections stack plainly with anchor ids; the header nav covers
+ *  site navigation (no rail). */
 export function CaseStudy({ project }: { project: Project }) {
   const hasEvidence = Boolean(
     project.figure ||
@@ -30,20 +31,8 @@ export function CaseStudy({ project }: { project: Project }) {
     project.evidenceStatus,
   );
 
-  const railItems = [
-    { href: "#problem", label: "Problem" },
-    { href: "#architecture", label: "Architecture" },
-    { href: "#outcome", label: "Outcome" },
-    ...(hasEvidence ? [{ href: "#evidence", label: "Evidence" }] : []),
-    { href: "#stack", label: "Stack" },
-    ...(project.links.length > 0 || project.todoLinks
-      ? [{ href: "#links", label: "Links" }]
-      : []),
-  ];
-
   return (
     <>
-      <Rail items={railItems} />
       <div className="case-head">
         <Link className="case-back" href="/#work">
           All projects

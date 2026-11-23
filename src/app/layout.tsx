@@ -1,5 +1,5 @@
-import type { Metadata } from "next";
-import { Schibsted_Grotesk, Source_Serif_4 } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Newsreader, Inter_Tight, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -7,20 +7,27 @@ import { profile, siteUrl } from "@/content";
 
 /* Self-hosted, subsetted, with size-adjusted fallbacks (next/font
    generates the fallback metrics, so there is no layout shift).
-   latin-ext covers ä ö ü ß. */
-const grotesk = Schibsted_Grotesk({
+   latin-ext covers ä ö ü ß. The italic serif used by the case-study
+   quote lives in CaseStudy.tsx, so it is only loaded on case pages. */
+const newsreader = Newsreader({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "500", "600", "700"],
+  weight: ["500", "600"],
   display: "swap",
-  variable: "--font-grotesk",
+  variable: "--font-newsreader",
 });
 
-const sourceSerif = Source_Serif_4({
+const interTight = Inter_Tight({
   subsets: ["latin", "latin-ext"],
-  weight: ["400", "600"],
-  style: ["normal", "italic"],
+  weight: ["400", "500", "600"],
   display: "swap",
-  variable: "--font-source-serif",
+  variable: "--font-inter-tight",
+});
+
+const jetbrainsMono = JetBrains_Mono({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500"],
+  display: "swap",
+  variable: "--font-jetbrains-mono",
 });
 
 const description =
@@ -58,6 +65,13 @@ export const metadata: Metadata = {
   icons: { icon: "/favicon.ico" },
 };
 
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#faf7f2" },
+    { media: "(prefers-color-scheme: dark)", color: "#16130f" },
+  ],
+};
+
 const personJsonLd = {
   "@context": "https://schema.org",
   "@type": "Person",
@@ -79,7 +93,10 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${grotesk.variable} ${sourceSerif.variable}`}>
+    <html
+      lang="en"
+      className={`${newsreader.variable} ${interTight.variable} ${jetbrainsMono.variable}`}
+    >
       <body>
         <script
           type="application/ld+json"

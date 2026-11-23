@@ -725,6 +725,7 @@ footer[id] {
 
 .case-figure {
   margin: 0;
+  max-width: 720px;
 }
 
 .case-figure img {
@@ -748,8 +749,9 @@ footer[id] {
   border-bottom: 1px solid var(--rule);
 }
 
-.case-quote p {
-  font-family: var(--font-display);
+.case-quote p,
+.case-citation p {
+  font-family: var(--font-newsreader-italic, var(--font-display));
   font-style: italic;
   font-weight: 500;
   font-size: 1.25rem;
@@ -777,14 +779,6 @@ footer[id] {
   font-size: var(--text-body);
   line-height: 1.6;
   max-width: 68ch;
-}
-
-.case-citation p {
-  font-family: var(--font-display);
-  font-style: italic;
-  font-weight: 500;
-  font-size: 1.25rem;
-  line-height: 1.5;
 }
 
 .case-citation cite {

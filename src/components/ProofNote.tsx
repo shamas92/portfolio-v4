@@ -54,8 +54,9 @@ export function ClaimButton({
   );
 }
 
-/** The evidence for one claim, shown in the margin column on desktop
- *  and as an inline disclosure under the claim on mobile. */
+/** The evidence for one claim, shown as an inline note under the
+ *  claim. Escape closes it from anywhere inside — including when
+ *  focus is on the Close button. */
 export function NotePanel({
   id,
   note,
@@ -66,7 +67,13 @@ export function NotePanel({
   onClose: () => void;
 }) {
   return (
-    <div className="margin-note" id={id}>
+    <div
+      className="margin-note"
+      id={id}
+      onKeyDown={(e) => {
+        if (e.key === "Escape") onClose();
+      }}
+    >
       <p className="margin-note-head">
         <CheckIcon />
         Evidence

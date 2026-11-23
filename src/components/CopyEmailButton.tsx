@@ -20,12 +20,21 @@ export function CopyEmailButton() {
   }
 
   return (
-    <button type="button" className="copy-btn" onClick={copyEmail}>
-      {copyState === "copied"
-        ? "Copied"
-        : copyState === "failed"
-          ? "Copy failed — use the email link"
-          : "Copy email"}
-    </button>
+    <>
+      <button type="button" className="copy-btn" onClick={copyEmail}>
+        {copyState === "copied"
+          ? "Copied"
+          : copyState === "failed"
+            ? "Copy failed — use the email link"
+            : "Copy email"}
+      </button>
+      <span className="visually-hidden" aria-live="polite">
+        {copyState === "copied"
+          ? "Email address copied to clipboard."
+          : copyState === "failed"
+            ? "Copy failed. Use the email link instead."
+            : ""}
+      </span>
+    </>
   );
 }

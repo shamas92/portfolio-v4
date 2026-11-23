@@ -190,8 +190,11 @@ export const projects: Project[] = [
       "No hosted live-demo URL is verified.",
     ],
     links: [
-      { label: "GitHub", href: "https://github.com/shamas92/leaselens" },
-      { label: "Demo film", href: "https://youtu.be/le_KM97lm5w" },
+      {
+        label: "LeaseLens on GitHub",
+        href: "https://github.com/shamas92/leaselens",
+      },
+      { label: "LeaseLens demo film", href: "https://youtu.be/le_KM97lm5w" },
     ],
   },
   {
@@ -238,7 +241,7 @@ export const projects: Project[] = [
     },
     links: [
       {
-        label: "GitHub",
+        label: "Sales ETL Pipeline on GitHub",
         href: "https://github.com/shamas92/sales-etl-pipeline",
       },
     ],

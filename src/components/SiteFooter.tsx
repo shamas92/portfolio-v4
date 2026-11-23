@@ -9,6 +9,7 @@ export function SiteFooter() {
         <a className="footer-email" href={`mailto:${profile.email}`}>
           {profile.email}
         </a>
+        <p className="footer-location">{profile.location}</p>
         <div className="footer-links">
           <a href={profile.github} target="_blank" rel="noreferrer">
             GitHub
@@ -18,6 +19,9 @@ export function SiteFooter() {
           </a>
           <CopyEmailButton />
         </div>
+        <p className="footer-line">
+          Every claim on this page carries its evidence.
+        </p>
         <p className="footer-eligibility">{profile.workEligibility}</p>
       </div>
     </footer>

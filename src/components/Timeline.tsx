@@ -38,7 +38,7 @@ export function Timeline() {
       </div>
 
       <div className="timeline-group">
-        <h3 className="timeline-group-head">Languages</h3>
+        <h3 className="timeline-group-head">Spoken languages</h3>
         <ol className="timeline">
           {background.languages.map((l) => (
             <li className="timeline-row" key={l.language}>

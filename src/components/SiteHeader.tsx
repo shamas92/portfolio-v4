@@ -10,8 +10,8 @@ export function SiteHeader() {
         </Link>
         <nav className="site-nav" aria-label="Sections">
           <Link href="/#work">Work</Link>
-          <Link href="/#stack">Stack</Link>
           <Link href="/#background">Background</Link>
+          <Link href="/#stack">Stack</Link>
           <Link href="#contact">Contact</Link>
         </nav>
       </div>

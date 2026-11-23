@@ -11,7 +11,7 @@ export const profile = {
   role: "Software Engineer",
   location: "Dresden, Germany",
   claim: "I build data & ML systems — and prove every claim on this page.",
-  intro: "MSc Computer Science, TU Dresden. Software engineer in Dresden.",
+  statusLine: "MSc Computer Science, TU Dresden, Dresden, Germany",
   email: "shamasrehman249@gmail.com",
   github: "https://github.com/shamas92",
   linkedin: "https://linkedin.com/in/shamasrehman",
@@ -47,21 +47,23 @@ export type Project = {
   rowOutcome: string;
   /** One proof statement for the Work row. */
   rowProof: string;
-  /** Evidence for the row proof statement, shown in the margin note. */
-  rowProofNote: string;
   stack: string[];
   problem: Prose;
   architecture: Prose;
   outcome: Prose;
   /** The one verified figure, when one exists. */
   figure?: { value: string; label: string };
-  /** The one specimen that proves it — a quote or a citation. */
-  specimen?: {
+  /** Production release version, when one exists. */
+  version?: string;
+  /** Test counts at the release, when measured. */
+  tests?: { total: number; backend: number; frontend: number };
+  /** The one piece of evidence that proves it — a quote or a citation. */
+  evidence?: {
     kind: "quote" | "citation";
     text: string;
     /** English gloss for a German quote. */
     gloss?: string;
-    /** Attribution line under the specimen. */
+    /** Attribution line under the evidence. */
     cite: string;
   };
   image?: {
@@ -75,8 +77,9 @@ export type Project = {
   registry?: { jurisdiction: string; rule: string }[];
   /** Honest limits, stated where they exist. */
   limits?: string[];
-  /** Shown when no figure was measured for the project. */
-  noFigureNote?: string;
+  /** Plain status line shown in the Evidence block when no figure
+   *  was measured for the project. */
+  evidenceStatus?: string;
   links: { label: string; href: string }[];
   /** Links that are known to exist but whose URL is missing. */
   todoLinks?: { label: string }[];
@@ -91,8 +94,6 @@ export const projects: Project[] = [
       "A tenant evidence workspace that checks deposit claims against the lease and the law.",
     rowProof:
       "86.1% registered IoU on the v7 demo pairing, measured live twice identically.",
-    rowProofNote:
-      "Registered IoU measures overlap after the two photos are aligned, so the score compares the same wall instead of two photos taken from different spots. Aligned 1588, move-out 1722.",
     stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
     problem: [
       [
@@ -147,7 +148,9 @@ export const projects: Project[] = [
       value: "86.1%",
       label: "registered IoU, v7 demo pairing, measured live twice identically",
     },
-    specimen: {
+    version: "v1.0.0",
+    tests: { total: 197, backend: 132, frontend: 65 },
+    evidence: {
       kind: "quote",
       text: "Die vor dem Einzug zu zahlende Kaution beträgt 950,00 EUR.",
       gloss: "The deposit to be paid before moving in is €950.00.",
@@ -162,8 +165,14 @@ export const projects: Project[] = [
         "SAM 3.1 segmentation burn from the v7 demo pairing, the dorm photo itself. 86.1% registered IoU, measured live twice identically.",
     },
     registry: [
-      { jurisdiction: "Germany", rule: "BGB §551: at most 3× monthly cold rent" },
-      { jurisdiction: "United Kingdom", rule: "Tenant Fees Act 2019: 5 weeks' rent" },
+      {
+        jurisdiction: "Germany",
+        rule: "BGB §551: at most 3× monthly cold rent",
+      },
+      {
+        jurisdiction: "United Kingdom",
+        rule: "Tenant Fees Act 2019: 5 weeks' rent",
+      },
       { jurisdiction: "New York, US", rule: "GOL §7-108: 1 month" },
       {
         jurisdiction: "France",
@@ -192,9 +201,13 @@ export const projects: Project[] = [
     rowOutcome:
       "Sales data from several sources, loaded into one trustworthy shape.",
     rowProof: "One DAG, three tasks, four tables.",
-    rowProofNote:
-      "dim_date, dim_customer, dim_product, fact_sales. Verified in the repository.",
-    stack: ["Apache Airflow", "Docker Compose", "PostgreSQL", "MinIO", "Parquet"],
+    stack: [
+      "Apache Airflow",
+      "Docker Compose",
+      "PostgreSQL",
+      "MinIO",
+      "Parquet",
+    ],
     problem: [
       [
         "Sales data arrived from several sources with no single, trustworthy shape for analysis.",
@@ -224,7 +237,10 @@ export const projects: Project[] = [
         "Pipeline diagram: three tasks, four tables. Airflow TaskFlow, Parquet/MinIO staging, PostgreSQL.",
     },
     links: [
-      { label: "GitHub", href: "https://github.com/shamas92/sales-etl-pipeline" },
+      {
+        label: "GitHub",
+        href: "https://github.com/shamas92/sales-etl-pipeline",
+      },
     ],
   },
   {
@@ -233,8 +249,6 @@ export const projects: Project[] = [
     year: 2025,
     rowOutcome: "Measured feedback for developers who speak in public.",
     rowProof: "Peer-reviewed publication, 2025.",
-    rowProofNote:
-      "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
     stack: ["PyTorch", "Hugging Face", "NLP"],
     problem: [
       [
@@ -256,7 +270,7 @@ export const projects: Project[] = [
         ".",
       ],
     ],
-    specimen: {
+    evidence: {
       kind: "citation",
       text: "An AI-driven speech analysis for enhancing communication and public speaking in global software development.",
       cite: "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
@@ -270,7 +284,6 @@ export const projects: Project[] = [
     year: 2024,
     rowOutcome: "Defects and quality issues in one record, not informal notes.",
     rowProof: "Shipped as an academic project.",
-    rowProofNote: "No figures were measured for this project, so none are shown.",
     stack: ["Laravel", "MySQL", "PHP"],
     problem: [
       [
@@ -282,10 +295,8 @@ export const projects: Project[] = [
         "A Laravel and MySQL CRM for quality management and defect tracking, built as an academic project in 2024.",
       ],
     ],
-    outcome: [
-      ["Shipped as an academic project."],
-    ],
-    noFigureNote: "No figures were measured for this project, so none are shown.",
+    outcome: [["Shipped as an academic project."]],
+    evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
   {
@@ -294,22 +305,17 @@ export const projects: Project[] = [
     year: 2024,
     rowOutcome: "Conversational support for students, in a structured form.",
     rowProof: "Shipped as an academic project.",
-    rowProofNote: "No figures were measured for this project, so none are shown.",
     stack: ["Python", "Hugging Face", "NLP"],
     problem: [
-      [
-        "Conversational support for students had no structured, measured form.",
-      ],
+      ["Conversational support for students had no structured, measured form."],
     ],
     architecture: [
       [
         "Python conversational support built with Hugging Face NLP, for students.",
       ],
     ],
-    outcome: [
-      ["Shipped as an academic project."],
-    ],
-    noFigureNote: "No figures were measured for this project, so none are shown.",
+    outcome: [["Shipped as an academic project."]],
+    evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
 ];

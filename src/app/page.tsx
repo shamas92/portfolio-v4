@@ -17,7 +17,7 @@ export default function Home() {
           <span className="hero-claim-mark">prove every claim</span> on this
           page.
         </p>
-        <p className="hero-intro">{profile.intro}</p>
+        <p className="hero-intro">{profile.statusLine}</p>
         <div className="hero-actions">
           <Link className="btn btn-primary" href="#work">
             See projects
@@ -48,8 +48,8 @@ export default function Home() {
           Work
         </h2>
         <p className="section-intro">
-          Five shipped systems. Each row states what it does and the
-          strongest proof for it.
+          Five shipped systems. Each row states what it does and the strongest
+          proof for it.
         </p>
         <ul className="work-list">
           {projects.map((p) => (

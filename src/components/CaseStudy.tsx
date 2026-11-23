@@ -23,7 +23,10 @@ export function CaseStudy({ project }: { project: Project }) {
         <h2 className="case-block-head" id="problem-head">
           Problem
         </h2>
-        <Annotated prose={project.problem} idPrefix={`${project.slug}-problem`} />
+        <Annotated
+          prose={project.problem}
+          idPrefix={`${project.slug}-problem`}
+        />
       </section>
 
       <section className="case-block" aria-labelledby="architecture-head">
@@ -40,7 +43,10 @@ export function CaseStudy({ project }: { project: Project }) {
         <h2 className="case-block-head" id="outcome-head">
           Outcome
         </h2>
-        <Annotated prose={project.outcome} idPrefix={`${project.slug}-outcome`} />
+        <Annotated
+          prose={project.outcome}
+          idPrefix={`${project.slug}-outcome`}
+        />
       </section>
 
       <section className="case-block" aria-labelledby="proof-head">
@@ -55,20 +61,20 @@ export function CaseStudy({ project }: { project: Project }) {
           </div>
         )}
 
-        {project.specimen?.kind === "quote" && (
+        {project.evidence?.kind === "quote" && (
           <blockquote className="case-quote">
-            <p lang="de">“{project.specimen.text}”</p>
-            {project.specimen.gloss && (
-              <p className="case-quote-gloss">{project.specimen.gloss}</p>
+            <p lang="de">“{project.evidence.text}”</p>
+            {project.evidence.gloss && (
+              <p className="case-quote-gloss">{project.evidence.gloss}</p>
             )}
-            <cite>{project.specimen.cite}</cite>
+            <cite>{project.evidence.cite}</cite>
           </blockquote>
         )}
 
-        {project.specimen?.kind === "citation" && (
+        {project.evidence?.kind === "citation" && (
           <div className="case-citation">
-            <p>“{project.specimen.text}”</p>
-            <cite>{project.specimen.cite}</cite>
+            <p>“{project.evidence.text}”</p>
+            <cite>{project.evidence.cite}</cite>
           </div>
         )}
 
@@ -110,8 +116,8 @@ export function CaseStudy({ project }: { project: Project }) {
           </div>
         )}
 
-        {project.noFigureNote && (
-          <p className="case-note">{project.noFigureNote}</p>
+        {project.evidenceStatus && (
+          <p className="case-note">{project.evidenceStatus}</p>
         )}
 
         {(project.links.length > 0 || project.todoLinks) && (

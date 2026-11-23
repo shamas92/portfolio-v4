@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
 """Generate public/og.png (1200x630) for the portfolio.
 
-Draws the site's name and claim with the site fonts on the paper
-token, the oxide-red wash behind 'prove every claim', and a thin
-oxide-red rule. Fonts are fetched as variable TTFs from Google Fonts
-into /tmp; nothing is installed.
+Draws the site's name and claim with the site fonts on the ground
+token, with a thin cobalt rule at the bottom edge. Fonts are
+fetched as variable TTFs from Google Fonts into /tmp; nothing is
+installed.
 """
 import urllib.request
 from pathlib import Path
@@ -27,14 +27,11 @@ def fetch_variable_ttf(path: str) -> Path:
 def main() -> None:
     from PIL import Image, ImageDraw, ImageFont
 
-    newsreader_path = fetch_variable_ttf(
-        "ofl/newsreader/Newsreader%5Bopsz%2Cwght%5D.ttf"
-    )
-    name_font = ImageFont.truetype(str(newsreader_path), 76)
-    name_font.set_variation_by_axes([72, 600])
+    geist_path = fetch_variable_ttf("ofl/geist/Geist%5Bwght%5D.ttf")
+    name_font = ImageFont.truetype(str(geist_path), 76)
+    name_font.set_variation_by_axes([600])
 
-    inter_path = fetch_variable_ttf("ofl/intertight/InterTight%5Bwght%5D.ttf")
-    claim_font = ImageFont.truetype(str(inter_path), 44)
+    claim_font = ImageFont.truetype(str(geist_path), 44)
     claim_font.set_variation_by_axes([600])
 
     mono_path = fetch_variable_ttf(
@@ -44,13 +41,12 @@ def main() -> None:
     status_font.set_variation_by_axes([400])
 
     W, H = 1200, 630
-    paper = (250, 247, 242)
-    ink = (27, 24, 21)
-    ink_muted = (107, 97, 86)
-    wash = (247, 228, 223)
-    accent = (154, 51, 36)
+    ground = (250, 249, 247)
+    ink = (20, 20, 19)
+    ink_muted = (87, 83, 78)
+    accent = (29, 78, 216)
 
-    img = Image.new("RGB", (W, H), paper)
+    img = Image.new("RGB", (W, H), ground)
     d = ImageDraw.Draw(img)
 
     x = 80
@@ -60,15 +56,7 @@ def main() -> None:
     y = 250
     d.text((x, y), "I build data & ML systems", font=claim_font, fill=ink)
     y = 310
-    # "and prove every claim" with the wash behind "prove every claim"
-    prefix = "and "
-    mark = "prove every claim"
-    d.text((x, y), prefix + mark, font=claim_font, fill=ink)
-    pw = d.textlength(prefix, font=claim_font)
-    mw = d.textlength(mark, font=claim_font)
-    # wash rectangle behind the marked words (drawn first, text redrawn)
-    d.rectangle([x + pw - 6, y + 4, x + pw + mw + 6, y + 52], fill=wash)
-    d.text((x, y), prefix + mark, font=claim_font, fill=ink)
+    d.text((x, y), "and prove every claim", font=claim_font, fill=ink)
     y = 370
     d.text((x, y), "on this page.", font=claim_font, fill=ink)
 
@@ -80,7 +68,7 @@ def main() -> None:
         fill=ink_muted,
     )
 
-    # thin oxide-red rule at the bottom edge
+    # thin cobalt rule at the bottom edge
     d.rectangle([0, H - 8, W, H], fill=accent)
 
     img.save(OUT, "PNG")

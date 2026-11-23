@@ -21,9 +21,14 @@ export function CopyEmailButton() {
 
   return (
     <>
-      <button type="button" className="copy-btn" onClick={copyEmail}>
+      <button
+        type="button"
+        className="copy-btn"
+        data-copied={copyState === "copied"}
+        onClick={copyEmail}
+      >
         {copyState === "copied"
-          ? "Copied"
+          ? "Copied ✓"
           : copyState === "failed"
             ? "Copy failed — use the email link"
             : "Copy email"}

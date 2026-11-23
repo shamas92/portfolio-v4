@@ -1,0 +1,903 @@
+@import "tailwindcss";
+
+/* ---- Specimen cabinet: tokens (raw values only here) ---- */
+:root {
+  --wood-deep: #211710;
+  --wood: #2e1f16;
+  --wood-panel: #3a2a1d;
+  --wood-raise: #463521;
+  --label-cream: #f3ebd8;
+  --label-ink: #1c1712;
+  --label-rule: #8a7a5f;
+  --ink-on-wood: #efe7d8;
+  --ink-muted-on-wood: #b9ac97;
+  --brass: #c08a2d;
+  --brass-deep: #9a6d20;
+  --glass-line: rgba(239, 231, 216, 0.16);
+
+  /* semantic aliases — components use only these */
+  --surface: var(--wood);
+  --surface-raised: var(--wood-panel);
+  --on-surface: var(--ink-on-wood);
+  --on-surface-muted: var(--ink-muted-on-wood);
+  --label-bg: var(--label-cream);
+  --on-label: var(--label-ink);
+  --accent: var(--brass);
+  --on-accent: var(--wood-deep);
+  --rule: var(--glass-line);
+  --focus: var(--brass);
+  --focus-on-light: var(--brass-deep);
+
+  /* one-off shades, named once here and never raw in a rule */
+  --ink-bright: #f5ebd9;
+  --ink-nav: #c2b7a3;
+  --ink-cta: #f4efdd;
+  --ink-drawer-label: #e6d7c0;
+  --brass-light: #d9ab4a;
+  --ink-on-cream: #4a3b2c;
+  --ink-on-cream-soft: #3a2e22;
+  --line-on-wood: rgba(239, 231, 216, 0.08);
+  --shadow-edge: rgba(0, 0, 0, 0.45);
+  --shadow-deep: rgba(0, 0, 0, 0.55);
+  --shadow-soft: rgba(0, 0, 0, 0.4);
+  --highlight-brass: rgba(255, 240, 200, 0.55);
+
+  --ease: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* ---- Faces: self-hosted, measured from the approved comp ---- */
+@font-face {
+  font-family: "Gothic A1";
+  src: url("./fonts/gothic-a1-700.woff2") format("woff2");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("./fonts/hanken-grotesk.woff2") format("woff2");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: "JetBrains Mono";
+  src: url("./fonts/jetbrains-mono.woff2") format("woff2");
+  font-weight: 100 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background: var(--surface);
+  color: var(--on-surface);
+  font-family: "Hanken Grotesk", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+::selection {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* On cream surfaces the brass ring is only 2.56:1 — use the deeper brass there. */
+.drawer-contact :focus-visible,
+.tray:focus-visible,
+.exam-figure :focus-visible {
+  outline-color: var(--focus-on-light);
+}
+
+/* Sections focused programmatically after a nav jump: no visible ring. */
+[tabindex="-1"]:focus {
+  outline: none;
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: var(--wood-deep);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--wood-raise);
+  border-radius: 5px;
+}
+
+/* ---- Cabinet: the whole first viewport, one frozen wall of drawers ---- */
+.cabinet {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 1920 / 1280;
+  overflow: hidden;
+  background-color: var(--wood);
+  background-image: url("/plates/wood-texture.webp");
+  background-size: 800px 800px;
+}
+
+/* Masthead: near-black band */
+.masthead {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 12.11%;
+  background: var(--wood-deep);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2.5%;
+  gap: 24px;
+}
+.brand-name {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(26px, 3.23vw, 62px);
+  line-height: 1.05;
+  letter-spacing: -0.01em;
+  color: var(--ink-bright);
+  white-space: nowrap;
+}
+.brand-tag {
+  font-size: clamp(14px, 1.25vw, 24px);
+  font-weight: 500;
+  color: var(--on-surface);
+  margin-top: 8px;
+  white-space: nowrap;
+}
+.topnav {
+  display: flex;
+  align-items: center;
+  gap: clamp(16px, 2vw, 40px);
+}
+.topnav a {
+  color: var(--ink-nav);
+  font-size: clamp(13px, 1.15vw, 22px);
+  font-weight: 500;
+  text-decoration: none;
+  padding: 4px 0;
+}
+.topnav a:hover {
+  color: var(--on-surface);
+}
+.drawer-cta {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: clamp(12px, 1vw, 19px);
+  font-weight: 500;
+  color: var(--ink-cta);
+  background: transparent;
+  border: 1px solid var(--accent);
+  border-radius: 9999px;
+  padding: 0.6em 1.3em;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 150ms var(--ease), color 150ms var(--ease);
+}
+.drawer-cta:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Drawer fronts: walnut bands with an engraved label and a brass pull */
+.drawer-front {
+  position: absolute;
+  background-color: var(--wood-panel);
+  background-image: url("/plates/wood-texture.webp");
+  background-size: 800px 800px;
+  border-top: 1px solid var(--line-on-wood);
+  border-bottom: 1px solid var(--shadow-edge);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  cursor: pointer;
+  width: 93.75%;
+  left: 3.13%;
+  padding: 0;
+  font-family: inherit;
+}
+.drawer-front:hover .drawer-label {
+  color: var(--ink-bright);
+}
+.drawer-front-work {
+  top: 15.23%;
+  height: 13.28%;
+}
+.drawer-front-stack {
+  top: 61.72%;
+  height: 13.28%;
+}
+.drawer-front-background {
+  top: 91.41%;
+  height: 8.59%;
+}
+.drawer-label {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(20px, 2.5vw, 48px);
+  line-height: 1;
+  color: var(--ink-drawer-label);
+  transition: color 150ms var(--ease);
+}
+.brass-pull {
+  width: clamp(56px, 7vw, 134px);
+  height: clamp(7px, 0.9vw, 17px);
+  border-radius: 9999px;
+  background: linear-gradient(180deg, var(--brass-light), var(--brass) 45%, var(--brass-deep));
+  box-shadow: 0 2px 3px var(--shadow-deep), inset 0 1px 0 var(--highlight-brass);
+}
+
+/* Side frames */
+.frame-side {
+  position: absolute;
+  top: 12.11%;
+  bottom: 0;
+  width: 3.13%;
+  background-color: var(--wood-panel);
+  background-image: url("/plates/wood-texture.webp");
+  background-size: 800px 800px;
+}
+.frame-left {
+  left: 0;
+}
+.frame-right {
+  right: 0;
+}
+
+/* Open Work drawer: five trays in a row */
+.drawer-open {
+  position: absolute;
+  left: 1.04%;
+  top: 28.52%;
+  width: 97.92%;
+  height: 32.81%;
+  display: flex;
+  gap: 12px;
+  padding: 0.9% 0.8%;
+  background: var(--wood-deep);
+  box-shadow: inset 0 3px 10px var(--shadow-deep), inset 0 -2px 6px var(--shadow-soft);
+}
+.tray {
+  flex: 1 1 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--label-bg);
+  border: 3px solid var(--wood-raise);
+  border-radius: 4px;
+  cursor: pointer;
+  text-align: left;
+  padding: 0;
+  font-family: inherit;
+  transition: flex-grow 240ms var(--ease);
+  position: relative;
+}
+.tray[aria-pressed="true"] {
+  flex-grow: 2.6;
+  border-color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent);
+}
+.tray-specimen {
+  flex: 1 1 auto;
+  min-height: 0;
+  position: relative;
+  overflow: hidden;
+  background: var(--label-bg);
+  border-radius: 1px 1px 0 0;
+}
+.tray-specimen img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.tray-label {
+  flex: 0 0 auto;
+  padding: 10px 12px 12px;
+  color: var(--on-label);
+  border-top: 1px solid var(--label-rule);
+}
+.tray-title {
+  display: block;
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(11px, 1.05vw, 20px);
+  line-height: 1.15;
+  /* Two lines of room, always: a wrapping title must not push the meta down,
+     or the ruled line (anchored to the meta) steps. */
+  min-height: 2.3em;
+}
+.tray-meta {
+  position: relative;
+  display: block;
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(9px, 0.72vw, 14px);
+  line-height: 1.45;
+  color: var(--ink-on-cream);
+  margin-top: 18px;
+  /* Two lines of room, always: a wrapping measurement must not push the
+     label down, or the ruled line steps. Same rule as the title above. */
+  min-height: 2.9em;
+}
+
+/* The ruled line, anchored to the labels instead of the cabinet: one brass
+   segment per tray, centred in the title/meta gap, each bleeding 6px into
+   the tray gaps so the five read as one continuous rule. The segments sit
+   at the same height only because every label is the same height (fixed
+   title room + reserved detail line) — that alignment is the line. */
+.tray-meta::before {
+  content: "";
+  position: absolute;
+  left: -18px;
+  right: -18px;
+  top: -9px;
+  height: 2px;
+  background: var(--accent);
+  opacity: 0.75;
+  pointer-events: none;
+}
+.tray:first-child .tray-meta::before {
+  left: -12px;
+}
+.tray:last-child .tray-meta::before {
+  right: -12px;
+}
+.tray-detail-line {
+  display: block;
+  font-size: clamp(10px, 0.8vw, 15px);
+  line-height: 1.45;
+  color: var(--ink-on-cream-soft);
+  margin-top: 6px;
+  /* One line of room, always: a wrapping detail must not push the meta up,
+     or the ruled line steps. Hidden details may clip invisibly; the visible
+     one (selected tray, 2.6x wide) always fits one line. */
+  height: 1.45em;
+  overflow: hidden;
+  /* Hidden, not removed: the space is reserved so every label stays the
+     same height and the ruled line stays straight. */
+  visibility: hidden;
+}
+.tray[aria-pressed="true"] .tray-detail-line {
+  visibility: visible;
+}
+.tray[aria-pressed="true"] .tray-title,
+.tray[aria-pressed="true"] .tray-meta {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+/* One continuous ruled line through all five labels */
+/* Open Contact drawer: cream sheet */
+.drawer-contact {
+  position: absolute;
+  left: 1.04%;
+  top: 75.39%;
+  width: 97.92%;
+  height: 15.63%;
+  background: var(--label-bg);
+  color: var(--on-label);
+  display: flex;
+  align-items: stretch;
+  padding: 1.1% 4.5%;
+  gap: 4%;
+  border: 3px solid var(--wood-raise);
+  border-radius: 4px;
+}
+.contact-col {
+  flex: 1 1 0;
+  min-width: 0;
+}
+.contact-title {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(12px, 1.15vw, 22px);
+  line-height: 1.15;
+  color: var(--on-label);
+  margin-bottom: 6px;
+}
+.contact-col p,
+.contact-col a {
+  font-size: clamp(10px, 0.82vw, 16px);
+  line-height: 1.5;
+  color: var(--ink-on-cream-soft);
+}
+.contact-col a {
+  display: inline-block;
+  padding: 6px 0;
+  color: var(--on-label);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-underline-offset: 3px;
+}
+.contact-col a:hover {
+  color: var(--brass-deep);
+}
+
+/* Small brass label tab on the Contact drawer's top edge — the drawer front it lacks. */
+.drawer-tab {
+  position: absolute;
+  left: 50%;
+  top: -13px;
+  transform: translateX(-50%);
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(10px, 0.75vw, 13px);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--on-accent);
+  background: var(--accent);
+  border-radius: 4px;
+  padding: 4px 14px;
+  white-space: nowrap;
+}
+
+/* ---- Sections below the cabinet ---- */
+.section {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 88px 24px;
+}
+.section-head {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(28px, 3vw, 44px);
+  line-height: 1.05;
+  color: var(--on-surface);
+  margin-bottom: 8px;
+}
+.section-sub {
+  color: var(--ink-muted-on-wood);
+  font-size: 17px;
+  line-height: 1.6;
+  max-width: 65ch;
+}
+.section-rule {
+  height: 1px;
+  background: var(--rule);
+  border: 0;
+  margin: 0;
+}
+
+/* Examination: the selected tray, opened */
+.exam {
+  display: grid;
+  grid-template-columns: minmax(0, 5fr) minmax(0, 7fr);
+  gap: 32px;
+  margin-top: 40px;
+  align-items: start;
+}
+.exam-figure {
+  background: var(--label-bg);
+  border: 3px solid var(--wood-raise);
+  border-radius: 12px;
+  overflow: hidden;
+}
+.exam-figure img {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+.exam-figure figcaption {
+  padding: 12px 16px;
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-on-cream);
+  border-top: 1px solid var(--label-rule);
+}
+.exam-body h3 {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(24px, 2.4vw, 36px);
+  line-height: 1.1;
+}
+.exam-body h3 span {
+  font-family: "JetBrains Mono", monospace;
+  font-weight: 500;
+  font-size: 15px;
+  color: var(--ink-muted-on-wood);
+  margin-left: 10px;
+}
+.exam-figure-line {
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(20px, 2vw, 30px);
+  color: var(--accent);
+  margin: 14px 0 4px;
+}
+.exam-figure-label {
+  font-size: 13px;
+  color: var(--ink-muted-on-wood);
+  margin-bottom: 20px;
+}
+.exam-block {
+  margin-top: 18px;
+}
+.exam-block h4 {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 12px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 5px;
+}
+.exam-block p {
+  font-size: 17px;
+  line-height: 1.65;
+  color: var(--on-surface);
+  max-width: 65ch;
+}
+.exam-block p + p {
+  margin-top: 8px;
+}
+.exam-quote {
+  margin-top: 18px;
+  padding: 14px 18px;
+  border: 1px solid var(--rule);
+  background: var(--surface-raised);
+  border-radius: 8px;
+}
+.exam-quote p {
+  font-size: 16px;
+  line-height: 1.6;
+}
+.exam-quote cite {
+  display: block;
+  margin-top: 6px;
+  font-size: 13px;
+  font-style: normal;
+  color: var(--ink-muted-on-wood);
+}
+.tech-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 20px;
+  list-style: none;
+  padding: 0;
+}
+.tech-tags li {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  color: var(--on-surface);
+  border: 1px solid var(--rule);
+  border-radius: 9999px;
+  padding: 5px 12px;
+}
+.doors {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 24px;
+}
+.door {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--on-surface);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  padding: 10px 18px;
+  text-decoration: none;
+  transition: background 150ms var(--ease), color 150ms var(--ease);
+}
+.door:hover {
+  background: var(--accent);
+  color: var(--on-accent);
+}
+.door svg {
+  width: 16px;
+  height: 16px;
+}
+
+/* Exam switcher: the same five trays, as small buttons, so the exam can change
+   projects without scrolling back to the hero. */
+.exam-switcher {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 28px;
+  list-style: none;
+  padding: 0;
+}
+.exam-switcher button {
+  font-family: "Hanken Grotesk", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--on-surface);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 9999px;
+  padding: 7px 14px;
+  cursor: pointer;
+  transition: border-color 150ms var(--ease), background 150ms var(--ease);
+}
+.exam-switcher button:hover {
+  border-color: var(--accent);
+}
+.exam-switcher button[aria-pressed="true"] {
+  border-color: var(--accent);
+  background: var(--accent);
+  color: var(--on-accent);
+}
+
+/* Citation as the figure: for projects whose specimen is a publication. */
+.exam-citation {
+  background: var(--label-bg);
+  border: 3px solid var(--wood-raise);
+  border-radius: 12px;
+  padding: 28px 24px;
+  color: var(--on-label);
+}
+.exam-citation p {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: clamp(19px, 1.6vw, 26px);
+  line-height: 1.35;
+}
+.exam-citation cite {
+  display: block;
+  margin-top: 14px;
+  font-family: "JetBrains Mono", monospace;
+  font-style: normal;
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--ink-on-cream);
+}
+.skill-groups {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 24px;
+  margin-top: 40px;
+}
+.skill-group h3 {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  margin-bottom: 10px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid var(--rule);
+}
+.skill-group ul {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.skill-group li {
+  font-size: 14px;
+  color: var(--on-surface);
+  background: var(--surface-raised);
+  border-radius: 9999px;
+  padding: 5px 12px;
+}
+.timeline {
+  margin-top: 40px;
+  display: grid;
+  gap: 0;
+}
+.timeline-row {
+  display: grid;
+  grid-template-columns: 170px 1fr;
+  gap: 24px;
+  padding: 20px 0;
+  border-top: 1px solid var(--rule);
+}
+.timeline-row:last-child {
+  border-bottom: 1px solid var(--rule);
+}
+.timeline-when {
+  font-family: "JetBrains Mono", monospace;
+  font-size: 13px;
+  color: var(--ink-muted-on-wood);
+  padding-top: 3px;
+}
+.timeline-what h3 {
+  font-family: "Gothic A1", sans-serif;
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 1.2;
+}
+.timeline-what p {
+  margin-top: 5px;
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--on-surface);
+  max-width: 65ch;
+}
+.cert-list {
+  margin-top: 40px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  list-style: none;
+  padding: 0;
+}
+.cert-list li {
+  font-size: 14px;
+  border: 1px solid var(--rule);
+  border-radius: 9999px;
+  padding: 7px 14px;
+}
+
+/* Footer */
+.footer {
+  border-top: 1px solid var(--rule);
+}
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 48px 24px 56px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 24px;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+.footer-email {
+  font-family: "JetBrains Mono", monospace;
+  font-size: clamp(17px, 1.8vw, 24px);
+  color: var(--on-surface);
+  text-decoration: none;
+  border-bottom: 2px solid var(--accent);
+}
+.footer-links {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}
+.footer-links a {
+  color: var(--ink-muted-on-wood);
+  text-decoration: none;
+  font-size: 15px;
+  padding: 4px 0;
+}
+.footer-links a:hover {
+  color: var(--on-surface);
+}
+.copy-btn {
+  font-family: inherit;
+  font-size: 14px;
+  color: var(--on-surface);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  padding: 7px 13px;
+  cursor: pointer;
+}
+.copy-btn:hover {
+  border-color: var(--accent);
+}
+.footer-note {
+  width: 100%;
+  font-size: 13px;
+  color: var(--ink-muted-on-wood);
+}
+
+/* ---- Mobile: the drawer becomes a vertical stack of trays ---- */
+@media (max-width: 1200px) {
+  .cabinet {
+    aspect-ratio: auto;
+    display: flex;
+    flex-direction: column;
+    overflow: visible;
+  }
+  .masthead {
+    position: static;
+    height: auto;
+    flex-wrap: wrap;
+    padding: 18px 20px;
+    row-gap: 12px;
+  }
+  .brand-name {
+    font-size: 30px;
+  }
+  .brand-tag {
+    white-space: normal;
+  }
+  .topnav {
+    gap: 18px;
+  }
+  .topnav a {
+    font-size: 15px;
+  }
+  .drawer-cta {
+    font-size: 14px;
+  }
+  .drawer-front {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 20px 0 16px;
+  }
+  .drawer-label {
+    font-size: 26px;
+  }
+  .frame-side {
+    display: none;
+  }
+  .drawer-open {
+    position: static;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    padding: 14px;
+    gap: 14px;
+  }
+  .tray {
+    flex: none;
+    min-height: 0;
+  }
+  .tray[aria-pressed="true"] {
+    flex-grow: 0;
+  }
+  .tray-specimen {
+    height: 180px;
+    flex: none;
+  }
+  .tray-title {
+    white-space: normal;
+    font-size: 19px;
+  }
+  .tray-meta {
+    white-space: normal;
+    font-size: 12px;
+  }
+  .tray-detail-line {
+    display: block;
+    font-size: 14px;
+    height: auto;
+  }
+  .tray-meta::before {
+    display: none;
+  }
+  .drawer-contact {
+    position: relative;
+    left: 0;
+    width: 100%;
+    height: auto;
+    flex-direction: column;
+    padding: 20px;
+    gap: 18px;
+    border-radius: 0;
+    border-left: 0;
+    border-right: 0;
+  }
+  .drawer-tab {
+    top: -13px;
+  }
+  .exam {
+    grid-template-columns: 1fr;
+  }
+  .timeline-row {
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+  .section {
+    padding: 64px 20px;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  .tray {
+    transition: none;
+  }
+  .drawer-cta,
+  .door {
+    transition: none;
+  }
+}

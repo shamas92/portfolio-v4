@@ -1,13 +1,14 @@
 #!/usr/bin/env node
 /**
- * Content-integrity check: every sentence, link and image in the old
- * Annotated Proof content (main:src/content.ts) must survive in the
- * new Engineering Notebook build, except the allowlisted removals.
+ * Content-integrity check: every sentence, link and image in the
+ * Engineering Notebook content (main:src/content.ts) must survive
+ * in the new Engineering Spec Sheet build, except the allowlisted
+ * removals and rewrites.
  *
  * Run after `npm run build` so the rendered HTML is fresh:
  *   node scripts/content-integrity.mjs
- * Writes docs/content-integrity.md and exits 1 on any unexplained
- * difference.
+ * Writes docs/spec-sheet-integrity.md and exits 1 on any
+ * unexplained difference.
  */
 import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
@@ -88,47 +89,43 @@ const rendered = htmlFiles(".next/server/app")
 
 const allowedRemoved = new Map([
   [
-    "MSc Computer Science, TU Dresden.",
-    "Intro reworded as the hero status line (allowed: duplicate Dresden fix).",
+    "Real-time C#/.NET + SQL Server process monitoring with live dashboards.",
+    "Rewritten in direct first-person voice (brief section E): the note now reads 'Built real-time C#/.NET and SQL Server process monitoring with live dashboards, cutting manual logging errors by 20%.'",
   ],
   [
-    "Software engineer in Dresden.",
-    "Intro reworded; role and location survive in the document title and the footer location line.",
-  ],
-  [
-    "No figures were measured for this project, so none are shown.",
-    "Reworded to the plain status line 'No figures were measured for this project.' (user decision 5).",
-  ],
-  [
-    "GitHub",
-    "Case link label renamed to a descriptive label for accessibility, e.g. 'LeaseLens on GitHub'.",
-  ],
-  [
-    "Demo film",
-    "Case link label renamed to 'LeaseLens demo film' for accessibility.",
+    "The CV credits this work with cutting manual logging errors by 20%.",
+    "Rewritten in direct first-person voice (brief section E); the 20% figure is unchanged and now sits in the same sentence.",
   ],
 ]);
 
 const allowedAdded = new Map([
   [
-    "MSc Computer Science, TU Dresden, Dresden, Germany",
-    "Hero status line, reworded from the old intro (allowed: duplicate Dresden fix).",
+    "One DAG, three tasks, four tables: dim_date, dim_customer, dim_product, fact_sales.",
+    "Flagship proof callout, composed verbatim from the row proof and the outcome claim note (brief section C).",
   ],
   [
-    "No figures were measured for this project.",
-    "Plain status line (user decision 5).",
+    "Peer-reviewed publication, 2025: Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, ISSN 3007-3138.",
+    "Flagship proof callout, composed verbatim from the row proof and the evidence citation (brief section C).",
   ],
   [
-    "LeaseLens on GitHub",
-    "Descriptive case link label (accessibility).",
+    "Peer-reviewed publication, 2025: Spectrum of Engineering Sciences, Vol.",
+    "First fragment of the OratorPath proof callout above — the sentence splitter breaks at 'Vol.'",
   ],
   [
-    "LeaseLens demo film",
-    "Descriptive case link label (accessibility).",
+    "843–852, ISSN 3007-3138.",
+    "Second fragment of the OratorPath proof callout above — the sentence splitter breaks at 'Vol.'",
   ],
   [
-    "Sales ETL Pipeline on GitHub",
-    "Descriptive case link label (accessibility).",
+    "Relational defect tracking in Laravel/MySQL — one record for every defect.",
+    "Tier-2 scope line, drawn only from the project's own problem and architecture text (brief section C).",
+  ],
+  [
+    "Structured NLP student support in Python/Hugging Face.",
+    "Tier-2 scope line, drawn only from the project's own problem and architecture text (brief section C).",
+  ],
+  [
+    "Built real-time C#/.NET and SQL Server process monitoring with live dashboards, cutting manual logging errors by 20%.",
+    "First-person rewrite of the Heavy Industries Taxila bullet (brief section E); the 20% figure is unchanged.",
   ],
 ]);
 
@@ -162,10 +159,10 @@ const addedImages = [...newImages].filter((i) => !oldImages.has(i));
 /* ---- report ---- */
 
 const lines = [];
-lines.push("# Content integrity — Annotated Proof → Engineering Notebook");
+lines.push("# Content integrity — Engineering Notebook → Engineering Spec Sheet");
 lines.push("");
 lines.push(
-  `Old source: \`main:src/content.ts\` (commit b7c0689). New source: \`src/content.ts\` on \`redesign/notebook\`, checked against the fresh production build's rendered HTML.`,
+  `Old source: \`main:src/content.ts\` (commit deaf356). New source: \`src/content.ts\` on \`redesign/spec-sheet\`, checked against the fresh production build's rendered HTML.`,
 );
 lines.push("");
 lines.push("## Summary");
@@ -208,19 +205,37 @@ lines.push("");
 lines.push("## Component copy outside content.ts (manual check)");
 lines.push("");
 lines.push(
-  "- Footer line “Every claim on this page carries its evidence.” is new presentation copy; the sentiment is the hero claim “I build data & ML systems — and prove every claim on this page.”, kept verbatim.",
+  "- Hero proof strip removed (brief section B): it was composed in page.tsx from the figure, tests and version fields, and those fields still render — in the LeaseLens flagship card metrics line and on the case page.",
 );
 lines.push(
-  "- Footer location line “Dresden, Germany” is new as a separate line; the fact was in the old intro (“Software engineer in Dresden.”) and the document title.",
+  "- Availability pill “Dresden · Werkstudent eligible, 20h/wk” is new component copy; the facts are profile.location (“Dresden, Germany”) and profile.workEligibility (“Working-student eligible, 20 hours a week.”), both kept verbatim. “20h/wk” is an abbreviation, not a new fact.",
 );
 lines.push(
-  "- Section order changed Work, Stack, Background to Work, Background, Stack (per the redesign brief). Section intros are unchanged.",
+  "- “View Flagship Work” replaces the “See projects” button label (presentation copy only).",
 );
 lines.push(
-  "- “Spoken languages” replaces the “Languages” heading in the timeline (allowed: label-clash fix); the programming group keeps “Languages”.",
+  "- Filter pill labels are the project stack tags verbatim, plus “All”, “SQL”, “Docker” and “C#”. SQL covers PostgreSQL/MySQL, Docker covers Docker Compose, C# matches no shipped project and the note says so.",
 );
 lines.push(
-  "- The row proof notes are gone as a row element; each note's text survives in the case-page claim notes (LeaseLens note merged into the outcome claim note, ETL and OratorPath notes verbatim).",
+  "- Capabilities matrix column headings (Data & Pipelines, ML & NLP, Full-Stack, Infra & DBs) are new presentation labels; every skill name inside them is verbatim from skillGroups or a project stack.",
+);
+lines.push(
+  "- “Earlier systems” and “Proof” are new presentation labels on the Work section and flagship cards.",
+);
+lines.push(
+  "- The rowProof sentences are no longer rendered as a row element on the home page, but every one of them survives in src/content.ts and in the case-page meta descriptions, so the sentence check passes them.",
+);
+lines.push(
+  "- The LeaseLens proof callout reuses the outcome claim note verbatim (“Registered IoU measures overlap after the two photos are aligned, so the score compares the same wall instead of two photos taken from different spots.”); the metrics line is composed from the figure, version and tests fields.",
+);
+lines.push(
+  "- Spoken languages and certificates moved from timeline groups into a horizontal metadata strip; every language, level, certificate and the Nov 2025 – Sep 2026 period is unchanged.",
+);
+lines.push(
+  "- Section order is unchanged (Hero, Work, Background, Stack, Contact). The footer is unchanged.",
+);
+lines.push(
+  "- The three SVG illustrations carry no numbers except the verified “86.1% IoU” label on the LeaseLens asset; the OratorPath bars are schematic and unlabeled.",
 );
 lines.push("");
 
@@ -239,6 +254,6 @@ lines.push(
 );
 lines.push("");
 
-writeFileSync("docs/content-integrity.md", lines.join("\n"));
+writeFileSync("docs/spec-sheet-integrity.md", lines.join("\n"));
 console.log(lines.join("\n"));
 if (unexplained > 0) process.exit(1);

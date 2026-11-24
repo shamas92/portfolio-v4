@@ -37,7 +37,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const description =
-  "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Five shipped systems, each shown with its proof.";
+  "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Six shipped systems, each shown with its proof.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),

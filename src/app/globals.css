@@ -658,12 +658,12 @@ footer[id] {
   padding-block: var(--space-12) var(--space-8);
 }
 
-/* Desktop: tighter vertical pacing so the Work section divider
-   and heading peek above the fold on 1080p/900p laptop screens.
-   Mobile keeps the generous pacing. */
+/* Desktop: tighter hero padding on 1080p/900p laptop screens.
+   The fold-pacing overrides that also trim the Work section live
+   after the flagship grid rules, so they win the cascade. */
 @media (min-width: 1024px) {
   .hero {
-    padding-block: var(--space-8) var(--space-6);
+    padding-block: var(--space-4) var(--space-3);
   }
 }
 
@@ -932,6 +932,34 @@ footer[id] {
 @media (min-width: 1024px) {
   .flagship-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+/* Desktop fold pacing: the hero and Work section lose a total of
+   ~104px on 1080p/900p laptop screens, so the Work divider,
+   heading and the first flagship card tops show without scrolling
+   (card tops sit ~878px from the top at 1440x900). This block
+   sits after the rules it overrides, so it wins the cascade.
+   Mobile keeps the generous pacing. */
+@media (min-width: 1024px) {
+  .hero-actions {
+    margin-top: var(--space-3);
+  }
+
+  #work {
+    padding-top: var(--space-6);
+  }
+
+  .filter-pills {
+    margin-top: var(--space-3);
+  }
+
+  .filter-note {
+    margin-top: var(--space-1);
+  }
+
+  .flagship-grid {
+    margin-top: var(--space-3);
   }
 }
 

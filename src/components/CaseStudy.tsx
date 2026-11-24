@@ -92,18 +92,11 @@ export function CaseStudy({ slug }: { slug: string }) {
         <p className="case-text">{project.decision}</p>
       </section>
 
-      <section
-        className="case-block"
-        id="result"
-        aria-labelledby="result-head"
-      >
+      <section className="case-block" id="result" aria-labelledby="result-head">
         <h2 className="case-block-head" id="result-head">
           {ui.result}
         </h2>
-        <Annotated
-          prose={project.result}
-          idPrefix={`${project.slug}-result`}
-        />
+        <Annotated prose={project.result} idPrefix={`${project.slug}-result`} />
       </section>
 
       {hasEvidence && (

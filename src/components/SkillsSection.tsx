@@ -22,7 +22,11 @@ export function SkillsSection() {
   for (const group of content.skillGroups) {
     for (const skill of group.skills) {
       if (skill.projects && skill.projects.length > 0) {
-        used.push({ group: group.title, name: skill.name, projects: skill.projects });
+        used.push({
+          group: group.title,
+          name: skill.name,
+          projects: skill.projects,
+        });
       } else {
         unused.push(skill.name);
       }
@@ -44,18 +48,16 @@ export function SkillsSection() {
                     <span className="skills-name">{skill.name}</span>{" "}
                     <span className="skills-used">
                       {ui.usedIn}{" "}
-                      {skill.projects.length === totalProjects ? (
-                        ui.everyProject
-                      ) : (
-                        skill.projects.map((slug, i) => (
-                          <span key={slug}>
-                            {i > 0 && ", "}
-                            <Link href={`/work/${slug}`}>
-                              {bySlug.get(slug) ?? slug}
-                            </Link>
-                          </span>
-                        ))
-                      )}
+                      {skill.projects.length === totalProjects
+                        ? ui.everyProject
+                        : skill.projects.map((slug, i) => (
+                            <span key={slug}>
+                              {i > 0 && ", "}
+                              <Link href={`/work/${slug}`}>
+                                {bySlug.get(slug) ?? slug}
+                              </Link>
+                            </span>
+                          ))}
                     </span>
                   </li>
                 ))}

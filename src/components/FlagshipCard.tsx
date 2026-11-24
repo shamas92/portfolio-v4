@@ -49,9 +49,7 @@ export function FlagshipCard({
         </h3>
         <div className="flagship-rows">
           <div className="flagship-row">
-            <p className="flagship-row-label">
-              {content.ui.caseStudy.problem}
-            </p>
+            <p className="flagship-row-label">{content.ui.caseStudy.problem}</p>
             <p className="flagship-row-text">{project.rowOutcome}</p>
           </div>
           <div className="flagship-row">

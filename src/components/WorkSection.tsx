@@ -104,11 +104,7 @@ export function WorkSection() {
         ))}
       </div>
 
-      <div
-        className="filter-pills"
-        role="group"
-        aria-label={ui.filterLabel}
-      >
+      <div className="filter-pills" role="group" aria-label={ui.filterLabel}>
         {ALL_PILLS.map((pill) => (
           <button
             key={pill}

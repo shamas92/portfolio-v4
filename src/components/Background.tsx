@@ -70,9 +70,7 @@ export function Background() {
               <li key={item}>{item}</li>
             ))}
           </ul>
-          <p className="meta-period">
-            {background.certifications.period}
-          </p>
+          <p className="meta-period">{background.certifications.period}</p>
         </div>
       </div>
     </>

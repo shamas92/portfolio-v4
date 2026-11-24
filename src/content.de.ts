@@ -24,7 +24,7 @@ export const deContent: SiteContent = {
     role: "Softwareentwickler",
     location: "Dresden, Deutschland",
     claim: "Ich baue Daten- & ML-Systeme.",
-    statusLine: "MSc Informatik, TU Dresden, Dresden, Deutschland",
+    statusLine: "MSc Informatik, TU Dresden",
     email: "shamasrehman249@gmail.com",
     github: "https://github.com/shamas92",
     linkedin: "https://linkedin.com/in/shamasrehman",
@@ -451,14 +451,14 @@ export const deContent: SiteContent = {
     },
     hero: {
       pill: "Dresden · Werkstudent, 20 Std./Woche",
-      ask: "Ich suche eine Werkstudentenstelle im Data Engineering, 20 Stunden pro Woche, in Dresden.",
+      ask: "Ich suche eine Werkstudentenstelle im Data Engineering.",
       emailMe: "E-Mail schreiben",
       downloadCv: "Lebenslauf herunterladen",
     },
     work: {
       heading: "Projekte",
       intro:
-        "Ausgewählte Projekte zuerst — Problem, Beitrag, eine Entscheidung und der Nachweis. Frühere Projekte folgen in einem kompakten Index.",
+        "Ausgewählte Projekte zuerst — mit Problem, Beitrag, einer Entscheidung und dem Nachweis.",
       featured: "Ausgewählt",
       all: "Alle",
       showingAll: "Alle {total} Projekte werden angezeigt.",

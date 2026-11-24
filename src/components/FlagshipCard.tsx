@@ -26,7 +26,11 @@ export function FlagshipCard({
   project: Project;
   dimmed: boolean;
 }) {
-  const { ref, className } = useReveal<HTMLElement>();
+  /* 0.05, not the 0.2 default: the cards are ~1100px tall, so
+     only ~18% of one is visible on load at 1440x900 and the
+     default threshold would leave the work blank until the
+     reader scrolls. */
+  const { ref, className } = useReveal<HTMLElement>(0.05);
   const content = useContent();
   const ui = content.ui.work;
   const Asset = assets[project.slug];

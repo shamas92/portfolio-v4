@@ -648,6 +648,15 @@ footer[id] {
   padding-block: var(--space-12) var(--space-8);
 }
 
+/* Phones: the hero padding is the single biggest cost before
+   the work, so it tightens here. The desktop tightening lives
+   in the fold-pacing block below. */
+@media (max-width: 767px) {
+  .hero {
+    padding-block: var(--space-6) var(--space-4);
+  }
+}
+
 /* Desktop: tighter hero padding on 1080p/900p laptop screens.
    The fold-pacing overrides that also trim the Work section live
    after the flagship grid rules, so they win the cascade. */
@@ -848,6 +857,12 @@ footer[id] {
 .section {
   padding-block: var(--space-8);
   border-top: 1px solid var(--rule);
+}
+
+@media (max-width: 767px) {
+  .section {
+    padding-block: var(--space-6);
+  }
 }
 
 .section-head {

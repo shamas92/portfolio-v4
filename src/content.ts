@@ -23,7 +23,7 @@ export const profile: Profile = {
   role: "Software Engineer",
   location: "Dresden, Germany",
   claim: "I build data & ML systems.",
-  statusLine: "MSc Computer Science, TU Dresden, Dresden, Germany",
+  statusLine: "MSc Computer Science, TU Dresden",
   email: "shamasrehman249@gmail.com",
   github: "https://github.com/shamas92",
   linkedin: "https://linkedin.com/in/shamasrehman",
@@ -657,14 +657,14 @@ export const ui: UiStrings = {
   },
   hero: {
     pill: "Dresden · Working-student eligible, 20h/wk",
-    ask: "Looking for a working-student role in data engineering, 20 hours a week, in Dresden.",
+    ask: "Looking for a working-student role in data engineering.",
     emailMe: "Email me",
     downloadCv: "Download CV",
   },
   work: {
     heading: "Work",
     intro:
-      "Featured work first — the problem, what I built, one decision, and the evidence. Earlier projects follow in a compact index.",
+      "Featured work first, with the problem, the contribution, and the evidence.",
     featured: "Featured",
     all: "All",
     showingAll: "Showing all {total} projects.",

@@ -22,7 +22,7 @@ export const profile: Profile = {
   name: "Shamas Ur Rehman",
   role: "Software Engineer",
   location: "Dresden, Germany",
-  claim: "I build data & ML systems — and prove every claim on this page.",
+  claim: "I build data & ML systems.",
   statusLine: "MSc Computer Science, TU Dresden, Dresden, Germany",
   email: "shamasrehman249@gmail.com",
   github: "https://github.com/shamas92",
@@ -33,8 +33,8 @@ export const profile: Profile = {
 /** Missing facts. Rendered as TODO(content) markers in dev, omitted in prod. */
 export const contentTodos = [
   {
-    id: "oratorpath-demo",
-    label: "OratorPath live dashboard URL",
+    id: "available-from",
+    label: "Available-from month (start date)",
   },
 ];
 
@@ -52,9 +52,22 @@ export type Project = {
   /** One proof statement for the Work row. */
   rowProof: string;
   stack: string[];
+  /** What he built on this project — one or two sentences, used on
+   *  the flagship card ("Built") and the case page (Contribution).
+   *  States the work, never the team size: solo vs team is not
+   *  verifiable from the repo or the content, so it is not claimed. */
+  contribution: string;
+  /** The one meaningful technical decision, with its trade-off —
+   *  one or two sentences, used on the card ("Decision") and the
+   *  case page. The trade-off is stated as design rationale, never
+   *  as a measured figure. */
+  decision: string;
+  /** The verifiable role or participation fact for the case page
+   *  ("My role"). Only what a source states: a job title, a
+   *  hackathon team name, a thesis, an academic project. */
+  role: string;
   problem: Prose;
-  architecture: Prose;
-  outcome: Prose;
+  result: Prose;
   /** The one verified figure, when one exists. */
   figure?: { value: string; label: string };
   /** Production release version, when one exists. */
@@ -65,7 +78,8 @@ export type Project = {
    *  verbatim from the project's own figure, tests and notes. */
   proofCallout?: string;
   /** Concrete technical scope for the tier-2 index rows, drawn
-   *  only from the project's own problem and architecture text. */
+   *  only from the project's own problem, contribution and decision
+   *  text. */
   scope?: string;
   /** The one piece of evidence that proves it — a quote or a citation. */
   evidence?: {
@@ -91,8 +105,6 @@ export type Project = {
    *  for a project with no public site. */
   badge?: string;
   links: { label: string; href: string }[];
-  /** Links that are known to exist but whose URL is missing. */
-  todoLinks?: { label: string }[];
 };
 
 export const projects: Project[] = [
@@ -105,6 +117,11 @@ export const projects: Project[] = [
     rowProof:
       "86.1% registered IoU on the v7 demo pairing, measured live twice identically.",
     stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
+    contribution:
+      "Built the deterministic validator, the five-jurisdiction deposit-cap registry, and the SAM 3.1 photo-evidence flow on a Next.js/TypeScript frontend and a FastAPI/Python backend.",
+    decision:
+      "The model flags passages; the validator decides. Deposit math runs in Python, never in the model, so a number the model invents cannot reach the result — at the cost of a second, deterministic pass over every flagged quote. Photos are aligned before overlap is measured, so the IoU compares the same wall instead of two photos taken from different spots.",
+    role: "Hackathon entry, Team Shamas #4919 (Indie Developer Track)",
     problem: [
       [
         "A tenant who rents in another country signs a lease, pays a deposit, and months later gets a claim for damage or cleaning. The question is simple: does the claim match the lease and the law? Answering it means reading a long document in a foreign language, and the deposit cap changes at every border.",
@@ -118,32 +135,14 @@ export const projects: Project[] = [
         ". The UK caps it at five weeks' rent, New York at one month, and France at one or two months, depending on whether the flat is furnished. A tenant needs the lease text and the local rule next to each other, and a check that ties the two together.",
       ],
     ],
-    architecture: [
-      [
-        "The frontend is Next.js and TypeScript. The backend is FastAPI and Python. The model reads the lease and flags the passages that matter. A deterministic validator then ",
-        {
-          claim: "checks every flagged quote verbatim against the lease text",
-          note: "The model flags passages. The validator, not the model, decides whether a quote matches the lease word for word.",
-        },
-        " and every citation against a five-jurisdiction registry. ",
-        {
-          claim: "Deposit math runs in Python, never in the model",
-          note: "The cap and the excess are computed from the lease figures in Python. The model never touches the arithmetic.",
-        },
-        ", so a number the model invents cannot reach the result.",
-      ],
-      [
-        "Photo evidence comes from SAM 3.1, which segments the damage in the move-in and move-out photos, and the two outlines are aligned first and then compared. That alignment is what “registered” means in the IoU figure.",
-      ],
-    ],
-    outcome: [
+    result: [
       [
         "Version 1.0.0 shipped on 2026-11-09 with ",
         {
           claim: "197 tests",
           note: "132 backend, 65 frontend, at v1.0.0.",
         },
-        ". The project was accepted into the Meta Global AI Developer Hackathon 2026, Indie Developer Track, as Team Shamas, Team Number 4919, though it was not a top finalist.",
+        ". Accepted into the Meta Global AI Developer Hackathon 2026 (Indie Developer Track, Team Shamas #4919); not a top finalist.",
       ],
       [
         "The dorm demo runs the check on a real lease. The deposit in the lease is €950.00. The legal cap for that flat is €535.41, so the excess is €414.59. The photo evidence for the same flat scored ",
@@ -156,7 +155,8 @@ export const projects: Project[] = [
     ],
     figure: {
       value: "86.1%",
-      label: "registered IoU, v7 demo pairing, measured live twice identically",
+      label:
+        "registered IoU, v7 demo pairing — single-pair score, no baseline; measured live twice identically",
     },
     version: "v1.0.0",
     tests: { total: 197, backend: 132, frontend: 65 },
@@ -223,24 +223,29 @@ export const projects: Project[] = [
       "MinIO",
       "Parquet",
     ],
+    contribution:
+      "Built the Airflow DAG, the Parquet/MinIO staging, the Kimball star schema, and the duplicate-proof upserts — one DAG, three tasks, four tables.",
+    decision:
+      "Upserts live in Python (psycopg2 ON CONFLICT), not in stored procedures: a rerun cannot duplicate rows, and the logic stays in the codebase where it can be read and tested. Mailpit alerts when a run fails.",
+    role: "Personal project",
     problem: [
       [
         "Sales data arrived from several sources with no single, trustworthy shape for analysis.",
       ],
     ],
-    architecture: [
-      [
-        "One Airflow DAG runs three tasks. Raw files land as Parquet in MinIO, then load into a Kimball star schema in PostgreSQL with four tables: dim_date, dim_customer, dim_product, fact_sales. Upserts use psycopg2 ON CONFLICT, so a rerun does not duplicate rows, and Mailpit sends an alert when a run fails.",
-      ],
-    ],
-    outcome: [
+    result: [
       [
         "The pipeline runs with ",
         {
           claim: "one DAG, three tasks, and four tables",
           note: "dim_date, dim_customer, dim_product, fact_sales. Verified in the repository.",
         },
-        ". There are no stored procedures. The upserts live in Python.",
+        ". The seed loads 4 mock rows and keeps ",
+        {
+          claim: "3 unique transactions after dedup",
+          note: "The repository seeds 4 mock rows; dedup leaves 3 unique transactions. No larger dataset or runtime has been measured.",
+        },
+        ", a rerun duplicates nothing, and a failed run alerts by email.",
       ],
     ],
     proofCallout:
@@ -267,24 +272,24 @@ export const projects: Project[] = [
     rowOutcome: "Measured feedback for developers who speak in public.",
     rowProof: "Peer-reviewed publication, 2025.",
     stack: ["PyTorch", "Hugging Face", "NLP"],
+    contribution:
+      "Built the speech-analysis coach (PyTorch, Hugging Face, NLP) as the final-year thesis project and co-authored the published paper.",
+    decision:
+      "The coach returns measured feedback — pace, filler words, clarity — instead of impressions. Numbers make progress comparable across sessions; they say nothing about delivery, which the speaker still has to judge.",
+    role: "Final-year thesis project; co-author of the published paper",
     problem: [
       [
         "Public-speaking feedback for software developers was anecdotal, not measured.",
       ],
     ],
-    architecture: [
-      [
-        "OratorPath is an AI public-speaking coach built with PyTorch, Hugging Face, and NLP, with a live dashboard. It was the final-year thesis project, and the coach analyses speech and returns measured feedback instead of impressions.",
-      ],
-    ],
-    outcome: [
+    result: [
       [
         "The work was co-authored as a paper and published in a ",
         {
           claim: "peer-reviewed journal",
           note: "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
         },
-        ".",
+        ". The dashboard is no longer live; the paper is the record.",
       ],
     ],
     evidence: {
@@ -295,7 +300,6 @@ export const projects: Project[] = [
     proofCallout:
       "Peer-reviewed publication, 2025: Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, ISSN 3007-3138.",
     links: [],
-    todoLinks: [{ label: "Live dashboard URL" }],
   },
   {
     slug: "hitec-cms",
@@ -306,17 +310,17 @@ export const projects: Project[] = [
     rowProof:
       "Delivered during IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
     stack: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
+    contribution:
+      "Built the database-backed web modules, the internal CMS admin panel, and the RAG support chatbot during the IT Department internship.",
+    decision:
+      "The chatbot answers from university documents (RAG) instead of general knowledge, so its answers stay grounded in the institution's own material — at the cost of only knowing what is in those documents.",
+    role: "IT Department intern, HITEC University (May–Oct 2025)",
     problem: [
       [
         "HITEC University's web presence ran on modules that needed a database behind them, and the internal team needed an admin panel to manage content — plus a support chatbot that could answer questions from university documents.",
       ],
     ],
-    architecture: [
-      [
-        "The backend is ASP.NET MVC in C#, with a SQL Server schema behind the web modules. The internal admin panel provides CRUD workflows for the content management system. A RAG support chatbot in Python/Hugging Face answers questions over university documents.",
-      ],
-    ],
-    outcome: [
+    result: [
       [
         "Delivered during the IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
       ],
@@ -333,17 +337,17 @@ export const projects: Project[] = [
     rowOutcome: "Defects and quality issues in one record, not informal notes.",
     rowProof: "Shipped as an academic project.",
     stack: ["Laravel", "MySQL", "PHP"],
+    contribution:
+      "Built a Laravel/MySQL CRM that keeps defects and quality issues in one relational record.",
+    decision:
+      "One relational record per defect instead of informal notes: heavier to set up than a spreadsheet, but every issue has one place to live.",
+    role: "Academic project (2024)",
     problem: [
       [
         "Defects and quality issues were tracked informally, with no single record.",
       ],
     ],
-    architecture: [
-      [
-        "A Laravel and MySQL CRM for quality management and defect tracking, built as an academic project in 2024.",
-      ],
-    ],
-    outcome: [["Shipped as an academic project."]],
+    result: [["Shipped as an academic project."]],
     scope:
       "Relational defect tracking in Laravel/MySQL — one record for every defect.",
     links: [],
@@ -355,15 +359,15 @@ export const projects: Project[] = [
     rowOutcome: "Conversational support for students, in a structured form.",
     rowProof: "Shipped as an academic project.",
     stack: ["Python", "Hugging Face", "NLP"],
+    contribution:
+      "Built conversational student support with Hugging Face NLP in Python.",
+    decision:
+      "Structured NLP support instead of free-form chat, so conversations follow a form instead of drifting.",
+    role: "Academic project (2024)",
     problem: [
       ["Conversational support for students had no structured, measured form."],
     ],
-    architecture: [
-      [
-        "Python conversational support built with Hugging Face NLP, for students.",
-      ],
-    ],
-    outcome: [["Shipped as an academic project."]],
+    result: [["Shipped as an academic project."]],
     scope: "Structured NLP student support in Python/Hugging Face.",
     links: [],
   },
@@ -384,6 +388,9 @@ export type ExperienceEntry = {
 };
 
 export type BackgroundContent = {
+  /** First-person introduction, 2–3 sentences, rendered as the
+   *  lead paragraph of the Background section. */
+  about: string;
   education: EducationEntry[];
   experience: ExperienceEntry[];
   languages: { language: string; level: string }[];
@@ -391,6 +398,8 @@ export type BackgroundContent = {
 };
 
 export const background: BackgroundContent = {
+  about:
+    "I am an MSc Computer Science student at TU Dresden, after a BSc in Software Engineering from HITEC University in Pakistan. I spent six months in a university IT department building database-backed web modules and a RAG chatbot, and I build data pipelines and ML systems in my own time — most recently LeaseLens, which checks rental deposit claims against the lease and the law. I am looking for a working-student role in data engineering or ML in Dresden, 20 hours a week, and I want work where the result can be measured.",
   education: [
     {
       degree: "MSc Computer Science",
@@ -435,22 +444,26 @@ export const background: BackgroundContent = {
   },
 };
 
-/** Each skill appears once. `project` links it to the case study that used it. */
+/** Each skill appears once. `projects` lists the slugs of the
+ *  projects that used it — the Skills section renders them as
+ *  "used in" links. A skill with no `projects` has no shipped use
+ *  on this page and is shown under the "no shipped use" line
+ *  instead of being dropped. */
 export type SkillGroup = {
   title: string;
-  skills: { name: string; project?: string }[];
+  skills: { name: string; projects?: string[] }[];
 };
 
 export const skillGroups: SkillGroup[] = [
   {
     title: "Languages",
     skills: [
-      { name: "Python", project: "leaselens" },
-      { name: "SQL", project: "sales-etl-pipeline" },
-      { name: "C#" },
-      { name: "TypeScript", project: "leaselens" },
+      { name: "Python", projects: ["leaselens", "hitec-cms", "upliftu"] },
+      { name: "SQL", projects: ["sales-etl-pipeline"] },
+      { name: "C#", projects: ["hitec-cms"] },
+      { name: "TypeScript", projects: ["leaselens"] },
       { name: "JavaScript" },
-      { name: "PHP", project: "quality-crm" },
+      { name: "PHP", projects: ["quality-crm"] },
     ],
   },
   {
@@ -464,107 +477,52 @@ export const skillGroups: SkillGroup[] = [
       { name: "anomaly detection" },
       { name: "Tableau" },
       { name: "Excel" },
+      { name: "Parquet", projects: ["sales-etl-pipeline"] },
     ],
   },
   {
     title: "Frameworks & AI",
     skills: [
-      { name: "FastAPI", project: "leaselens" },
-      { name: "ASP.NET MVC" },
-      { name: "Next.js", project: "leaselens" },
-      { name: "React", project: "leaselens" },
-      { name: "PyTorch", project: "oratorpath" },
-      { name: "Hugging Face", project: "oratorpath" },
-      { name: "RAG" },
-      { name: "NLP", project: "oratorpath" },
+      { name: "FastAPI", projects: ["leaselens"] },
+      { name: "ASP.NET MVC", projects: ["hitec-cms"] },
+      { name: "Next.js", projects: ["leaselens"] },
+      { name: "React", projects: ["leaselens"] },
+      { name: "PyTorch", projects: ["oratorpath"] },
+      { name: "Hugging Face", projects: ["oratorpath", "upliftu"] },
+      { name: "RAG", projects: ["hitec-cms"] },
+      { name: "NLP", projects: ["oratorpath", "upliftu"] },
+      { name: "SAM 3.1", projects: ["leaselens"] },
+      { name: "Laravel", projects: ["quality-crm"] },
     ],
   },
   {
     title: "Databases",
     skills: [
-      { name: "SQL Server" },
-      { name: "MySQL", project: "quality-crm" },
-      { name: "PostgreSQL", project: "sales-etl-pipeline" },
+      { name: "SQL Server", projects: ["hitec-cms"] },
+      { name: "MySQL", projects: ["quality-crm"] },
+      { name: "PostgreSQL", projects: ["sales-etl-pipeline"] },
     ],
   },
   {
     title: "Tools",
     skills: [
-      { name: "Git" },
-      { name: "Docker", project: "sales-etl-pipeline" },
+      {
+        name: "Git",
+        projects: [
+          "leaselens",
+          "sales-etl-pipeline",
+          "oratorpath",
+          "hitec-cms",
+          "quality-crm",
+          "upliftu",
+        ],
+      },
+      { name: "Docker", projects: ["sales-etl-pipeline"] },
+      { name: "Docker Compose", projects: ["sales-etl-pipeline"] },
+      { name: "MinIO", projects: ["sales-etl-pipeline"] },
+      { name: "Apache Airflow", projects: ["sales-etl-pipeline"] },
       { name: "Linux (Ubuntu)" },
       { name: "REST APIs" },
-    ],
-  },
-];
-
-/**
- * Capabilities matrix: every technology on the site, grouped by
- * what it does, each exactly once, as plain text with no links.
- *
- * Mapping (29 skills from skillGroups + 6 tags that only appear in
- * project stacks = 35 items):
- * - Data & Pipelines: the 8 Data & BI skills + SQL + the ETL
- *   staging tags (Parquet, MinIO, Apache Airflow).
- * - ML & NLP: the ML skills + Python, the language the ML work
- *   is written in here, and SAM 3.1, the segmentation model.
- * - Full-Stack: the remaining languages and web frameworks,
- *   including Laravel, which only appears in the CRM stack.
- * - Infra & DBs: the three databases + Docker, Docker Compose,
- *   Git, Linux (Ubuntu).
- * No skill is claimed for a project it was not linked to: the
- * matrix groups capabilities, it does not attribute them.
- * Column titles translate; skill names are proper nouns and do not.
- */
-export type MatrixColumn = { title: string; skills: string[] };
-
-export const matrixColumns: MatrixColumn[] = [
-  {
-    title: "Data & Pipelines",
-    skills: [
-      "SQL",
-      "Pandas",
-      "NumPy",
-      "Matplotlib",
-      "scikit-learn",
-      "time-series analysis",
-      "anomaly detection",
-      "Tableau",
-      "Excel",
-      "Parquet",
-      "MinIO",
-      "Apache Airflow",
-    ],
-  },
-  {
-    title: "ML & NLP",
-    skills: ["Python", "PyTorch", "Hugging Face", "RAG", "NLP", "SAM 3.1"],
-  },
-  {
-    title: "Full-Stack",
-    skills: [
-      "TypeScript",
-      "JavaScript",
-      "PHP",
-      "C#",
-      "ASP.NET MVC",
-      "Next.js",
-      "React",
-      "FastAPI",
-      "Laravel",
-      "REST APIs",
-    ],
-  },
-  {
-    title: "Infra & DBs",
-    skills: [
-      "PostgreSQL",
-      "MySQL",
-      "SQL Server",
-      "Docker",
-      "Docker Compose",
-      "Git",
-      "Linux (Ubuntu)",
     ],
   },
 ];
@@ -580,10 +538,8 @@ export const matrixColumns: MatrixColumn[] = [
 export type UiStrings = {
   skipLink: string;
   navLabel: string;
-  nav: { work: string; background: string; stack: string; contact: string };
+  nav: { work: string; background: string; contact: string };
   header: {
-    githubLabel: string;
-    linkedinLabel: string;
     menuOpen: string;
     menuClose: string;
     menuNavLabel: string;
@@ -598,18 +554,22 @@ export type UiStrings = {
   };
   theme: { toLight: string; toDark: string };
   language: { label: string };
-  hero: { pill: string; viewWork: string; downloadCv: string };
+  hero: { pill: string; ask: string; emailMe: string; downloadCv: string };
   work: {
     heading: string;
     intro: string;
+    featured: string;
     all: string;
     showingAll: string;
     showingSome: string;
     earlierSystems: string;
+    filterLabel: string;
     proof: string;
     iouLabel: string;
     metrics: string;
     stackLabel: string;
+    builtLabel: string;
+    decisionLabel: string;
   };
   background: {
     heading: string;
@@ -618,16 +578,24 @@ export type UiStrings = {
     languagesLabel: string;
     certificatesLabel: string;
   };
-  stack: { heading: string; intro: string };
+  skills: {
+    heading: string;
+    intro: string;
+    usedIn: string;
+    everyProject: string;
+    noShippedUse: string;
+  };
   footer: { heading: string; closing: string };
   caseStudy: {
     allProjects: string;
     problem: string;
-    architecture: string;
-    outcome: string;
+    contribution: string;
+    decision: string;
+    result: string;
     evidence: string;
     stack: string;
     links: string;
+    role: string;
     registryHeading: string;
     limitsHeading: string;
   };
@@ -665,12 +633,9 @@ export const ui: UiStrings = {
   nav: {
     work: "Work",
     background: "Background",
-    stack: "Stack",
     contact: "Contact",
   },
   header: {
-    githubLabel: "Shamas Ur Rehman on GitHub",
-    linkedinLabel: "Shamas Ur Rehman on LinkedIn",
     menuOpen: "Open menu",
     menuClose: "Close menu",
     menuNavLabel: "Sections",
@@ -691,23 +656,28 @@ export const ui: UiStrings = {
     label: "Language",
   },
   hero: {
-    pill: "Dresden · Werkstudent eligible, 20h/wk",
-    viewWork: "View Flagship Work",
+    pill: "Dresden · Working-student eligible, 20h/wk",
+    ask: "Looking for a working-student role in data engineering, 20 hours a week, in Dresden.",
+    emailMe: "Email me",
     downloadCv: "Download CV",
   },
   work: {
     heading: "Work",
     intro:
-      "Three flagship systems, each with its architecture and its proof. Three earlier systems follow in a compact index.",
+      "Featured work first — the problem, what I built, one decision, and the evidence. Earlier projects follow in a compact index.",
+    featured: "Featured",
     all: "All",
     showingAll: "Showing all {total} projects.",
     showingSome: "{n} of {total} projects use {tag}.",
-    earlierSystems: "Earlier & Institutional Systems",
+    earlierSystems: "Earlier projects",
+    filterLabel: "Filter projects by stack",
     proof: "Proof",
     iouLabel: "registered IoU",
     metrics:
       "{version} · {total} tests ({backend} backend, {frontend} frontend)",
     stackLabel: "Stack",
+    builtLabel: "Built",
+    decisionLabel: "Decision",
   },
   background: {
     heading: "Background",
@@ -716,10 +686,13 @@ export const ui: UiStrings = {
     languagesLabel: "Spoken languages",
     certificatesLabel: "Certificates",
   },
-  stack: {
-    heading: "Stack",
+  skills: {
+    heading: "Skills",
     intro:
-      "Every skill, grouped by what it does. The pills above the projects filter them by stack.",
+      "Every skill, grouped by what it does. Each one names the project that used it; the ones with no shipped use on this page are listed separately, not dropped.",
+    usedIn: "Used in",
+    everyProject: "every project",
+    noShippedUse: "No shipped use on this page",
   },
   footer: {
     heading: "Contact",
@@ -728,11 +701,13 @@ export const ui: UiStrings = {
   caseStudy: {
     allProjects: "All projects",
     problem: "Problem",
-    architecture: "Architecture",
-    outcome: "Outcome",
+    contribution: "Contribution",
+    decision: "Decision",
+    result: "Result",
     evidence: "Evidence",
     stack: "Stack",
     links: "Links",
+    role: "My role",
     registryHeading: "Deposit caps in the registry",
     limitsHeading: "Limits",
   },
@@ -778,7 +753,6 @@ export type SiteContent = {
   projects: Project[];
   background: BackgroundContent;
   skillGroups: SkillGroup[];
-  matrixColumns: MatrixColumn[];
   ui: UiStrings;
 };
 
@@ -788,6 +762,5 @@ export const enContent: SiteContent = {
   projects,
   background,
   skillGroups,
-  matrixColumns,
   ui,
 };

@@ -152,7 +152,7 @@ export function CaseStudy({ slug }: { slug: string }) {
           )}
 
           {caseAsset && (
-            <figure className="case-figure">
+            <figure className="case-figure case-figure--mockup">
               <caseAsset.Component />
               <figcaption>
                 {content.ui.assets[caseAsset.captionKey].caption}

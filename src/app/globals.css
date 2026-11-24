@@ -2026,9 +2026,27 @@ footer[id] {
   margin-bottom: var(--space-2);
 }
 
+/* One figure treatment for the Evidence section: the same framed
+   presentation as the flagship card's visual area (hairline
+   border, 8px radius, ground background, 24px padding), so the
+   mockup reads identically on the card and on its case page.
+   The mockup caption uses the same mono label as the card; the
+   SAM photo keeps a body-small caption — a mockup label and a
+   photo caption are different content, so they keep different
+   styles, each applied consistently. */
 .case-figure {
-  margin: 0;
+  margin: var(--space-3) 0 0;
   max-width: 720px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  background: var(--bg);
+  padding: var(--space-3);
+}
+
+.case-figure.case-figure--mockup figcaption {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  max-width: none;
 }
 
 .case-figure img,

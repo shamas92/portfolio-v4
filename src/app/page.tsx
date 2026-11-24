@@ -26,13 +26,20 @@ export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
 
   /* Hero scroll transformation: as the reader scrolls the first
-   *  320px, the hero recedes — the name scales down slightly and
-   *  the whole hero drifts up a touch. The progress is a CSS
-   *  variable on the hero element; the CSS applies it as
-   *  transform only, so there is no layout shift and the fold
-   *  does not move. A passive rAF scroll listener, skipped under
-   *  reduced motion and without JavaScript (the variable stays
-   *  0). The effect reverses on scroll-up. */
+   *  240px, the hero expands — the name grows toward the reader
+   *  (scale 1 → 1.22, anchored at its baseline so it grows
+   *  upward into the hero's top padding and never collides with
+   *  the claim below it) while the supporting lines drift up a
+   *  touch and fade only to 0.92, so the role, the ask, the
+   *  location pill and the action stay legible throughout the
+   *  effect. The progress is a CSS variable on the hero element;
+   *  the CSS applies it as transform/opacity only, so there is
+   *  no layout shift and the fold does not move. A passive rAF
+   *  scroll listener, skipped under reduced motion and without
+   *  JavaScript (the variable stays 0). The effect reverses on
+   *  scroll-up. The range is 240px, not the full hero height:
+   *  the name is off-screen past ~150px of scroll, so the growth
+   *  has to happen while it is still in view. */
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
@@ -40,7 +47,7 @@ export default function Home() {
     let raf = 0;
     const update = () => {
       raf = 0;
-      const progress = Math.min(window.scrollY / 320, 1);
+      const progress = Math.min(window.scrollY / 240, 1);
       hero.style.setProperty("--hero-progress", progress.toFixed(3));
     };
     const onScroll = () => {

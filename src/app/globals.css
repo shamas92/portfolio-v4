@@ -821,22 +821,36 @@ footer[id] {
   font-size: var(--text-small);
 }
 
-/* ---- Hero scroll transformation: the hero recedes as the
-   reader scrolls the first 320px — the name scales down a
-   touch and the whole hero drifts up. --hero-progress is set
-   from page.tsx (0 at the top, 1 at 320px). Transform only, so
-   there is no layout shift and the fold does not move; the
-   effect reverses on scroll-up. Without JavaScript the variable
-   stays 0. Under reduced motion the rules are overridden to
-   none (see the reduced-motion block). */
+/* ---- Hero scroll transformation: the hero expands as the
+   reader scrolls the first 240px — the name grows toward the
+   reader (scale 1 → 1.22, anchored at its baseline so it grows
+   upward into the hero's top padding and never collides with
+   the claim below it) while the supporting lines drift up a
+   touch and fade only to 0.92, so the role, the ask, the
+   location pill and the action stay legible throughout.
+   --hero-progress is set from page.tsx (0 at the top, 1 at
+   240px). Transform/opacity only, so there is no layout shift
+   and the fold does not move; the effect reverses on scroll-up.
+   Without JavaScript the variable stays 0. Under reduced
+   motion the rules are overridden to none (see the
+   reduced-motion block). */
 .hero {
   --hero-progress: 0;
-  transform: translateY(calc(var(--hero-progress, 0) * -14px));
 }
 
 .hero-name {
-  transform: scale(calc(1 - var(--hero-progress, 0) * 0.05));
-  transform-origin: left top;
+  transform: translateY(calc(var(--hero-progress, 0) * -10px))
+    scale(calc(1 + var(--hero-progress, 0) * 0.22));
+  transform-origin: left bottom;
+}
+
+.hero-claim,
+.hero-ask,
+.hero-pill,
+.hero-status,
+.hero-actions {
+  transform: translateY(calc(var(--hero-progress, 0) * -12px));
+  opacity: calc(1 - var(--hero-progress, 0) * 0.08);
 }
 
 /* ---- Buttons and links: plain verbs ---- */
@@ -904,7 +918,16 @@ footer[id] {
 }
 
 [data-entrance] {
-  animation: rise-in var(--dur-reveal) var(--ease) both;
+  /* Fill mode `backwards`, not `both`: `both` would keep the
+   * animation's final keyframe (opacity 1, translateY 0)
+   * applied forever, which would override the --hero-progress
+   * transform/opacity rules on the hero lines after the
+   * entrance completes. `backwards` applies the `from` state
+   * during the delay, then releases the element to its
+   * stylesheet values — which at rest are identical (opacity 1,
+   * translateY 0) — so the entrance looks the same and the
+   * scroll rules can take over. */
+  animation: rise-in var(--dur-reveal) var(--ease) backwards;
   animation-delay: var(--entrance-delay, 0ms);
 }
 
@@ -2323,8 +2346,14 @@ footer[id] {
   /* The hero scroll transformation is transform-only, so it
      is switched off here too. */
   .hero,
-  .hero-name {
+  .hero-name,
+  .hero-claim,
+  .hero-ask,
+  .hero-pill,
+  .hero-status,
+  .hero-actions {
     transform: none;
+    opacity: 1;
   }
 
   .reveal.is-visible {

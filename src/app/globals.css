@@ -1665,13 +1665,6 @@ footer[id] {
   min-height: 44px;
 }
 
-.case-status {
-  margin-top: var(--space-2);
-  color: var(--ink-muted);
-  font-size: var(--text-small);
-  max-width: 68ch;
-}
-
 .case-stack-list {
   list-style: none;
   padding: 0;

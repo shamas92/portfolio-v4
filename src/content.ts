@@ -87,9 +87,6 @@ export type Project = {
   registry?: { jurisdiction: string; rule: string }[];
   /** Honest limits, stated where they exist. */
   limits?: string[];
-  /** Plain status line shown in the Evidence block when no figure
-   *  was measured for the project. */
-  evidenceStatus?: string;
   /** Badge shown on the tier-2 row, e.g. "Internal / Archived"
    *  for a project with no public site. */
   badge?: string;
@@ -327,7 +324,6 @@ export const projects: Project[] = [
     scope:
       "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
     badge: "Internal / Archived",
-    evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
   {
@@ -350,7 +346,6 @@ export const projects: Project[] = [
     outcome: [["Shipped as an academic project."]],
     scope:
       "Relational defect tracking in Laravel/MySQL — one record for every defect.",
-    evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
   {
@@ -370,7 +365,6 @@ export const projects: Project[] = [
     ],
     outcome: [["Shipped as an academic project."]],
     scope: "Structured NLP student support in Python/Hugging Face.",
-    evidenceStatus: "No figures were measured for this project.",
     links: [],
   },
 ];

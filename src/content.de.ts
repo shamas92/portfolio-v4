@@ -262,7 +262,6 @@ export const deContent: SiteContent = {
       scope:
         "Datenbankgestützte Universitäts-Webmodule, ein internes CMS-Admin-Panel sowie ein integrierter RAG-Support-Chatbot.",
       badge: "Intern / Archiviert",
-      evidenceStatus: "Für dieses Projekt wurden keine Kennzahlen gemessen.",
       links: [],
     },
     {
@@ -286,7 +285,6 @@ export const deContent: SiteContent = {
       outcome: [["Als akademisches Projekt veröffentlicht."]],
       scope:
         "Relationales Defect-Tracking in Laravel/MySQL — ein Datensatz für jeden Defekt.",
-      evidenceStatus: "Für dieses Projekt wurden keine Kennzahlen gemessen.",
       links: [],
     },
     {
@@ -309,7 +307,6 @@ export const deContent: SiteContent = {
       ],
       outcome: [["Als akademisches Projekt veröffentlicht."]],
       scope: "Strukturierte NLP-Studierendenbetreuung in Python/Hugging Face.",
-      evidenceStatus: "Für dieses Projekt wurden keine Kennzahlen gemessen.",
       links: [],
     },
   ],

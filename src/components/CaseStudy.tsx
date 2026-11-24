@@ -20,11 +20,12 @@ const newsreaderItalic = Newsreader({
 /** One case-study page: the same six blocks for every project —
  *  Problem, Architecture, Outcome, Evidence, Stack, Links.
  *  A block is omitted when the project has no verified content for
- *  it; the plain status line stays where Evidence would be empty.
- *  Sections stack plainly with anchor ids; the header nav covers
- *  site navigation (no rail). The page looks the project up in the
- *  current locale's content by slug — the server page already
- *  validated the slug, so the lookup always succeeds. */
+ *  it; projects with no verified figure have no Evidence block at
+ *  all (user decision 2026-11-24). Sections stack plainly with
+ *  anchor ids; the header nav covers site navigation (no rail).
+ *  The page looks the project up in the current locale's content
+ *  by slug — the server page already validated the slug, so the
+ *  lookup always succeeds. */
 export function CaseStudy({ slug }: { slug: string }) {
   const content = useContent();
   const ui = content.ui.caseStudy;
@@ -34,8 +35,7 @@ export function CaseStudy({ slug }: { slug: string }) {
     project.evidence ||
     project.image ||
     project.registry ||
-    project.limits ||
-    project.evidenceStatus,
+    project.limits,
   );
 
   return (
@@ -162,10 +162,6 @@ export function CaseStudy({ slug }: { slug: string }) {
                 ))}
               </ul>
             </div>
-          )}
-
-          {project.evidenceStatus && (
-            <p className="case-status">{project.evidenceStatus}</p>
           )}
         </section>
       )}

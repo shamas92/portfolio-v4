@@ -3,11 +3,11 @@
 /* ============================================================
    Engineering Spec Sheet — tokens
    Two layers: raw values in this block only; components use the
-   semantic aliases below. Technical Cobalt is the single
-   functional accent, used only for interactive links, the live
-   availability dot, active filter states, and verified proof
-   badges. No gradients, no decorative shadows, hairline rules
-   instead of boxes.
+   semantic aliases below. Oxide red is the single functional
+   accent, used only for interactive links, active filter states,
+   and verified proof badges. (The live availability dot is
+   emerald, a status colour, not the accent.) No gradients, no
+   decorative shadows, hairline rules instead of boxes.
    ============================================================ */
 :root {
   /* raw values — light */
@@ -16,9 +16,9 @@
   --ink-light: #141413;
   --ink-muted-light: #57534e;
   --rule-light: #e6e4e0;
-  --accent-light: #1d4ed8;
-  --accent-wash-light: #dbeafe;
-  --accent-on-wash-light: #1d4ed8;
+  --accent-light: #9a3324;
+  --accent-wash-light: #f9e7e0;
+  --accent-on-wash-light: #9a3324;
   /* Presence / status dot — emerald #10B981 in BOTH themes (the
      polish brief fixes this value; it reads on the dark ground
      too). A live-status colour, not the accent. */
@@ -34,9 +34,9 @@
   --ink-dark: #f5f5f4;
   --ink-muted-dark: #a8a29e;
   --rule-dark: #262624;
-  --accent-dark: #3b82f6;
-  --accent-wash-dark: #172554;
-  --accent-on-wash-dark: #60a5fa;
+  --accent-dark: #e07856;
+  --accent-wash-dark: #33150f;
+  --accent-on-wash-dark: #e07856;
   --presence-dark: #10b981;
   --lang-active-dark: #262626;
   --shadow-dark: 0 8px 24px rgb(0 0 0 / 0.45);
@@ -899,8 +899,8 @@ footer[id] {
   background: var(--accent);
   border-color: var(--accent);
   /* Active pill text is the page ground in both themes:
-     6.37:1 light, 5.32:1 dark. White on the dark accent would
-     fail (3.3:1), so it is never used. */
+     6.95:1 light, 6.51:1 dark. White on the dark accent would
+     fail (3.00:1), so it is never used. */
   color: var(--bg);
 }
 

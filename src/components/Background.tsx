@@ -3,12 +3,14 @@
 import { useContent } from "@/i18n/LocaleProvider";
 import { LocationPanel } from "./LocationPanel";
 
-/** Background: the first-person About as the lead paragraph, then
- *  Experience on the left, Education on the right (two-column
- *  desktop grid), with spoken languages in a metadata strip
- *  underneath. Certificates live in their own section now (see
- *  CertificatesSection), not in this strip. Every fact is
- *  rendered from the locale content verbatim. */
+/** Background: Experience on the left, Education on the right
+ *  (two-column desktop grid), with spoken languages in a metadata
+ *  strip underneath and the Dresden location panel after it. The
+ *  first-person About lead lives in the section header in
+ *  page.tsx, so it animates with the heading. Certificates live
+ *  in their own section now (see CertificatesSection), not in
+ *  this strip. Every fact is rendered from the locale content
+ *  verbatim. */
 export function Background() {
   const content = useContent();
   const background = content.background;
@@ -16,8 +18,6 @@ export function Background() {
 
   return (
     <>
-      <p className="about-lead">{background.about}</p>
-
       <div className="bg-grid">
         <div>
           <h3 className="bg-col-head">{ui.experience}</h3>

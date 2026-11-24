@@ -552,7 +552,6 @@ export type UiStrings = {
   work: {
     heading: string;
     intro: string;
-    featured: string;
     all: string;
     showingAll: string;
     showingSome: string;
@@ -699,7 +698,6 @@ export const ui: UiStrings = {
     heading: "Work",
     intro:
       "Featured work first, with the problem, the contribution, and the evidence.",
-    featured: "Featured",
     all: "All",
     showingAll: "Showing all {total} projects.",
     showingSome: "{n} of {total} projects use {tag}.",

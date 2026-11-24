@@ -452,7 +452,6 @@ export const deContent: SiteContent = {
       heading: "Projekte",
       intro:
         "Ausgewählte Projekte zuerst — mit Problem, Beitrag, einer Entscheidung und dem Nachweis.",
-      featured: "Ausgewählt",
       all: "Alle",
       showingAll: "Alle {total} Projekte werden angezeigt.",
       showingSome: "{n} von {total} Projekten verwenden {tag}.",

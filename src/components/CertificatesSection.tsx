@@ -19,7 +19,6 @@ export function CertificatesSection() {
 
   return (
     <div>
-      <p className="section-intro">{ui.intro}</p>
       <ul className="certificates-grid">
         {certs.items.map((item, i) => (
           <li className="certificate" key={item}>

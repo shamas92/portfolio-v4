@@ -1105,8 +1105,11 @@ footer[id] {
 }
 
 /* ---- Flagship cards: three-up editorial grid ---- */
+/* One head-to-content rhythm: every section's first content
+   block sits 24px (space-3) below its head or intro. The
+   sub-section dividers (index headings, filter bar) keep 32px. */
 .flagship-grid {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   display: grid;
   gap: var(--space-3);
   grid-template-columns: minmax(0, 1fr);
@@ -1134,9 +1137,16 @@ footer[id] {
   }
 }
 
+/* One card geometry for the whole page: the flagship cards use
+   the same 8px radius as the certificate plates and the location
+   panel (they were square before, the only square cards on the
+   page). overflow: hidden clips the visual area to the card's
+   top corners. */
 .flagship-card {
   background: var(--surface);
   border: 1px solid var(--rule);
+  border-radius: 8px;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   min-width: 0;
@@ -1497,7 +1507,7 @@ footer[id] {
 /* ---- Skills: grouped columns, each skill naming the project
    that used it; the unshipped skills gather under one line ---- */
 .skills-grid {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   display: grid;
   gap: var(--space-4);
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -1571,7 +1581,7 @@ footer[id] {
    the display serif. ---- */
 .certificates-grid {
   list-style: none;
-  margin: var(--space-2) 0 0;
+  margin: var(--space-3) 0 0;
   padding: 0;
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -1642,14 +1652,14 @@ footer[id] {
 
 /* ---- Background: Experience left, Education right ---- */
 .about-lead {
-  margin-top: var(--space-2);
+  margin-top: var(--space-3);
   font-size: var(--text-body);
   line-height: 1.65;
   max-width: 68ch;
 }
 
 .bg-grid {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   display: grid;
   gap: var(--space-4);
   grid-template-columns: 1.15fr minmax(0, 1fr);

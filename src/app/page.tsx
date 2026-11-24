@@ -110,10 +110,15 @@ export default function Home() {
         aria-labelledby="background-head"
         tabIndex={-1}
       >
+        {/* The section header block — head plus lead — animates
+            together in one Reveal, the same pattern as Work and
+            Skills. The lead lives here, not in Background, so the
+            header and its opening paragraph never drift apart. */}
         <Reveal>
           <h2 className="section-head" id="background-head">
             {ui.background.heading}
           </h2>
+          <p className="about-lead">{content.background.about}</p>
         </Reveal>
         <Background />
       </section>
@@ -143,6 +148,7 @@ export default function Home() {
           <h2 className="section-head" id="certificates-head">
             {ui.certificates.heading}
           </h2>
+          <p className="section-intro">{ui.certificates.intro}</p>
         </Reveal>
         <CertificatesSection />
       </section>

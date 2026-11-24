@@ -99,7 +99,6 @@ export function WorkSection() {
 
   return (
     <>
-      <h3 className="index-heading">{ui.featured}</h3>
       <div className="flagship-grid">
         {flagships.map((project) => (
           <FlagshipCard

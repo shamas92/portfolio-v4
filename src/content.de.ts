@@ -44,7 +44,7 @@ export const deContent: SiteContent = {
       contribution:
         "Ich habe den deterministischen Validator, das Register der Kautionsobergrenzen für fünf Rechtsordnungen und den Fotonachweis mit SAM 3.1 gebaut — auf einem Next.js/TypeScript-Frontend und einem FastAPI/Python-Backend.",
       decision:
-        "Das Modell markiert Stellen; der Validator entscheidet. Die Kautionsberechnung läuft in Python, nie im Modell, sodass eine Zahl, die das Modell erfindet, nicht ins Ergebnis gelangen kann — auf Kosten eines zweiten, deterministischen Durchlaufs über jedes markierte Zitat. Die Fotos werden vor der Überlappungsmessung ausgerichtet, sodass die IoU dieselbe Wand vergleicht statt zwei Fotos aus verschiedenen Blickwinkeln.",
+        "Das Modell markiert Stellen; der Validator entscheidet. Die Kautionsberechnung läuft in Python, nie im Modell, sodass eine Zahl, die das Modell erfindet, nicht ins Ergebnis gelangen kann — auf Kosten eines zweiten, deterministischen Durchlaufs über jedes markierte Zitat.",
       role: "Hackathon-Beitrag, Team Shamas #4919 (Indie Developer Track)",
       problem: [
         [
@@ -147,7 +147,7 @@ export const deContent: SiteContent = {
         "Parquet",
       ],
       contribution:
-        "Ich habe den Airflow-DAG, das Parquet/MinIO-Staging, das Kimball-Star-Schema und die duplikatsicheren Upserts gebaut — ein DAG, drei Tasks, vier Tabellen.",
+        "Ich habe den Airflow-DAG, das Parquet/MinIO-Staging, das Kimball-Star-Schema und die duplikatsicheren Upserts gebaut.",
       decision:
         "Upserts leben in Python (psycopg2 ON CONFLICT), nicht in Stored Procedures: Ein erneuter Lauf kann keine Zeilen duplizieren, und die Logik bleibt in der Codebasis, wo man sie lesen und testen kann. Mailpit warnt, wenn ein Lauf fehlschlägt.",
       role: "Eigenes Projekt",
@@ -465,6 +465,9 @@ export const deContent: SiteContent = {
       showingSome: "{n} von {total} Projekten verwenden {tag}.",
       earlierSystems: "Frühere Projekte",
       filterLabel: "Projekte nach Stack filtern",
+      detailsLabel: "Wie es gebaut wurde",
+      filterBy: "Nach Technologie filtern",
+      filterClear: "Filter zurücksetzen",
       proof: "Nachweis",
       iouLabel: "registered IoU",
       metrics:

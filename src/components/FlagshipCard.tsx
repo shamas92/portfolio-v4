@@ -12,13 +12,16 @@ const assets: Record<string, React.ComponentType> = {
   oratorpath: OratorPathAsset,
 };
 
-/** One featured card: SVG visual, year, title link, and four
- *  labelled rows — Problem, Built (contribution), Decision, Proof —
- *  then the mono stack tags. The rows are the card form of the case
- *  page (Problem / Contribution / Decision / Result), so the card
- *  and the page never disagree. The LeaseLens metrics line keeps
- *  the IoU as alignment accuracy on the v7 demo pairing and the
- *  197 tests as a separate release fact, never conflated. */
+/** One featured card: SVG visual, year, title link, a one-sentence
+ *  summary, and the proof — visible without interaction. The
+ *  contribution and the decision live in a native <details>
+ *  ("How it was built"), keyboard accessible with no JavaScript,
+ *  so the card scans in seconds and the substance is one click
+ *  away. The rows are the card form of the case page (Problem /
+ *  Contribution / Decision / Result), so the card and the page
+ *  never disagree. The LeaseLens metrics line keeps the IoU as
+ *  alignment accuracy on the v7 demo pairing and the 197 tests
+ *  as a separate release fact, never conflated. */
 export function FlagshipCard({
   project,
   dimmed,
@@ -51,22 +54,11 @@ export function FlagshipCard({
             </span>
           </Link>
         </h3>
-        <div className="flagship-rows">
-          <div className="flagship-row">
-            <p className="flagship-row-label">{content.ui.caseStudy.problem}</p>
-            <p className="flagship-row-text">{project.rowOutcome}</p>
-          </div>
-          <div className="flagship-row">
-            <p className="flagship-row-label">{ui.builtLabel}</p>
-            <p className="flagship-row-text">{project.contribution}</p>
-          </div>
-          <div className="flagship-row">
-            <p className="flagship-row-label">{ui.decisionLabel}</p>
-            <p className="flagship-row-text">{project.decision}</p>
-          </div>
-          <div className="flagship-row flagship-row--proof">
-            <p className="flagship-row-label">{ui.proof}</p>
-            <p className="flagship-row-text">{project.proofCallout}</p>
+        <p className="flagship-summary">{project.rowOutcome}</p>
+        {project.proofCallout && (
+          <div className="flagship-proof">
+            <p className="flagship-proof-label">{ui.proof}</p>
+            <p className="flagship-proof-text">{project.proofCallout}</p>
             {project.slug === "leaselens" &&
               project.figure &&
               project.tests &&
@@ -84,7 +76,25 @@ export function FlagshipCard({
                 </p>
               )}
           </div>
-        </div>
+        )}
+        <details className="flagship-details">
+          <summary className="flagship-details-summary">
+            {ui.detailsLabel}
+            <span className="flagship-details-chevron" aria-hidden="true">
+              ›
+            </span>
+          </summary>
+          <div className="flagship-rows">
+            <div className="flagship-row">
+              <p className="flagship-row-label">{ui.builtLabel}</p>
+              <p className="flagship-row-text">{project.contribution}</p>
+            </div>
+            <div className="flagship-row">
+              <p className="flagship-row-label">{ui.decisionLabel}</p>
+              <p className="flagship-row-text">{project.decision}</p>
+            </div>
+          </div>
+        </details>
         <ul className="flagship-stack" aria-label={ui.stackLabel}>
           {project.stack.map((tech) => (
             <li key={tech}>{tech}</li>

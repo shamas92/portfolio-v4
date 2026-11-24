@@ -120,7 +120,7 @@ export const projects: Project[] = [
     contribution:
       "Built the deterministic validator, the five-jurisdiction deposit-cap registry, and the SAM 3.1 photo-evidence flow on a Next.js/TypeScript frontend and a FastAPI/Python backend.",
     decision:
-      "The model flags passages; the validator decides. Deposit math runs in Python, never in the model, so a number the model invents cannot reach the result — at the cost of a second, deterministic pass over every flagged quote. Photos are aligned before overlap is measured, so the IoU compares the same wall instead of two photos taken from different spots.",
+      "The model flags passages; the validator decides. Deposit math runs in Python, never in the model, so a number the model invents cannot reach the result — at the cost of a second, deterministic pass over every flagged quote.",
     role: "Hackathon entry, Team Shamas #4919 (Indie Developer Track)",
     problem: [
       [
@@ -224,7 +224,7 @@ export const projects: Project[] = [
       "Parquet",
     ],
     contribution:
-      "Built the Airflow DAG, the Parquet/MinIO staging, the Kimball star schema, and the duplicate-proof upserts — one DAG, three tasks, four tables.",
+      "Built the Airflow DAG, the Parquet/MinIO staging, the Kimball star schema, and the duplicate-proof upserts.",
     decision:
       "Upserts live in Python (psycopg2 ON CONFLICT), not in stored procedures: a rerun cannot duplicate rows, and the logic stays in the codebase where it can be read and tested. Mailpit alerts when a run fails.",
     role: "Personal project",
@@ -564,6 +564,9 @@ export type UiStrings = {
     showingSome: string;
     earlierSystems: string;
     filterLabel: string;
+    detailsLabel: string;
+    filterBy: string;
+    filterClear: string;
     proof: string;
     iouLabel: string;
     metrics: string;
@@ -671,6 +674,9 @@ export const ui: UiStrings = {
     showingSome: "{n} of {total} projects use {tag}.",
     earlierSystems: "Earlier projects",
     filterLabel: "Filter projects by stack",
+    detailsLabel: "How it was built",
+    filterBy: "Filter by technology",
+    filterClear: "Clear filter",
     proof: "Proof",
     iouLabel: "registered IoU",
     metrics:

@@ -272,20 +272,11 @@ export function SiteHeader() {
     >
       <div className="site-header-inner">
         <div className="header-left">
-          {/* The wordmark words leave the row (display: none)
-              once scrolled, and the monogram is aria-hidden, so
-              without a label this link would have no accessible
-              name while scrolling (axe link-name). The label is
-              the visible wordmark itself — name plus role, in
-              the same words and order — so the accessible name
-              also satisfies label-in-name. The name and role are
-              the same strings the wordmark renders, in both
-              locales. */}
-          <Link
-            className="site-name"
-            href="/"
-            aria-label={`${content.profile.name} ${content.profile.role}`}
-          >
+          {/* The wordmark words are visually hidden (not
+              display: none) once scrolled, so they stay in the
+              accessibility tree and this link keeps its name —
+              see the .site-name-words rule in globals.css. */}
+          <Link className="site-name" href="/">
             <span className="site-monogram" aria-hidden="true">
               SR
             </span>

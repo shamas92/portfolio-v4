@@ -323,11 +323,22 @@ footer[id] {
 /* Scrolled pill: the 768px pill cannot hold the full row
    (wordmark + nav links + Download CV + DE/EN + theme toggle),
    so the wordmark — name and role — leaves the row once
-   scrolled. It uses display: none, so it also leaves the tab
-   order — never visibility: hidden on a focusable control. The
-   SR monogram, nav, Download CV, DE/EN and theme toggle stay. */
+   scrolled. It is visually hidden, not display: none: the words
+   are spans, not focusable controls, and keeping them in the
+   accessibility tree means the wordmark link keeps its
+   accessible name while scrolling. display: none would leave
+   the link nameless (axe link-name), and an aria-label would
+   have to duplicate the wordmark and satisfy label-in-name.
+   The SR monogram, nav, Download CV, DE/EN and theme toggle
+   stay. */
 .site-header.is-scrolled .site-name-words {
-  display: none;
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
 }
 
 /* Scrolled pill, compact spacing: hiding the wordmark and icons

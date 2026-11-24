@@ -1,6 +1,7 @@
 "use client";
 
 import { useContent } from "@/i18n/LocaleProvider";
+import { LocationPanel } from "./LocationPanel";
 
 /** Background: the first-person About as the lead paragraph, then
  *  Experience on the left, Education on the right (two-column
@@ -63,6 +64,8 @@ export function Background() {
           </p>
         </div>
       </div>
+
+      <LocationPanel />
     </>
   );
 }

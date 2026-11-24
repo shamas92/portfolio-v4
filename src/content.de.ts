@@ -23,6 +23,7 @@ export const deContent: SiteContent = {
     name: "Shamas Ur Rehman",
     role: "Softwareentwickler",
     location: "Dresden, Deutschland",
+    address: "Fritz-Löffler-Straße 12, 01069 Dresden",
     claim: "Ich baue Daten- & ML-Systeme.",
     statusLine: "MSc Informatik, TU Dresden",
     email: "shamasrehman249@gmail.com",
@@ -473,6 +474,11 @@ export const deContent: SiteContent = {
       experience: "Berufserfahrung",
       education: "Ausbildung",
       languagesLabel: "Sprachen",
+      location: {
+        eyebrow: "Standort",
+        nowIn: "Jetzt in Dresden",
+        decorativeNote: "Konturlinien — Dekoration, keine Vermessungskarte.",
+      },
     },
     certificates: {
       heading: "Zertifikate",

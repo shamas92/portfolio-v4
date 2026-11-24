@@ -10,6 +10,7 @@ export type Profile = {
   name: string;
   role: string;
   location: string;
+  address: string;
   claim: string;
   statusLine: string;
   email: string;
@@ -22,6 +23,7 @@ export const profile: Profile = {
   name: "Shamas Ur Rehman",
   role: "Software Engineer",
   location: "Dresden, Germany",
+  address: "Fritz-Löffler-Straße 12, 01069 Dresden",
   claim: "I build data & ML systems.",
   statusLine: "MSc Computer Science, TU Dresden",
   email: "shamasrehman249@gmail.com",
@@ -571,6 +573,11 @@ export type UiStrings = {
     experience: string;
     education: string;
     languagesLabel: string;
+    location: {
+      eyebrow: string;
+      nowIn: string;
+      decorativeNote: string;
+    };
   };
   certificates: {
     heading: string;
@@ -714,6 +721,11 @@ export const ui: UiStrings = {
     experience: "Experience",
     education: "Education",
     languagesLabel: "Spoken languages",
+    location: {
+      eyebrow: "Location",
+      nowIn: "Now in Dresden",
+      decorativeNote: "Contour motif — decorative, not a survey map.",
+    },
   },
   certificates: {
     heading: "Certificates",

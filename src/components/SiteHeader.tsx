@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import { profile } from "@/content";
-import { CopyEmailButton } from "./CopyEmailButton";
+import { DownloadCvButton } from "./DownloadCvButton";
 import { ThemeToggle } from "./ThemeToggle";
 
 const sections = [
@@ -90,7 +90,7 @@ export function SiteHeader() {
             <LinkedinIcon />
             <span className="site-action-label">LinkedIn</span>
           </a>
-          <CopyEmailButton />
+          <DownloadCvButton className="copy-btn" />
           <ThemeToggle />
         </div>
       </div>

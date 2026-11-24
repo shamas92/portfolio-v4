@@ -21,14 +21,6 @@ export const profile = {
 /** Missing facts. Rendered as TODO(content) markers in dev, omitted in prod. */
 export const contentTodos = [
   {
-    id: "cv",
-    label: "CV download — the user supplies the CV file",
-  },
-  {
-    id: "availability",
-    label: "Availability line — the user supplies the wording",
-  },
-  {
     id: "oratorpath-demo",
     label: "OratorPath live dashboard URL",
   },

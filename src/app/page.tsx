@@ -1,14 +1,11 @@
 import Link from "next/link";
 import type { CSSProperties } from "react";
 import { profile } from "@/content";
-import { CopyEmailButton } from "@/components/CopyEmailButton";
-import { Todo } from "@/components/Todo";
+import { DownloadCvButton } from "@/components/DownloadCvButton";
 import { Reveal } from "@/components/Reveal";
 import { WorkSection } from "@/components/WorkSection";
 import { Background } from "@/components/Background";
 import { CapabilitiesMatrix } from "@/components/CapabilitiesMatrix";
-
-const isProd = process.env.NODE_ENV === "production";
 
 /** Entrance delays: the h1 never animates (it is the LCP element);
  *  the claim, pill, status line and actions rise in at 40ms steps. */
@@ -34,21 +31,8 @@ export default function Home() {
           <Link className="btn btn-primary" href="#work">
             View Flagship Work
           </Link>
-          <CopyEmailButton />
-          {!isProd && (
-            <>
-              <button type="button" className="btn btn-secondary" disabled>
-                Download CV
-              </button>
-              <Todo label="CV download — the user supplies the CV file" />
-            </>
-          )}
+          <DownloadCvButton className="btn btn-secondary" />
         </div>
-        {!isProd && (
-          <p className="hero-availability">
-            <Todo label="Availability line — the user supplies the wording" />
-          </p>
-        )}
       </header>
 
       <section

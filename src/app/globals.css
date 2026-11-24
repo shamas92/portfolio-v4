@@ -158,13 +158,35 @@ body {
       color 200ms var(--ease);
   }
 
+  /* Every surface cross-fades, not just the ones listed here
+     first: the certificate plates, the location panel and the
+     form fields snapped while the sections around them faded. */
   .section,
   .site-footer,
   .mobile-menu,
   .hero-pill,
   .flagship-visual,
-  .index-row {
+  .index-row,
+  .certificate,
+  .location-panel,
+  .form-field input,
+  .form-field textarea {
     transition:
+      background-color 200ms var(--ease),
+      border-color 200ms var(--ease);
+  }
+
+  /* The flagship card is also a reveal (opacity/transform
+     400ms), and the reveal rule outranks the card's own
+     transition, so the card's surface snapped on a theme change
+     while its visual faded. The surface transition joins the
+     reveal transition here, at a specificity the reveal rule
+     cannot override. Inside no-preference, so reduced motion
+     still gets no transition at all. */
+  .flagship-card.reveal.is-visible {
+    transition:
+      opacity var(--dur-reveal) var(--ease),
+      transform var(--dur-reveal) var(--ease),
       background-color 200ms var(--ease),
       border-color 200ms var(--ease);
   }
@@ -1099,7 +1121,9 @@ footer[id] {
   opacity: 0.35;
 }
 
-.flagship-card,
+/* The index rows dim on the filter; the flagship card's dimming
+   transition lives in the theme cross-fade block
+   (.flagship-card.reveal.is-visible). */
 .index-row {
   transition: opacity var(--dur-med) var(--ease);
 }
@@ -1150,10 +1174,10 @@ footer[id] {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  transition:
-    background-color var(--dur-med) var(--ease),
-    border-color var(--dur-med) var(--ease),
-    opacity var(--dur-med) var(--ease);
+  /* No transition here: the card is a reveal, and the reveal
+     rule outranks this selector, so a transition declared here
+     would be dead. The card's transition lives in the theme
+     cross-fade block (.flagship-card.reveal.is-visible). */
 }
 
 @media (hover: hover) and (pointer: fine) {

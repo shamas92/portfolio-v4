@@ -660,7 +660,7 @@ export const ui: UiStrings = {
   },
   hero: {
     pill: "Dresden · Working-student eligible, 20h/wk",
-    ask: "Looking for a working-student role in data engineering.",
+    ask: "Looking for a working-student role in full-stack software and data engineering.",
     emailMe: "Email me",
     downloadCv: "Download CV",
   },

@@ -276,7 +276,10 @@ export function SiteHeader() {
             <span className="site-monogram" aria-hidden="true">
               SR
             </span>
-            <span className="site-name-text">{content.profile.name}</span>
+            <span className="site-name-words">
+              <span className="site-name-text">{content.profile.name}</span>
+              <span className="site-name-role">{content.profile.role}</span>
+            </span>
           </Link>
         </div>
 

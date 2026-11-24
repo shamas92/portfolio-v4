@@ -451,7 +451,7 @@ export const deContent: SiteContent = {
     },
     hero: {
       pill: "Dresden · Werkstudent, 20 Std./Woche",
-      ask: "Ich suche eine Werkstudentenstelle im Data Engineering.",
+      ask: "Ich suche eine Werkstudentenstelle in Full-Stack- und Datenentwicklung.",
       emailMe: "E-Mail schreiben",
       downloadCv: "Lebenslauf herunterladen",
     },

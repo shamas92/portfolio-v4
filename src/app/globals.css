@@ -242,13 +242,16 @@ footer[id] {
     box-shadow 200ms var(--ease);
 }
 
+/* Scrolled pill: a solid surface. The earlier 80% surface plus
+   blur let page text show through the pill, so the header was
+   hard to read while scrolling. The border and the shadow give
+   the separation now; nothing behind the pill is visible, in
+   either theme. */
 .site-header.is-scrolled .site-header-inner {
   max-width: 768px;
   margin-top: 12px;
   padding: 10px 16px;
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: var(--surface);
   border-color: var(--rule);
   border-radius: 999px;
   box-shadow: var(--shadow);
@@ -256,11 +259,11 @@ footer[id] {
 
 /* Scrolled pill: the 768px pill cannot hold the full row
    (wordmark + nav links + Download CV + DE/EN + theme toggle),
-   so the wordmark text leaves the row once scrolled. It uses
-   display: none, so it also leaves the tab order — never
-   visibility: hidden on a focusable control. The SR monogram,
-   nav, Download CV, DE/EN and theme toggle stay. */
-.site-header.is-scrolled .site-name-text {
+   so the wordmark — name and role — leaves the row once
+   scrolled. It uses display: none, so it also leaves the tab
+   order — never visibility: hidden on a focusable control. The
+   SR monogram, nav, Download CV, DE/EN and theme toggle stay. */
+.site-header.is-scrolled .site-name-words {
   display: none;
 }
 
@@ -315,6 +318,26 @@ footer[id] {
   text-underline-offset: 3px;
 }
 
+/* Wordmark words: name over a small role descriptor
+   ("Software Engineer" / "Softwareentwickler", from
+   profile.role). The descriptor makes the positioning explicit
+   in the header without claiming a title he does not hold. */
+.site-name-words {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  line-height: 1.2;
+}
+
+.site-name-role {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
 .site-monogram {
   display: inline-flex;
   align-items: center;
@@ -331,7 +354,7 @@ footer[id] {
 }
 
 @media (max-width: 399px) {
-  .site-name-text {
+  .site-name-words {
     position: absolute;
     width: 1px;
     height: 1px;

@@ -21,6 +21,9 @@ export function IndexRow({
       <div className="index-main">
         <h3 className="index-title">
           <Link href={`/work/${project.slug}`}>{project.title}</Link>
+          {project.badge && (
+            <span className="index-badge">{project.badge}</span>
+          )}
         </h3>
         <p className="index-scope">{project.scope}</p>
         <ul className="index-stack" aria-label={content.ui.work.stackLabel}>

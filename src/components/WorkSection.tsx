@@ -7,7 +7,7 @@ import { FlagshipCard } from "./FlagshipCard";
 import { IndexRow } from "./IndexRow";
 
 const FLAGSHIPS = ["leaselens", "sales-etl-pipeline", "oratorpath"];
-const TIER2 = ["quality-crm", "upliftu"];
+const TIER2 = ["hitec-cms", "quality-crm", "upliftu"];
 
 /** Pills, in the order the brief names them, then the remaining
  *  project stack tags alphabetically. Counts are the number of
@@ -42,8 +42,7 @@ const ALL_PILLS: Pill[] = ["All", ...PILLS];
 
 /** A project matches a pill when one of its stack tags is the pill,
  *  or the pill is a shorthand for a tag: Docker covers Docker
- *  Compose, SQL covers the SQL databases. C# matches no shipped
- *  project — it appears in Background, and the note says so. */
+ *  Compose, SQL covers the SQL databases. */
 function matches(project: Project, pill: Pill): boolean {
   if (pill === "All") return true;
   const stack = project.stack.map((s) => s.toLowerCase());
@@ -59,7 +58,7 @@ function matches(project: Project, pill: Pill): boolean {
  *  matching cards stay full, the rest dim. No layout library is
  *  needed because nothing reorders — the filter never hides a
  *  project, so the section works with JavaScript disabled too
- *  (the pills simply do not render and all five stay visible). */
+ *  (the pills simply do not render and all six stay visible). */
 export function WorkSection() {
   const content = useContent();
   const projects = content.projects;
@@ -82,10 +81,12 @@ export function WorkSection() {
 
   const note =
     active === "All"
-      ? ui.showingAll
-      : active === "C#"
-        ? ui.cSharpNote
-        : format(ui.showingSome, { n: matched, tag: active });
+      ? format(ui.showingAll, { total: projects.length })
+      : format(ui.showingSome, {
+          n: matched,
+          tag: active,
+          total: projects.length,
+        });
 
   return (
     <>

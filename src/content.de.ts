@@ -236,6 +236,36 @@ export const deContent: SiteContent = {
       todoLinks: [{ label: "Live-Dashboard-URL" }],
     },
     {
+      slug: "hitec-cms",
+      title: "HITEC University Webplattform & Admin-Panel",
+      year: 2025,
+      rowOutcome:
+        "Datenbankgestützte Universitäts-Webmodule, ein internes CMS-Admin-Panel sowie ein integrierter RAG-Support-Chatbot.",
+      rowProof:
+        "Umgesetzt im IT-Praktikum (Mai–Okt 2025); internes Admin-Panel & CMS, Live-Betrieb extern fortgeführt.",
+      stack: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
+      problem: [
+        [
+          "Die Webpräsenz der HITEC University brauchte datenbankgestützte Module und ein internes Admin-Panel für die Inhaltsverwaltung — dazu einen Support-Chatbot, der Fragen aus Universitätsdokumenten beantwortet.",
+        ],
+      ],
+      architecture: [
+        [
+          "Das Backend ist ASP.NET MVC in C# mit einem SQL-Server-Schema hinter den Webmodulen. Das interne Admin-Panel bietet CRUD-Workflows für das Content-Management-System. Ein RAG-Support-Chatbot in Python/Hugging Face beantwortet Fragen auf Basis der Universitätsdokumente.",
+        ],
+      ],
+      outcome: [
+        [
+          "Umgesetzt im IT-Praktikum (Mai–Okt 2025); internes Admin-Panel & CMS, Live-Betrieb extern fortgeführt.",
+        ],
+      ],
+      scope:
+        "Datenbankgestützte Universitäts-Webmodule, ein internes CMS-Admin-Panel sowie ein integrierter RAG-Support-Chatbot.",
+      badge: "Intern / Archiviert",
+      evidenceStatus: "Für dieses Projekt wurden keine Kennzahlen gemessen.",
+      links: [],
+    },
+    {
       slug: "quality-crm",
       title: "Quality Management & Defect-Tracking CRM",
       year: 2024,
@@ -449,7 +479,6 @@ export const deContent: SiteContent = {
     header: {
       githubLabel: "Shamas Ur Rehman auf GitHub",
       linkedinLabel: "Shamas Ur Rehman auf LinkedIn",
-      availabilityTooltip: "Dresden · Werkstudent, 20 Std./Woche",
       menuOpen: "Menü öffnen",
       menuClose: "Menü schließen",
       menuNavLabel: "Bereiche",
@@ -477,13 +506,11 @@ export const deContent: SiteContent = {
     work: {
       heading: "Projekte",
       intro:
-        "Drei zentrale Systeme, jeweils mit Architektur und Nachweis. Zwei frühere Systeme folgen in einem kompakten Index.",
+        "Drei zentrale Systeme, jeweils mit Architektur und Nachweis. Drei frühere Systeme folgen in einem kompakten Index.",
       all: "Alle",
-      showingAll: "Alle 5 Projekte werden angezeigt.",
-      showingSome: "{n} von 5 Projekten verwenden {tag}.",
-      cSharpNote:
-        "Kein veröffentlichtes Projekt führt C# auf. Es steht im Werdegang — beim HITEC-Praktikum und bei Heavy Industries Taxila.",
-      earlierSystems: "Frühere Systeme",
+      showingAll: "Alle {total} Projekte werden angezeigt.",
+      showingSome: "{n} von {total} Projekten verwenden {tag}.",
+      earlierSystems: "Frühere & institutionelle Systeme",
       proof: "Nachweis",
       iouLabel: "registered IoU",
       metrics:
@@ -551,7 +578,7 @@ export const deContent: SiteContent = {
     meta: {
       titleSuffix: "Softwareentwickler, Dresden",
       description:
-        "Persönliches Portfolio von Shamas Ur Rehman, MSc-Informatikstudent an der TU Dresden. Fünf veröffentlichte Systeme, jedes mit seinem Nachweis.",
+        "Persönliches Portfolio von Shamas Ur Rehman, MSc-Informatikstudent an der TU Dresden. Sechs veröffentlichte Systeme, jedes mit seinem Nachweis.",
     },
   },
 };

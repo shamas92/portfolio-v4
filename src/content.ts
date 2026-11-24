@@ -90,6 +90,9 @@ export type Project = {
   /** Plain status line shown in the Evidence block when no figure
    *  was measured for the project. */
   evidenceStatus?: string;
+  /** Badge shown on the tier-2 row, e.g. "Internal / Archived"
+   *  for a project with no public site. */
+  badge?: string;
   links: { label: string; href: string }[];
   /** Links that are known to exist but whose URL is missing. */
   todoLinks?: { label: string }[];
@@ -296,6 +299,36 @@ export const projects: Project[] = [
       "Peer-reviewed publication, 2025: Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, ISSN 3007-3138.",
     links: [],
     todoLinks: [{ label: "Live dashboard URL" }],
+  },
+  {
+    slug: "hitec-cms",
+    title: "HITEC University Web Platform & Admin Panel",
+    year: 2025,
+    rowOutcome:
+      "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
+    rowProof:
+      "Delivered during IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
+    stack: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
+    problem: [
+      [
+        "HITEC University's web presence ran on modules that needed a database behind them, and the internal team needed an admin panel to manage content — plus a support chatbot that could answer questions from university documents.",
+      ],
+    ],
+    architecture: [
+      [
+        "The backend is ASP.NET MVC in C#, with a SQL Server schema behind the web modules. The internal admin panel provides CRUD workflows for the content management system. A RAG support chatbot in Python/Hugging Face answers questions over university documents.",
+      ],
+    ],
+    outcome: [
+      [
+        "Delivered during the IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
+      ],
+    ],
+    scope:
+      "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
+    badge: "Internal / Archived",
+    evidenceStatus: "No figures were measured for this project.",
+    links: [],
   },
   {
     slug: "quality-crm",
@@ -557,7 +590,6 @@ export type UiStrings = {
   header: {
     githubLabel: string;
     linkedinLabel: string;
-    availabilityTooltip: string;
     menuOpen: string;
     menuClose: string;
     menuNavLabel: string;
@@ -579,7 +611,6 @@ export type UiStrings = {
     all: string;
     showingAll: string;
     showingSome: string;
-    cSharpNote: string;
     earlierSystems: string;
     proof: string;
     iouLabel: string;
@@ -646,7 +677,6 @@ export const ui: UiStrings = {
   header: {
     githubLabel: "Shamas Ur Rehman on GitHub",
     linkedinLabel: "Shamas Ur Rehman on LinkedIn",
-    availabilityTooltip: "Dresden · Werkstudent 20h/wk",
     menuOpen: "Open menu",
     menuClose: "Close menu",
     menuNavLabel: "Sections",
@@ -674,13 +704,11 @@ export const ui: UiStrings = {
   work: {
     heading: "Work",
     intro:
-      "Three flagship systems, each with its architecture and its proof. Two earlier systems follow in a compact index.",
+      "Three flagship systems, each with its architecture and its proof. Three earlier systems follow in a compact index.",
     all: "All",
-    showingAll: "Showing all 5 projects.",
-    showingSome: "{n} of 5 projects use {tag}.",
-    cSharpNote:
-      "No shipped project lists C#. It appears in Background — the HITEC internship and Heavy Industries Taxila.",
-    earlierSystems: "Earlier systems",
+    showingAll: "Showing all {total} projects.",
+    showingSome: "{n} of {total} projects use {tag}.",
+    earlierSystems: "Earlier & Institutional Systems",
     proof: "Proof",
     iouLabel: "registered IoU",
     metrics:
@@ -745,7 +773,7 @@ export const ui: UiStrings = {
   meta: {
     titleSuffix: "Software Engineer, Dresden",
     description:
-      "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Five shipped systems, each shown with its proof.",
+      "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Six shipped systems, each shown with its proof.",
   },
 };
 

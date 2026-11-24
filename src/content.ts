@@ -717,7 +717,7 @@ export const ui: UiStrings = {
   },
   certificates: {
     heading: "Certificates",
-    intro: "Four Google certificates, completed {period}.",
+    intro: "Four Google certificates.",
     note: "Per-certificate completion dates are not on record, so none are shown.",
   },
   skills: {

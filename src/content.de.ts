@@ -476,7 +476,7 @@ export const deContent: SiteContent = {
     },
     certificates: {
       heading: "Zertifikate",
-      intro: "Vier Google-Zertifikate, abgeschlossen {period}.",
+      intro: "Vier Google-Zertifikate.",
       note: "Einzelne Abschlussdaten liegen nicht vor, daher werden keine angezeigt.",
     },
     skills: {

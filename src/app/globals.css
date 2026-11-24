@@ -255,16 +255,12 @@ footer[id] {
 }
 
 /* Scrolled pill: the 768px pill cannot hold the full row
-   (wordmark + 4 nav links + GitHub + LinkedIn + Download CV +
-   DE/EN + theme toggle needs ~950–1070px), so the wordmark text
-   and the two social icons leave the row once scrolled. They use
-   display: none, so they also leave the tab order — never
+   (wordmark + nav links + Download CV + DE/EN + theme toggle),
+   so the wordmark text leaves the row once scrolled. It uses
+   display: none, so it also leaves the tab order — never
    visibility: hidden on a focusable control. The SR monogram,
-   nav, Download CV, DE/EN and theme toggle stay. Scoped to
-   .site-actions so the identical icons in the mobile-menu strip
-   are untouched. */
-.site-header.is-scrolled .site-name-text,
-.site-header.is-scrolled .site-actions .site-action-icon {
+   nav, Download CV, DE/EN and theme toggle stay. */
+.site-header.is-scrolled .site-name-text {
   display: none;
 }
 
@@ -412,67 +408,6 @@ footer[id] {
   gap: var(--space-1);
   margin-left: auto;
   flex: none;
-}
-
-.site-action-icon {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 44px;
-  height: 44px;
-  flex: none;
-  color: var(--ink-muted);
-  text-decoration: none;
-  border-radius: 8px;
-  transition:
-    color var(--dur-med) var(--ease),
-    background-color var(--dur-med) var(--ease);
-}
-
-.site-action-icon:hover {
-  color: var(--accent-ink);
-}
-
-.site-action-icon svg {
-  flex: none;
-  width: 18px;
-  height: 18px;
-}
-
-/* ---- Hover tooltips: CSS only, shown on hover or keyboard
-   focus, hover-capable pointers only. Transform/opacity only. ---- */
-.has-tooltip {
-  position: relative;
-}
-
-.has-tooltip .tooltip {
-  position: absolute;
-  top: calc(100% + 8px);
-  left: 50%;
-  transform: translate(-50%, 4px);
-  opacity: 0;
-  pointer-events: none;
-  white-space: nowrap;
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  padding: 4px 10px;
-  box-shadow: var(--shadow);
-  transition:
-    opacity var(--dur-fast) var(--ease),
-    transform var(--dur-fast) var(--ease);
-  z-index: 60;
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .has-tooltip:hover .tooltip,
-  .has-tooltip:focus-visible .tooltip {
-    opacity: 1;
-    transform: translate(-50%, 0);
-  }
 }
 
 /* ---- Language toggle: segmented DE | EN, deliberately
@@ -659,13 +594,28 @@ footer[id] {
   margin-right: auto;
 }
 
+.mobile-menu-email {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+  font-size: var(--text-small);
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.mobile-menu-email:hover {
+  color: var(--accent-ink);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* The mobile layout starts below 1024px, not 768px: the desktop
-   header row (wordmark + 4 nav links + GitHub + LinkedIn +
-   Download CV + DE/EN + theme toggle) does not fit in 768–1023px,
-   so the hamburger menu appears there instead. */
+   header row (wordmark + nav links + Download CV + DE/EN + theme
+   toggle) does not fit in 768–1023px, so the hamburger menu
+   appears there instead. */
 @media (max-width: 1023px) {
   .site-nav,
-  .site-action-icon,
   .header-lang,
   .header-theme {
     display: none;
@@ -725,6 +675,16 @@ footer[id] {
   text-wrap: balance;
   max-width: 26ch;
   color: var(--ink-muted);
+}
+
+/* The ask: the role, the hours, the place, in ink — the one line
+   a recruiter reads after the claim. */
+.hero-ask {
+  margin-top: var(--space-2);
+  font-size: 1.125rem;
+  line-height: 1.5;
+  color: var(--ink);
+  max-width: 60ch;
 }
 
 /* Availability pill: mono, hairline border, accent dot with a
@@ -963,7 +923,7 @@ footer[id] {
 
 /* ---- Flagship cards: three-up editorial grid ---- */
 .flagship-grid {
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
   display: grid;
   gap: var(--space-3);
   grid-template-columns: minmax(0, 1fr);
@@ -975,12 +935,12 @@ footer[id] {
   }
 }
 
-/* Desktop fold pacing: the hero and Work section lose a total of
-   ~104px on 1080p/900p laptop screens, so the Work divider,
-   heading and the first flagship card tops show without scrolling
-   (card tops sit ~878px from the top at 1440x900). This block
-   sits after the rules it overrides, so it wins the cascade.
-   Mobile keeps the generous pacing. */
+/* Desktop fold pacing: the hero and Work section lose a little
+   on 1080p/900p laptop screens. The first flagship card tops now
+   clear the fold because the filter pills sit below the grid,
+   not above it — these trims are the remainder. This block sits
+   after the rules it overrides, so it wins the cascade. Mobile
+   keeps the generous pacing. */
 @media (min-width: 1024px) {
   .hero-actions {
     margin-top: var(--space-3);
@@ -988,18 +948,6 @@ footer[id] {
 
   #work {
     padding-top: var(--space-6);
-  }
-
-  .filter-pills {
-    margin-top: var(--space-3);
-  }
-
-  .filter-note {
-    margin-top: var(--space-1);
-  }
-
-  .flagship-grid {
-    margin-top: var(--space-3);
   }
 }
 
@@ -1085,32 +1033,37 @@ footer[id] {
   }
 }
 
-.flagship-problem {
+.flagship-rows {
+  display: grid;
+  gap: var(--space-2);
+  margin-top: var(--space-1);
+}
+
+.flagship-row-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
+  color: var(--ink-muted);
+  margin-bottom: 2px;
+}
+
+.flagship-row-text {
   font-size: 1rem;
   line-height: 1.6;
   max-width: 60ch;
 }
 
-/* Proof callout: mono "Proof" label in accent, plain-English
-   explanation, then the verified metrics line in mono. */
-.flagship-proof {
+/* The Proof row is the card's verdict: pushed to the bottom of
+   the card, separated by a hairline, with the verified metrics
+   line in mono. */
+.flagship-row--proof {
   margin-top: auto;
   padding-top: var(--space-2);
   border-top: 1px solid var(--rule);
-  display: grid;
-  gap: var(--space-1);
 }
 
-.flagship-proof-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  font-weight: 500;
+.flagship-row--proof .flagship-row-label {
   color: var(--accent-ink);
-}
-
-.flagship-proof-text {
-  font-size: var(--text-small);
-  line-height: 1.55;
 }
 
 .flagship-proof-metrics {
@@ -1177,7 +1130,7 @@ footer[id] {
 
 /* ---- Tier-2 index: compact border-separated rows ---- */
 .index-heading {
-  margin-top: var(--space-6);
+  margin-top: var(--space-4);
   font-family: var(--font-mono);
   font-size: var(--text-mono);
   font-weight: 500;
@@ -1282,32 +1235,33 @@ footer[id] {
   }
 }
 
-/* ---- Capabilities matrix: four columns, plain text, no links ---- */
-.matrix {
+/* ---- Skills: grouped columns, each skill naming the project
+   that used it; the unshipped skills gather under one line ---- */
+.skills-grid {
   margin-top: var(--space-4);
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 }
 
 @media (max-width: 1023px) {
-  .matrix {
+  .skills-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
 
 @media (max-width: 767px) {
-  .matrix {
+  .skills-grid {
     grid-template-columns: minmax(0, 1fr);
   }
 }
 
-.matrix-col {
+.skills-col {
   border-top: 2px solid var(--ink);
   padding-top: var(--space-2);
 }
 
-.matrix-col-head {
+.skills-col-head {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: 1.125rem;
@@ -1316,19 +1270,49 @@ footer[id] {
   margin-bottom: var(--space-1);
 }
 
-.matrix-list {
+.skills-list {
   list-style: none;
   padding: 0;
 }
 
-.matrix-list li {
+.skills-list li {
   font-size: var(--text-small);
   line-height: 1.55;
   padding-block: 6px;
   border-top: 1px solid var(--rule);
 }
 
+.skills-name {
+  font-weight: 600;
+}
+
+.skills-used {
+  color: var(--ink-muted);
+}
+
+.skills-studied {
+  margin-top: var(--space-4);
+  font-size: var(--text-small);
+  line-height: 1.6;
+  color: var(--ink-muted);
+  max-width: 68ch;
+}
+
+.skills-studied-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
+  color: var(--ink);
+}
+
 /* ---- Background: Experience left, Education right ---- */
+.about-lead {
+  margin-top: var(--space-2);
+  font-size: var(--text-body);
+  line-height: 1.65;
+  max-width: 68ch;
+}
+
 .bg-grid {
   margin-top: var(--space-4);
   display: grid;
@@ -1382,7 +1366,20 @@ footer[id] {
   line-height: 1.6;
 }
 
-.meta-group-items .meta-period {
+.meta-cert-list {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.meta-cert-list li {
+  font-size: var(--text-small);
+  line-height: 1.6;
+}
+
+.meta-period {
+  margin-top: var(--space-1);
   font-family: var(--font-mono);
   font-size: var(--text-mono);
   color: var(--ink-muted);
@@ -1559,6 +1556,24 @@ footer[id] {
   font-family: var(--font-mono);
   font-size: var(--text-mono);
   color: var(--ink-muted);
+}
+
+.case-role {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--ink-muted);
+}
+
+.case-role-label {
+  color: var(--ink);
+  font-weight: 500;
+}
+
+.case-text {
+  font-size: var(--text-body);
+  line-height: 1.6;
+  max-width: 68ch;
 }
 
 .case-back {
@@ -1797,6 +1812,9 @@ footer[id] {
   padding: var(--space-1) var(--space-2);
   cursor: pointer;
   white-space: nowrap;
+  /* A button, not a link: the global anchor underline must not
+     reach the header Download CV pill. */
+  text-decoration: none;
   transition:
     background-color var(--dur-med) var(--ease),
     border-color var(--dur-med) var(--ease),
@@ -1963,7 +1981,6 @@ footer[id] {
 
   .site-header-inner,
   .site-nav a::before,
-  .has-tooltip .tooltip,
   .menu-line,
   .copy-icon-envelope,
   .copy-icon-check,

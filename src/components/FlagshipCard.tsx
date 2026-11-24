@@ -62,7 +62,7 @@ export function FlagshipCard({
             <p className="flagship-row-label">{ui.decisionLabel}</p>
             <p className="flagship-row-text">{project.decision}</p>
           </div>
-          <div className="flagship-row">
+          <div className="flagship-row flagship-row--proof">
             <p className="flagship-row-label">{ui.proof}</p>
             <p className="flagship-row-text">{project.proofCallout}</p>
             {project.slug === "leaselens" &&

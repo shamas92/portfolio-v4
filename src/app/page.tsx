@@ -1,19 +1,23 @@
 "use client";
 
-import Link from "next/link";
 import type { CSSProperties } from "react";
 import { useContent } from "@/i18n/LocaleProvider";
-import { DownloadCvButton } from "@/components/DownloadCvButton";
 import { Reveal } from "@/components/Reveal";
 import { WorkSection } from "@/components/WorkSection";
 import { Background } from "@/components/Background";
-import { CapabilitiesMatrix } from "@/components/CapabilitiesMatrix";
+import { SkillsSection } from "@/components/SkillsSection";
 
 /** Entrance delays: the h1 never animates (it is the LCP element);
- *  the claim, pill, status line and actions rise in at 40ms steps. */
+ *  the claim, ask, pill, status line and actions rise in at 40ms steps. */
 const delay = (ms: number) =>
   ({ "--entrance-delay": `${ms}ms` }) as CSSProperties;
 
+/** Home: hero (role, focus, location, availability, one primary
+ *  action), Featured Work, Earlier projects, Background (with the
+ *  first-person About as its lead), Skills, Contact (the footer).
+ *  The work is the first thing after the hero; the filter pills
+ *  sit below the flagship row, not above it, so the first project
+ *  is visible in the first viewport. */
 export default function Home() {
   const content = useContent();
   const ui = content.ui;
@@ -25,18 +29,23 @@ export default function Home() {
         <p className="hero-claim" data-entrance style={delay(40)}>
           {content.profile.claim}
         </p>
-        <p className="hero-pill" data-entrance style={delay(80)}>
+        <p className="hero-ask" data-entrance style={delay(80)}>
+          {ui.hero.ask}
+        </p>
+        <p className="hero-pill" data-entrance style={delay(120)}>
           <span className="status-dot" aria-hidden="true" />
           {ui.hero.pill}
         </p>
-        <p className="hero-status" data-entrance style={delay(120)}>
+        <p className="hero-status" data-entrance style={delay(160)}>
           {content.profile.statusLine}
         </p>
-        <div className="hero-actions" data-entrance style={delay(160)}>
-          <Link className="btn btn-primary" href="#work">
-            {ui.hero.viewWork}
-          </Link>
-          <DownloadCvButton className="btn btn-secondary" />
+        <div className="hero-actions" data-entrance style={delay(200)}>
+          <a
+            className="btn btn-primary"
+            href={`mailto:${content.profile.email}`}
+          >
+            {ui.hero.emailMe}
+          </a>
         </div>
       </header>
 
@@ -71,17 +80,17 @@ export default function Home() {
 
       <section
         className="section"
-        id="stack"
-        aria-labelledby="stack-head"
+        id="skills"
+        aria-labelledby="skills-head"
         tabIndex={-1}
       >
         <Reveal>
-          <h2 className="section-head" id="stack-head">
-            {ui.stack.heading}
+          <h2 className="section-head" id="skills-head">
+            {ui.skills.heading}
           </h2>
-          <p className="section-intro">{ui.stack.intro}</p>
+          <p className="section-intro">{ui.skills.intro}</p>
         </Reveal>
-        <CapabilitiesMatrix />
+        <SkillsSection />
       </section>
     </div>
   );

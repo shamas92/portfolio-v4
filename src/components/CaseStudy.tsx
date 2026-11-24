@@ -5,7 +5,6 @@ import Link from "next/link";
 import { Newsreader } from "next/font/google";
 import { useContent } from "@/i18n/LocaleProvider";
 import { Annotated } from "./ProofNote";
-import { Todo } from "./Todo";
 
 /* The italic serif for quotes and citations. Loaded only on case
    pages, so the home page never pays for it. */
@@ -17,12 +16,16 @@ const newsreaderItalic = Newsreader({
   variable: "--font-newsreader-italic",
 });
 
-/** One case-study page: the same six blocks for every project —
- *  Problem, Architecture, Outcome, Evidence, Stack, Links.
- *  A block is omitted when the project has no verified content for
- *  it; projects with no verified figure have no Evidence block at
- *  all (user decision 2026-11-24). Sections stack plainly with
- *  anchor ids; the header nav covers site navigation (no rail).
+/** One case-study page: the same blocks for every project —
+ *  Problem, Contribution, Decision, Result, Evidence, Stack,
+ *  Links. Contribution and Decision are one or two sentences each
+ *  (the same text as the flagship card); Result is the outcome
+ *  prose. A block is omitted when the project has no verified
+ *  content for it; projects with no verified figure have no
+ *  Evidence block at all (user decision 2026-11-24). The Links
+ *  block is omitted when the project has no links, so no bare
+ *  heading ever renders. Sections stack plainly with anchor ids;
+ *  the header nav covers site navigation (no rail).
  *  The page looks the project up in the current locale's content
  *  by slug — the server page already validated the slug, so the
  *  lookup always succeeds. */
@@ -48,6 +51,9 @@ export function CaseStudy({ slug }: { slug: string }) {
         <p className="case-meta">
           {project.year} — {project.stack.join(", ")}
         </p>
+        <p className="case-role">
+          <span className="case-role-label">{ui.role}</span> — {project.role}
+        </p>
       </div>
 
       <section
@@ -66,29 +72,37 @@ export function CaseStudy({ slug }: { slug: string }) {
 
       <section
         className="case-block"
-        id="architecture"
-        aria-labelledby="architecture-head"
+        id="contribution"
+        aria-labelledby="contribution-head"
       >
-        <h2 className="case-block-head" id="architecture-head">
-          {ui.architecture}
+        <h2 className="case-block-head" id="contribution-head">
+          {ui.contribution}
         </h2>
-        <Annotated
-          prose={project.architecture}
-          idPrefix={`${project.slug}-architecture`}
-        />
+        <p className="case-text">{project.contribution}</p>
       </section>
 
       <section
         className="case-block"
-        id="outcome"
-        aria-labelledby="outcome-head"
+        id="decision"
+        aria-labelledby="decision-head"
       >
-        <h2 className="case-block-head" id="outcome-head">
-          {ui.outcome}
+        <h2 className="case-block-head" id="decision-head">
+          {ui.decision}
+        </h2>
+        <p className="case-text">{project.decision}</p>
+      </section>
+
+      <section
+        className="case-block"
+        id="result"
+        aria-labelledby="result-head"
+      >
+        <h2 className="case-block-head" id="result-head">
+          {ui.result}
         </h2>
         <Annotated
-          prose={project.outcome}
-          idPrefix={`${project.slug}-outcome`}
+          prose={project.result}
+          idPrefix={`${project.slug}-result`}
         />
       </section>
 
@@ -177,7 +191,7 @@ export function CaseStudy({ slug }: { slug: string }) {
         </ul>
       </section>
 
-      {(project.links.length > 0 || project.todoLinks) && (
+      {project.links.length > 0 && (
         <section className="case-block" id="links" aria-labelledby="links-head">
           <h2 className="case-block-head" id="links-head">
             {ui.links}
@@ -193,9 +207,6 @@ export function CaseStudy({ slug }: { slug: string }) {
               >
                 {l.label}
               </a>
-            ))}
-            {project.todoLinks?.map((t) => (
-              <Todo key={t.label} label={t.label} />
             ))}
           </div>
         </section>

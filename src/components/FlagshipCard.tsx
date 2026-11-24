@@ -12,11 +12,13 @@ const assets: Record<string, React.ComponentType> = {
   oratorpath: OratorPathAsset,
 };
 
-/** One flagship card: SVG visual, year, title link, one-sentence
- *  problem, plain-English proof callout, mono stack tags. The
- *  LeaseLens metrics line keeps the IoU as alignment accuracy on
- *  the v7 demo pairing and the 197 tests as a separate release
- *  fact, never conflated. */
+/** One featured card: SVG visual, year, title link, and four
+ *  labelled rows — Problem, Built (contribution), Decision, Proof —
+ *  then the mono stack tags. The rows are the card form of the case
+ *  page (Problem / Contribution / Decision / Result), so the card
+ *  and the page never disagree. The LeaseLens metrics line keeps
+ *  the IoU as alignment accuracy on the v7 demo pairing and the
+ *  197 tests as a separate release fact, never conflated. */
 export function FlagshipCard({
   project,
   dimmed,
@@ -45,26 +47,41 @@ export function FlagshipCard({
             </span>
           </Link>
         </h3>
-        <p className="flagship-problem">{project.rowOutcome}</p>
-        <div className="flagship-proof">
-          <p className="flagship-proof-label">{ui.proof}</p>
-          <p className="flagship-proof-text">{project.proofCallout}</p>
-          {project.slug === "leaselens" &&
-            project.figure &&
-            project.tests &&
-            project.version && (
-              <p className="flagship-proof-metrics">
-                <span className="proof-badge">
-                  {project.figure.value} {ui.iouLabel}
-                </span>
-                {format(ui.metrics, {
-                  version: project.version,
-                  total: project.tests.total,
-                  backend: project.tests.backend,
-                  frontend: project.tests.frontend,
-                })}
-              </p>
-            )}
+        <div className="flagship-rows">
+          <div className="flagship-row">
+            <p className="flagship-row-label">
+              {content.ui.caseStudy.problem}
+            </p>
+            <p className="flagship-row-text">{project.rowOutcome}</p>
+          </div>
+          <div className="flagship-row">
+            <p className="flagship-row-label">{ui.builtLabel}</p>
+            <p className="flagship-row-text">{project.contribution}</p>
+          </div>
+          <div className="flagship-row">
+            <p className="flagship-row-label">{ui.decisionLabel}</p>
+            <p className="flagship-row-text">{project.decision}</p>
+          </div>
+          <div className="flagship-row">
+            <p className="flagship-row-label">{ui.proof}</p>
+            <p className="flagship-row-text">{project.proofCallout}</p>
+            {project.slug === "leaselens" &&
+              project.figure &&
+              project.tests &&
+              project.version && (
+                <p className="flagship-proof-metrics">
+                  <span className="proof-badge">
+                    {project.figure.value} {ui.iouLabel}
+                  </span>
+                  {format(ui.metrics, {
+                    version: project.version,
+                    total: project.tests.total,
+                    backend: project.tests.backend,
+                    frontend: project.tests.frontend,
+                  })}
+                </p>
+              )}
+          </div>
         </div>
         <ul className="flagship-stack" aria-label={ui.stackLabel}>
           {project.stack.map((tech) => (

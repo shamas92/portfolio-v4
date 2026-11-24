@@ -58,7 +58,10 @@ function matches(project: Project, pill: Pill): boolean {
  *  matching cards stay full, the rest dim. No layout library is
  *  needed because nothing reorders — the filter never hides a
  *  project, so the section works with JavaScript disabled too
- *  (the pills simply do not render and all six stay visible). */
+ *  (the pills simply do not render and all six stay visible).
+ *  Order is deliberate: the featured grid comes first so the work
+ *  is visible in the first viewport, and the filter pills sit
+ *  below it, before the earlier-projects index. */
 export function WorkSection() {
   const content = useContent();
   const projects = content.projects;
@@ -90,10 +93,21 @@ export function WorkSection() {
 
   return (
     <>
+      <h3 className="index-heading">{ui.featured}</h3>
+      <div className="flagship-grid">
+        {flagships.map((project) => (
+          <FlagshipCard
+            key={project.slug}
+            project={project}
+            dimmed={!matches(project, active)}
+          />
+        ))}
+      </div>
+
       <div
         className="filter-pills"
         role="group"
-        aria-label="Filter projects by stack"
+        aria-label={ui.filterLabel}
       >
         {ALL_PILLS.map((pill) => (
           <button
@@ -110,16 +124,6 @@ export function WorkSection() {
       <p className="filter-note" aria-live="polite">
         {note}
       </p>
-
-      <div className="flagship-grid">
-        {flagships.map((project) => (
-          <FlagshipCard
-            key={project.slug}
-            project={project}
-            dimmed={!matches(project, active)}
-          />
-        ))}
-      </div>
 
       <h3 className="index-heading">{ui.earlierSystems}</h3>
       <ul className="index-list">

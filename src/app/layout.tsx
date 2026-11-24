@@ -58,7 +58,7 @@ export const metadata: Metadata = {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Shamas Ur Rehman — I build data & ML systems, and prove every claim on this page.",
+        alt: "Shamas Ur Rehman — I build data & ML systems. Looking for a working-student role in data engineering, 20 hours a week, in Dresden.",
       },
     ],
   },

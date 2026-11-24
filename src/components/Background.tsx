@@ -2,11 +2,13 @@
 
 import { useContent } from "@/i18n/LocaleProvider";
 
-/** Background: Experience on the left, Education on the right
- *  (two-column desktop grid), with spoken languages and
- *  certificates compressed into a horizontal metadata strip
- *  underneath. Every fact is rendered from the locale content
- *  verbatim. */
+/** Background: the first-person About as the lead paragraph, then
+ *  Experience on the left, Education on the right (two-column
+ *  desktop grid), with spoken languages and certificates in a
+ *  metadata strip underneath. Certificates are four short lines
+ *  with one shared period — no per-certificate date is verified,
+ *  so none is invented. Every fact is rendered from the locale
+ *  content verbatim. */
 export function Background() {
   const content = useContent();
   const background = content.background;
@@ -14,6 +16,8 @@ export function Background() {
 
   return (
     <>
+      <p className="about-lead">{background.about}</p>
+
       <div className="bg-grid">
         <div>
           <h3 className="bg-col-head">{ui.experience}</h3>
@@ -61,11 +65,13 @@ export function Background() {
         </div>
         <div>
           <p className="meta-group-label">{ui.certificatesLabel}</p>
-          <p className="meta-group-items">
-            {background.certifications.items.join(" · ")}{" "}
-            <span className="meta-period">
-              · {background.certifications.period}
-            </span>
+          <ul className="meta-cert-list">
+            {background.certifications.items.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+          <p className="meta-period">
+            {background.certifications.period}
           </p>
         </div>
       </div>

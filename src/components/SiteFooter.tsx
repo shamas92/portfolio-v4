@@ -2,6 +2,7 @@
 
 import { useContent } from "@/i18n/LocaleProvider";
 import { CopyEmailButton } from "./CopyEmailButton";
+import { DownloadCvButton } from "./DownloadCvButton";
 
 export function SiteFooter() {
   const content = useContent();
@@ -24,6 +25,7 @@ export function SiteFooter() {
             LinkedIn
           </a>
           <CopyEmailButton />
+          <DownloadCvButton className="btn btn-secondary" />
         </div>
         <p className="footer-line">{ui.closing}</p>
         <p className="footer-eligibility">{profile.workEligibility}</p>

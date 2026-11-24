@@ -1,6 +1,7 @@
 "use client";
 
 import type { CSSProperties } from "react";
+import { useEffect, useRef } from "react";
 import { useContent } from "@/i18n/LocaleProvider";
 import { Reveal } from "@/components/Reveal";
 import { WorkSection } from "@/components/WorkSection";
@@ -21,10 +22,42 @@ const delay = (ms: number) =>
 export default function Home() {
   const content = useContent();
   const ui = content.ui;
+  const heroRef = useRef<HTMLElement>(null);
+
+  /* Hero scroll transformation: as the reader scrolls the first
+   *  320px, the hero recedes — the name scales down slightly and
+   *  the whole hero drifts up a touch. The progress is a CSS
+   *  variable on the hero element; the CSS applies it as
+   *  transform only, so there is no layout shift and the fold
+   *  does not move. A passive rAF scroll listener, skipped under
+   *  reduced motion and without JavaScript (the variable stays
+   *  0). The effect reverses on scroll-up. */
+  useEffect(() => {
+    const hero = heroRef.current;
+    if (!hero) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
+      return;
+    let raf = 0;
+    const update = () => {
+      raf = 0;
+      const progress = Math.min(window.scrollY / 320, 1);
+      hero.style.setProperty("--hero-progress", progress.toFixed(3));
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+    };
+  }, []);
 
   return (
     <div className="page">
-      <header className="hero">
+      <header className="hero" ref={heroRef}>
         <h1 className="hero-name">{content.profile.name}</h1>
         <p className="hero-claim" data-entrance style={delay(40)}>
           {content.profile.claim}

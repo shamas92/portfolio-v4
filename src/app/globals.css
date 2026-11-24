@@ -789,6 +789,24 @@ footer[id] {
   font-size: var(--text-small);
 }
 
+/* ---- Hero scroll transformation: the hero recedes as the
+   reader scrolls the first 320px — the name scales down a
+   touch and the whole hero drifts up. --hero-progress is set
+   from page.tsx (0 at the top, 1 at 320px). Transform only, so
+   there is no layout shift and the fold does not move; the
+   effect reverses on scroll-up. Without JavaScript the variable
+   stays 0. Under reduced motion the rules are overridden to
+   none (see the reduced-motion block). */
+.hero {
+  --hero-progress: 0;
+  transform: translateY(calc(var(--hero-progress, 0) * -14px));
+}
+
+.hero-name {
+  transform: scale(calc(1 - var(--hero-progress, 0) * 0.05));
+  transform-origin: left top;
+}
+
 /* ---- Buttons and links: plain verbs ---- */
 .btn {
   display: inline-flex;
@@ -1084,6 +1102,17 @@ footer[id] {
   display: block;
   width: 100%;
   height: auto;
+}
+
+/* The visuals are schematic diagrams, not product screenshots:
+   the caption says so plainly, in the same mono voice as the
+   other metadata. */
+.flagship-visual-caption {
+  margin-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1.5;
+  color: var(--ink-muted);
 }
 
 .flagship-body {
@@ -2125,6 +2154,13 @@ footer[id] {
   .reveal,
   .reveal.is-visible {
     opacity: 1;
+    transform: none;
+  }
+
+  /* The hero scroll transformation is transform-only, so it
+     is switched off here too. */
+  .hero,
+  .hero-name {
     transform: none;
   }
 

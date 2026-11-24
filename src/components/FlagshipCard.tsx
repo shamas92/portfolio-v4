@@ -12,6 +12,15 @@ const assets: Record<string, React.ComponentType> = {
   oratorpath: OratorPathAsset,
 };
 
+/* Card visual captions live in the locale content, keyed by the
+   asset (not the slug): the ETL and OratorPath assets have
+   shorter keys than their project slugs. */
+const assetKeys: Record<string, "leaselens" | "etl" | "orator"> = {
+  leaselens: "leaselens",
+  "sales-etl-pipeline": "etl",
+  oratorpath: "orator",
+};
+
 /** One featured card: SVG visual, year, title link, a one-sentence
  *  summary, and the proof — visible without interaction. The
  *  contribution and the decision live in a native <details>
@@ -37,13 +46,21 @@ export function FlagshipCard({
   const content = useContent();
   const ui = content.ui.work;
   const Asset = assets[project.slug];
+  const assetKey = assetKeys[project.slug];
 
   return (
     <article
       ref={ref}
       className={`flagship-card ${className}${dimmed ? " work-dim" : ""}`}
     >
-      <div className="flagship-visual">{Asset ? <Asset /> : null}</div>
+      <div className="flagship-visual">
+        {Asset ? <Asset /> : null}
+        {assetKey && (
+          <p className="flagship-visual-caption">
+            {content.ui.assets[assetKey].caption}
+          </p>
+        )}
+      </div>
       <div className="flagship-body">
         <p className="flagship-year">{project.year}</p>
         <h3 className="flagship-title">

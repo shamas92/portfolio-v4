@@ -174,9 +174,9 @@ export const deContent: SiteContent = {
       proofCallout:
         "Ein DAG, drei Tasks, vier Tabellen: dim_date, dim_customer, dim_product, fact_sales.",
       image: {
-        src: "/images/etl-diagram.png",
-        width: 1728,
-        height: 1440,
+        src: "/images/etl-diagram.webp",
+        width: 1440,
+        height: 1200,
         alt: "Diagramm der ETL-Pipeline: ein DAG, drei Tasks, vier Tabellen",
         caption:
           "Pipeline-Diagramm: drei Tasks, vier Tabellen. Airflow TaskFlow, Parquet/MinIO-Staging, PostgreSQL.",
@@ -518,6 +518,8 @@ export const deContent: SiteContent = {
         moveIn: "EINZUG",
         moveOut: "AUSZUG",
         iou: "86.1% IoU",
+        caption:
+          "Schema der Registrierungsprüfung — Illustration, kein Produkt-Screenshot.",
       },
       etl: {
         ariaLabel:
@@ -528,6 +530,7 @@ export const deContent: SiteContent = {
         airflow: "Airflow",
         tasks: "Tasks",
         footer: "1 DAG · 3 TASKS · 4 TABELLEN",
+        caption: "Pipeline-Diagramm — schematisch, kein Produkt-Screenshot.",
       },
       orator: {
         ariaLabel:
@@ -537,6 +540,7 @@ export const deContent: SiteContent = {
         pace: "TEMPO",
         fillerWords: "FÜLLWÖRTER",
         clarity: "KLARHEIT",
+        caption: "Sprachmetriken — schematische Balken, keine Messwerte.",
       },
     },
     meta: {

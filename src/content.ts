@@ -579,7 +579,11 @@ export type UiStrings = {
     experience: string;
     education: string;
     languagesLabel: string;
-    certificatesLabel: string;
+  };
+  certificates: {
+    heading: string;
+    intro: string;
+    note: string;
   };
   skills: {
     heading: string;
@@ -693,7 +697,11 @@ export const ui: UiStrings = {
     experience: "Experience",
     education: "Education",
     languagesLabel: "Spoken languages",
-    certificatesLabel: "Certificates",
+  },
+  certificates: {
+    heading: "Certificates",
+    intro: "Four Google certificates, completed {period}.",
+    note: "Per-certificate completion dates are not on record, so none are shown.",
   },
   skills: {
     heading: "Skills",

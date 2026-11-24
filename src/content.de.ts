@@ -481,7 +481,11 @@ export const deContent: SiteContent = {
       experience: "Berufserfahrung",
       education: "Ausbildung",
       languagesLabel: "Sprachen",
-      certificatesLabel: "Zertifikate",
+    },
+    certificates: {
+      heading: "Zertifikate",
+      intro: "Vier Google-Zertifikate, abgeschlossen {period}.",
+      note: "Einzelne Abschlussdaten liegen nicht vor, daher werden keine angezeigt.",
     },
     skills: {
       heading: "Skills",

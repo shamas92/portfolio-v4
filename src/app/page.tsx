@@ -7,6 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { WorkSection } from "@/components/WorkSection";
 import { Background } from "@/components/Background";
 import { SkillsSection } from "@/components/SkillsSection";
+import { CertificatesSection } from "@/components/CertificatesSection";
 
 /** Entrance delays: the h1 never animates (it is the LCP element);
  *  the claim, ask, pill, status line and actions rise in at 40ms steps. */
@@ -15,10 +16,10 @@ const delay = (ms: number) =>
 
 /** Home: hero (role, focus, location, availability, one primary
  *  action), Featured Work, Earlier projects, Background (with the
- *  first-person About as its lead), Skills, Contact (the footer).
- *  The work is the first thing after the hero; the filter pills
- *  sit below the flagship row, not above it, so the first project
- *  is visible in the first viewport. */
+ *  first-person About as its lead), Skills, Certificates,
+ *  Contact (the footer). The work is the first thing after the
+ *  hero; the filter pills sit below the flagship row, not above
+ *  it, so the first project is visible in the first viewport. */
 export default function Home() {
   const content = useContent();
   const ui = content.ui;
@@ -124,6 +125,20 @@ export default function Home() {
           <p className="section-intro">{ui.skills.intro}</p>
         </Reveal>
         <SkillsSection />
+      </section>
+
+      <section
+        className="section"
+        id="certificates"
+        aria-labelledby="certificates-head"
+        tabIndex={-1}
+      >
+        <Reveal>
+          <h2 className="section-head" id="certificates-head">
+            {ui.certificates.heading}
+          </h2>
+        </Reveal>
+        <CertificatesSection />
       </section>
     </div>
   );

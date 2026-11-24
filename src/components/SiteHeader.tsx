@@ -272,7 +272,16 @@ export function SiteHeader() {
     >
       <div className="site-header-inner">
         <div className="header-left">
-          <Link className="site-name" href="/">
+          {/* The wordmark words leave the row (display: none)
+              once scrolled, and the monogram is aria-hidden, so
+              without a label this link would have no accessible
+              name while scrolling (axe link-name). The name is
+              the same in both locales. */}
+          <Link
+            className="site-name"
+            href="/"
+            aria-label={content.profile.name}
+          >
             <span className="site-monogram" aria-hidden="true">
               SR
             </span>

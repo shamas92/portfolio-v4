@@ -853,14 +853,14 @@ footer[id] {
 }
 
 /* ---- Hero scroll transformation: the hero expands as the
-   reader scrolls the first 240px — the name grows toward the
+   reader scrolls the first 160px — the name grows toward the
    reader (scale 1 → 1.22, anchored at its baseline so it grows
    upward into the hero's top padding and never collides with
    the claim below it) while the supporting lines drift up a
    touch and fade only to 0.92, so the role, the ask, the
    location pill and the action stay legible throughout.
    --hero-progress is set from page.tsx (0 at the top, 1 at
-   240px). Transform/opacity only, so there is no layout shift
+   160px). Transform/opacity only, so there is no layout shift
    and the fold does not move; the effect reverses on scroll-up.
    Without JavaScript the variable stays 0. Under reduced
    motion the rules are overridden to none (see the

@@ -26,7 +26,7 @@ export default function Home() {
   const heroRef = useRef<HTMLElement>(null);
 
   /* Hero scroll transformation: as the reader scrolls the first
-   *  240px, the hero expands — the name grows toward the reader
+   *  160px, the hero expands — the name grows toward the reader
    *  (scale 1 → 1.22, anchored at its baseline so it grows
    *  upward into the hero's top padding and never collides with
    *  the claim below it) while the supporting lines drift up a
@@ -37,9 +37,12 @@ export default function Home() {
    *  no layout shift and the fold does not move. A passive rAF
    *  scroll listener, skipped under reduced motion and without
    *  JavaScript (the variable stays 0). The effect reverses on
-   *  scroll-up. The range is 240px, not the full hero height:
+   *  scroll-up. The range is 160px, not the full hero height:
    *  the name is off-screen past ~150px of scroll, so the growth
-   *  has to happen while it is still in view. */
+   *  has to complete while it is still in view — at 240px the
+   *  full 1.22× was never seen, because the name had already
+   *  left, and the expansion read as a slight zoom instead of a
+   *  deliberate effect. */
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
@@ -47,7 +50,7 @@ export default function Home() {
     let raf = 0;
     const update = () => {
       raf = 0;
-      const progress = Math.min(window.scrollY / 240, 1);
+      const progress = Math.min(window.scrollY / 160, 1);
       hero.style.setProperty("--hero-progress", progress.toFixed(3));
     };
     const onScroll = () => {

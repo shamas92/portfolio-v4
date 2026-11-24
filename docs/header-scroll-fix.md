@@ -143,4 +143,12 @@ left alone.
 
 ## Merge / deploy record
 
-(To be filled in after the merge, push and deploy.)
+MERGED + DEPLOYED LIVE 2026-11-24 ~18:18 CET: branch fast-forward
+merged to main (383e49b), pushed to origin/main, deployed via Vercel
+CLI (deployment `portfolio-v4-ns31ev4jd`). Live verified by curl (the
+QA Chrome cannot reach the live URL): home + all 6 case pages 200; the
+served stylesheet contains the 1023px breakpoint, the scrolled-state
+hiding rule, `column-gap:12px` and the scrolled nav-padding rule;
+oxide red `#9a3324` and Newsreader intact. The live deployment serves
+383e49b; this record commit changes only the note text, so no redeploy
+was needed.

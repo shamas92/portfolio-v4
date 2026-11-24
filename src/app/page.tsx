@@ -36,8 +36,7 @@ export default function Home() {
   useEffect(() => {
     const hero = heroRef.current;
     if (!hero) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches)
-      return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0;
     const update = () => {
       raf = 0;

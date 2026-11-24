@@ -31,7 +31,7 @@ const SECTION_IDS = ["work", "background", "stack", "contact"] as const;
  *  flush container at scroll top and morphs into a centered
  *  floating pill once the user scrolls past 24px. Three zones —
  *  wordmark, sliding-pill section nav, utility cluster — and a
- *  mobile dropdown menu below 768px.
+ *  mobile dropdown menu below 1024px.
  *
  *  The header is fixed, so the layout reserves its at-top height
  *  with a .header-spacer div; the morph never moves page content.

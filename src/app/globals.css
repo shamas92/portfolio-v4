@@ -254,6 +254,42 @@ footer[id] {
   box-shadow: var(--shadow);
 }
 
+/* Scrolled pill: the 768px pill cannot hold the full row
+   (wordmark + 4 nav links + GitHub + LinkedIn + Download CV +
+   DE/EN + theme toggle needs ~950–1070px), so the wordmark text
+   and the two social icons leave the row once scrolled. They use
+   display: none, so they also leave the tab order — never
+   visibility: hidden on a focusable control. The SR monogram,
+   nav, Download CV, DE/EN and theme toggle stay. Scoped to
+   .site-actions so the identical icons in the mobile-menu strip
+   are untouched. */
+.site-header.is-scrolled .site-name-text,
+.site-header.is-scrolled .site-actions .site-action-icon {
+  display: none;
+}
+
+/* Scrolled pill, compact spacing: hiding the wordmark and icons
+   is not quite enough in German — "Lebenslauf herunterladen"
+   (207px) against "Download CV" (126px) leaves the row ~52px
+   over the pill. The pill keeps its 768px width, so the scrolled
+   state tightens its own spacing instead: narrower inner padding
+   (12px, matching the mobile scrolled padding), tighter zone gaps,
+   narrower nav-link padding, tighter actions gap. No control
+   shrinks below its 44px tap target; the at-top layout is
+   untouched. */
+.site-header.is-scrolled .site-header-inner {
+  padding-inline: 12px;
+  column-gap: 12px;
+}
+
+.site-header.is-scrolled .site-nav a {
+  padding-inline: 8px;
+}
+
+.site-header.is-scrolled .site-actions {
+  gap: 4px;
+}
+
 /* ---- Header left: monogram + wordmark ---- */
 .header-left {
   display: flex;
@@ -623,7 +659,11 @@ footer[id] {
   margin-right: auto;
 }
 
-@media (max-width: 767px) {
+/* The mobile layout starts below 1024px, not 768px: the desktop
+   header row (wordmark + 4 nav links + GitHub + LinkedIn +
+   Download CV + DE/EN + theme toggle) does not fit in 768–1023px,
+   so the hamburger menu appears there instead. */
+@media (max-width: 1023px) {
   .site-nav,
   .site-action-icon,
   .header-lang,

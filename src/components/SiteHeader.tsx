@@ -39,7 +39,7 @@ export function SiteHeader() {
   const sections = [
     { id: "work", label: ui.nav.work, href: "/#work" },
     { id: "background", label: ui.nav.background, href: "/#background" },
-    { id: "contact", label: ui.nav.contact, href: "#contact" },
+    { id: "contact", label: ui.nav.contact, href: "/#contact" },
   ];
   const isCasePage = pathname?.startsWith("/work/") ?? false;
   /* On a case page there is no Work section in view, so Work stays
@@ -54,25 +54,66 @@ export function SiteHeader() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  /* Scroll-spy: the section in the middle band of the viewport is
-   *  active. On a case page the observer is skipped — Work is
-   *  active by rule (see activeSection above). */
+  /* Active-section tracking: a scroll-position computation, not an
+   * IntersectionObserver. The observer it replaced watched a 5%
+   * band (rootMargin -40%/-55%) that the Contact footer — 441px
+   * tall at the page end — never enters at maximum scroll on
+   * desktop widths (footer top 459px against a band bottom of
+   * 405px at 1440x900), so Contact never became active and the
+   * last section to cross the band stayed highlighted. The
+   * computation below has a bottom-of-page rule, so the last
+   * section is active exactly when the page cannot scroll
+   * further. One `active` string means at most one item is
+   * active, and the click handler below sets it immediately so
+   * a click highlights even before the smooth scroll lands.
+   * On a case page the whole effect is skipped — Work is active
+   * by rule (see activeSection above). */
   useEffect(() => {
     if (isCasePage) return;
-    const targets = SECTION_IDS.map((id) => document.getElementById(id)).filter(
-      (el): el is HTMLElement => el !== null,
-    );
-    if (targets.length === 0) return;
-    const observer = new IntersectionObserver(
-      (entries) => {
-        for (const entry of entries) {
-          if (entry.isIntersecting) setActive(entry.target.id);
-        }
-      },
-      { rootMargin: "-40% 0px -55% 0px" },
-    );
-    targets.forEach((t) => observer.observe(t));
-    return () => observer.disconnect();
+    let raf = 0;
+    const compute = () => {
+      raf = 0;
+      const doc = document.documentElement;
+      const vh = window.innerHeight;
+      /* Bottom of page: the last section is active. */
+      if (window.scrollY + vh >= doc.scrollHeight - 4) {
+        setActive("contact");
+        return;
+      }
+      /* Otherwise the last section whose top has crossed the
+       * 40% line — the same line the old observer band used. */
+      const line = vh * 0.4;
+      let current: string = "work";
+      for (const id of SECTION_IDS) {
+        const el = document.getElementById(id);
+        if (el && el.getBoundingClientRect().top <= line) current = id;
+      }
+      setActive(current);
+    };
+    const onScroll = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(compute);
+    };
+    /* Direct fragment visits and back/forward: the hash names the
+     * active section immediately; the scroll handler confirms it
+     * once the jump settles. */
+    const onHash = () => {
+      const hash = window.location.hash.replace(/^#/, "");
+      if ((SECTION_IDS as readonly string[]).includes(hash)) {
+        setActive(hash);
+      }
+    };
+    compute();
+    onHash();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    window.addEventListener("hashchange", onHash);
+    return () => {
+      if (raf) cancelAnimationFrame(raf);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+      window.removeEventListener("hashchange", onHash);
+    };
   }, [isCasePage]);
 
   function closeMenu(returnFocus = true) {
@@ -167,6 +208,10 @@ export function SiteHeader() {
                 key={s.id}
                 href={s.href}
                 aria-current={isActive ? "true" : undefined}
+                /* Highlight at once: the smooth scroll to the
+                 * section can take over a second, and the scroll
+                 * handler confirms the state once it lands. */
+                onClick={() => setActive(s.id)}
               >
                 {isActive && (
                   <motion.span
@@ -231,7 +276,10 @@ export function SiteHeader() {
                   href={s.href}
                   className="mobile-menu-link"
                   aria-current={activeSection === s.id ? "true" : undefined}
-                  onClick={() => closeMenu()}
+                  onClick={() => {
+                    setActive(s.id);
+                    closeMenu();
+                  }}
                 >
                   {s.label}
                 </Link>

@@ -34,6 +34,24 @@ export function SiteHeader() {
   const isMenuOpen = menuPathname !== null && menuPathname === pathname;
   const menuRef = useRef<HTMLDivElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
+  /* A nav click names its destination: the pill moves to the
+   * clicked item at once and stays there while the smooth scroll
+   * runs, instead of trailing the sections the viewport passes
+   * through. `topAtClick` is the destination's viewport top when
+   * the click happened; `lastY` is the scroll position at the
+   * previous computation, so a manual scroll away from the
+   * destination is recognised. */
+  const navTarget = useRef<{ id: string; topAtClick: number } | null>(null);
+  const lastY = useRef<number | null>(null);
+
+  function goTo(id: string) {
+    const el = document.getElementById(id);
+    navTarget.current = {
+      id,
+      topAtClick: el ? el.getBoundingClientRect().top : 0,
+    };
+    setActive(id);
+  }
 
   const ui = content.ui;
   const sections = [
@@ -64,10 +82,12 @@ export function SiteHeader() {
    * computation below has a bottom-of-page rule, so the last
    * section is active exactly when the page cannot scroll
    * further. One `active` string means at most one item is
-   * active, and the click handler below sets it immediately so
-   * a click highlights even before the smooth scroll lands.
-   * On a case page the whole effect is skipped — Work is active
-   * by rule (see activeSection above). */
+   * active. A nav click names its destination at once (see
+   * goTo): the pill moves to the clicked item and holds there
+   * while the smooth scroll runs, instead of trailing the
+   * sections the viewport passes through. On a case page the
+   * whole effect is skipped — Work is active by rule (see
+   * activeSection above). */
   useEffect(() => {
     if (isCasePage) return;
     let raf = 0;
@@ -75,19 +95,43 @@ export function SiteHeader() {
       raf = 0;
       const doc = document.documentElement;
       const vh = window.innerHeight;
-      /* Bottom of page: the last section is active. */
-      if (window.scrollY + vh >= doc.scrollHeight - 4) {
-        setActive("contact");
-        return;
-      }
-      /* Otherwise the last section whose top has crossed the
-       * 40% line — the same line the old observer band used. */
       const line = vh * 0.4;
-      let current: string = "work";
-      for (const id of SECTION_IDS) {
-        const el = document.getElementById(id);
-        if (el && el.getBoundingClientRect().top <= line) current = id;
+      const y = window.scrollY;
+      /* Position-based value: the bottom rule, else the last
+       * section whose top has crossed the 40% line — the same
+       * line the old observer band used. */
+      let current: string;
+      if (y + vh >= doc.scrollHeight - 4) {
+        current = "contact";
+      } else {
+        current = "work";
+        for (const id of SECTION_IDS) {
+          const el = document.getElementById(id);
+          if (el && el.getBoundingClientRect().top <= line) current = id;
+        }
       }
+      /* A click names its destination: hold it while the smooth
+       * scroll runs toward it. It clears the moment the
+       * position computation agrees it is current, or the
+       * moment the reader scrolls the other way — a wheel, a
+       * scrollbar drag, a touch, a key — so a manual scroll
+       * never leaves a stale highlight. */
+      const target = navTarget.current;
+      if (target && current !== target.id) {
+        const below = target.topAtClick > line;
+        const prevY = lastY.current ?? y;
+        const movingAway = below ? y < prevY - 2 : y > prevY + 2;
+        if (movingAway) {
+          navTarget.current = null;
+        } else {
+          lastY.current = y;
+          setActive(target.id);
+          return;
+        }
+      } else if (target) {
+        navTarget.current = null;
+      }
+      lastY.current = y;
       setActive(current);
     };
     const onScroll = () => {
@@ -96,10 +140,12 @@ export function SiteHeader() {
     };
     /* Direct fragment visits and back/forward: the hash names the
      * active section immediately; the scroll handler confirms it
-     * once the jump settles. */
+     * once the jump settles. A back/forward to a different hash
+     * drops any click target that is not the hash just landed on. */
     const onHash = () => {
       const hash = window.location.hash.replace(/^#/, "");
       if ((SECTION_IDS as readonly string[]).includes(hash)) {
+        if (navTarget.current?.id !== hash) navTarget.current = null;
         setActive(hash);
       }
     };
@@ -108,11 +154,45 @@ export function SiteHeader() {
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onScroll);
     window.addEventListener("hashchange", onHash);
+    /* A manual scroll input drops the click target at once, even
+     * before the scroll position has moved: the reader has taken
+     * control, so the position computation — not the destination
+     * — decides the highlight from here on. A programmatic
+     * smooth scroll fires none of these. The page may not move
+     * (already at the top), so no scroll event follows: schedule
+     * a computation so the highlight corrects itself on the next
+     * frame instead of going stale. */
+    const onInput = (e: Event) => {
+      if (!navTarget.current) return;
+      if (e.type === "keydown") {
+        const k = (e as KeyboardEvent).key;
+        if (
+          ![
+            "ArrowUp",
+            "ArrowDown",
+            "PageUp",
+            "PageDown",
+            "Home",
+            "End",
+            " ",
+          ].includes(k)
+        )
+          return;
+      }
+      navTarget.current = null;
+      onScroll();
+    };
+    window.addEventListener("wheel", onInput, { passive: true });
+    window.addEventListener("touchmove", onInput, { passive: true });
+    window.addEventListener("keydown", onInput);
     return () => {
       if (raf) cancelAnimationFrame(raf);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onScroll);
       window.removeEventListener("hashchange", onHash);
+      window.removeEventListener("wheel", onInput);
+      window.removeEventListener("touchmove", onInput);
+      window.removeEventListener("keydown", onInput);
     };
   }, [isCasePage]);
 
@@ -208,10 +288,9 @@ export function SiteHeader() {
                 key={s.id}
                 href={s.href}
                 aria-current={isActive ? "true" : undefined}
-                /* Highlight at once: the smooth scroll to the
-                 * section can take over a second, and the scroll
-                 * handler confirms the state once it lands. */
-                onClick={() => setActive(s.id)}
+                /* Highlight at once: goTo names the destination
+                 * and holds it while the smooth scroll runs. */
+                onClick={() => goTo(s.id)}
               >
                 {isActive && (
                   <motion.span
@@ -277,7 +356,7 @@ export function SiteHeader() {
                   className="mobile-menu-link"
                   aria-current={activeSection === s.id ? "true" : undefined}
                   onClick={() => {
-                    setActive(s.id);
+                    goTo(s.id);
                     closeMenu();
                   }}
                 >

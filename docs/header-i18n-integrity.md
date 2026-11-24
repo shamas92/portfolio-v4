@@ -5,8 +5,8 @@ Baseline: `src/content.ts` at commit 50023ff (redesign/header-i18n before the po
 ## Part A — English unchanged
 
 - Old sentences checked: 176
-- Old sentences preserved verbatim or as part of a longer note: 168
-- Old sentences removed under the allowlist: 8
+- Old sentences preserved verbatim or as part of a longer note: 167
+- Old sentences removed under the allowlist: 9
 - Unexplained missing sentences: 0
 - New sentences added under the allowlist: 14
 - Unexplained added sentences: 0
@@ -15,6 +15,7 @@ Baseline: `src/content.ts` at commit 50023ff (redesign/header-i18n before the po
 
 ### Removed sentences (allowlisted)
 
+- “No figures were measured for this project.”: Evidence status line. User decision 2026-11-24: the Evidence block is omitted entirely for projects with no verified figures (Quality CRM, UpliftU, HITEC), so the status line is deleted in both locales.
 - “Dresden · Werkstudent 20h/wk”: Navbar presence-dot tooltip, removed with the dot itself (the polish brief removes the redundant dot; the hero pill carries the availability line).
 - “Two earlier systems follow in a compact index.”: Work intro, second sentence. Three earlier systems now follow (HITEC added); the sentence is replaced by the three-systems version.
 - “Showing all 5 projects.”: Work filter note. The count is now a derived {total} placeholder (6 projects); the hard-coded 5 is gone.
@@ -57,8 +58,8 @@ Baseline: `src/content.ts` at commit 50023ff (redesign/header-i18n before the po
 
 ## Part B — German complete
 
-- English string leaves: 343
-- German string leaves: 342
+- English string leaves: 340
+- German string leaves: 339
 - Keys in English but not German: 1 (1 allowlisted)
 - Keys in German but not English: 0 (0 allowlisted)
 - German values byte-identical to English: 170 (170 explained as proper nouns, links, numbers, or the verbatim quote)

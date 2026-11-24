@@ -111,21 +111,25 @@ separate decision, not smuggled into this one.
 | --- | --- |
 | Light ink on ground | 17.52:1 |
 | Light muted on ground | 7.25:1 |
-| Light accent on ground | 6.37:1 |
-| Light accent on wash (nav pill) | 5.49:1 |
+| Light accent on ground | 6.95:1 |
+| Light accent on wash (nav pill) | 6.10:1 |
 | Light ground on ink (copy pill) | 17.52:1 |
-| Light ground on accent (language active) | 6.37:1 |
+| Light ground on accent (active filter pill) | 6.95:1 |
 | Dark ink on ground | 17.94:1 |
 | Dark muted on ground | 7.76:1 |
-| Dark accent on ground | 5.32:1 |
-| Dark accent-on-wash on wash (nav pill) | 5.78:1 |
-| Dark ground on accent (language active) | 5.32:1 |
+| Dark accent on ground | 6.51:1 |
+| Dark accent-on-wash on wash (nav pill) | 5.57:1 |
+| Dark ground on accent (active filter pill) | 6.51:1 |
 | Dark presence dot on ground | 7.72:1 |
 | Light presence dot on ground | 5.21:1 |
 
 The dark nav pill was 4.00:1 before the fix (#3B82F6 on #172554). A new
 `--accent-on-wash` token is #60A5FA in dark mode and #1D4ED8 in light mode;
-only the nav-pill label uses it.
+only the nav-pill label uses it. (Final decisions, 2026-11-24: the accent
+is now oxide red — `--accent-on-wash` is #E07856 in dark mode and #9A3324
+in light mode, on washes #33150F / #F9E7E0; the table above carries the
+oxide-red values. The presence-dot rows are unchanged: the dot is emerald,
+not the accent.)
 
 ## Accessibility results
 

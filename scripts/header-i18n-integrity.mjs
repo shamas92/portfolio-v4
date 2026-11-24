@@ -14,6 +14,12 @@
  * navbar presence dot and the stale C# note. Those sentences are
  * allowlisted below with their reasons.
  *
+ * The final-decisions update (2026-11-24) removes the Evidence
+ * block entirely for projects with no verified figures (Quality
+ * CRM, UpliftU, HITEC) — user decision, reversing the 2026-11-23
+ * "keep the note" call. The "No figures were measured" status
+ * line is allowlisted as removed below.
+ *
  * Part B — German complete: the German locale (src/content.de.ts)
  * must carry every string exactly once, with no missing or extra
  * keys versus the English shape, and every German value that is
@@ -143,6 +149,10 @@ const allowedRemoved = new Map([
   [
     "Five shipped systems, each shown with its proof.",
     "Meta description, second sentence. Six shipped systems now (HITEC added).",
+  ],
+  [
+    "No figures were measured for this project.",
+    "Evidence status line. User decision 2026-11-24: the Evidence block is omitted entirely for projects with no verified figures (Quality CRM, UpliftU, HITEC), so the status line is deleted in both locales.",
   ],
 ]);
 

@@ -2,7 +2,7 @@
 """Generate public/og.png (1200x630) for the portfolio.
 
 Draws the site's name and claim with the site fonts on the ground
-token, with a thin cobalt rule at the bottom edge. Fonts are
+token, with a thin oxide-red rule at the bottom edge. Fonts are
 fetched as variable TTFs from Google Fonts into /tmp; nothing is
 installed.
 """
@@ -27,11 +27,14 @@ def fetch_variable_ttf(path: str) -> Path:
 def main() -> None:
     from PIL import Image, ImageDraw, ImageFont
 
-    geist_path = fetch_variable_ttf("ofl/geist/Geist%5Bwght%5D.ttf")
-    name_font = ImageFont.truetype(str(geist_path), 76)
-    name_font.set_variation_by_axes([600])
+    newsreader_path = fetch_variable_ttf(
+        "ofl/newsreader/Newsreader%5Bopsz,wght%5D.ttf"
+    )
+    name_font = ImageFont.truetype(str(newsreader_path), 76)
+    name_font.set_variation_by_axes([72, 600])
 
-    claim_font = ImageFont.truetype(str(geist_path), 44)
+    inter_path = fetch_variable_ttf("ofl/intertight/InterTight%5Bwght%5D.ttf")
+    claim_font = ImageFont.truetype(str(inter_path), 44)
     claim_font.set_variation_by_axes([600])
 
     mono_path = fetch_variable_ttf(
@@ -44,7 +47,7 @@ def main() -> None:
     ground = (250, 249, 247)
     ink = (20, 20, 19)
     ink_muted = (87, 83, 78)
-    accent = (29, 78, 216)
+    accent = (154, 51, 36)
 
     img = Image.new("RGB", (W, H), ground)
     d = ImageDraw.Draw(img)
@@ -68,7 +71,7 @@ def main() -> None:
         fill=ink_muted,
     )
 
-    # thin cobalt rule at the bottom edge
+    # thin oxide-red rule at the bottom edge
     d.rectangle([0, H - 8, W, H], fill=accent)
 
     img.save(OUT, "PNG")

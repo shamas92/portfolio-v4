@@ -8,7 +8,7 @@ Baseline: `main:src/content.ts` at commit 8ab0f7f (the live Engineering Spec She
 - Old sentences preserved verbatim or as part of a longer note: 140
 - Old sentences removed under the allowlist: 0
 - Unexplained missing sentences: 0
-- New sentences added under the allowlist: 38
+- New sentences added under the allowlist: 36
 - Unexplained added sentences: 0
 - Links: 6 old, 6 new, 0 missing, 0 added
 - Images: 2 old, 2 new, 0 missing, 0 added
@@ -30,8 +30,6 @@ Baseline: `main:src/content.ts` at commit 8ab0f7f (the live Engineering Spec She
 - “Copy email address”: CopyEmailButton aria-label, previously hardcoded in CopyEmailButton; now ui.copyEmail.iconLabel.
 - “Switch to light mode”: ThemeToggle label, previously hardcoded in ThemeToggle; now ui.theme.toLight.
 - “Switch to dark mode”: ThemeToggle label, previously hardcoded in ThemeToggle; now ui.theme.toDark.
-- “Switch language to German”: LanguageToggle label — new control, no Spec Sheet predecessor; now ui.language.toGerman.
-- “Switch language to English”: LanguageToggle label — new control, no Spec Sheet predecessor; now ui.language.toEnglish.
 - “Dresden · Werkstudent eligible, 20h/wk”: Hero availability pill, previously hardcoded in page.tsx; now ui.hero.pill.
 - “View Flagship Work”: Hero CTA label, previously hardcoded in page.tsx; now ui.hero.viewWork.
 - “Three flagship systems, each with its architecture and its proof.”: Work section intro, first sentence, previously hardcoded in page.tsx; now ui.work.intro.
@@ -74,8 +72,8 @@ Baseline: `main:src/content.ts` at commit 8ab0f7f (the live Engineering Spec She
 
 ## Part B — German complete
 
-- English string leaves: 331
-- German string leaves: 330
+- English string leaves: 329
+- German string leaves: 328
 - Keys in English but not German: 1 (1 allowlisted)
 - Keys in German but not English: 0 (0 allowlisted)
 - German values byte-identical to English: 163 (163 explained as proper nouns, links, numbers, or the verbatim quote)

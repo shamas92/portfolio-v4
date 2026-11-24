@@ -41,7 +41,7 @@ export function SiteHeader() {
   const content = useContent();
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
-  const [active, setActive] = useState<string | null>(null);
+  const [active, setActive] = useState<string | null>("work");
   const [scrolled, setScrolled] = useState(false);
   /* The menu is open for the route it was opened on: a route change
    *  closes it by derivation, with no effect and no ref. */

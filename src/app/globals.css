@@ -18,6 +18,7 @@
   --rule-light: #e6e4e0;
   --accent-light: #1d4ed8;
   --accent-wash-light: #dbeafe;
+  --accent-on-wash-light: #1d4ed8;
   --presence-light: #047857;
   --shadow-light: 0 8px 24px rgb(20 20 19 / 0.08);
   /* raw values — dark */
@@ -28,6 +29,7 @@
   --rule-dark: #262624;
   --accent-dark: #3b82f6;
   --accent-wash-dark: #172554;
+  --accent-on-wash-dark: #60a5fa;
   --presence-dark: #10b981;
   --shadow-dark: 0 8px 24px rgb(0 0 0 / 0.45);
 
@@ -40,6 +42,7 @@
   --rule: var(--rule-light);
   --accent: var(--accent-light);
   --accent-ink: var(--accent-light);
+  --accent-on-wash: var(--accent-on-wash-light);
   --focus: var(--accent-light);
   --accent-wash: var(--accent-wash-light);
   /* presence dot — emerald, a live-status colour, not the accent */
@@ -87,6 +90,7 @@ html[data-theme="dark"] {
   --rule: var(--rule-dark);
   --accent: var(--accent-dark);
   --accent-ink: var(--accent-dark);
+  --accent-on-wash: var(--accent-on-wash-dark);
   --focus: var(--accent-dark);
   --accent-wash: var(--accent-wash-dark);
   --presence: var(--presence-dark);
@@ -204,7 +208,7 @@ footer[id] {
 }
 
 .header-spacer {
-  height: 84px;
+  height: 92px;
 }
 
 .site-header-inner {
@@ -257,7 +261,9 @@ footer[id] {
   text-decoration: none;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: var(--space-1);
+  min-width: 44px;
   min-height: 44px;
 }
 
@@ -365,7 +371,7 @@ footer[id] {
 }
 
 .site-nav a[aria-current="true"] {
-  color: var(--accent-ink);
+  color: var(--accent-on-wash);
   font-weight: 600;
 }
 
@@ -466,8 +472,8 @@ footer[id] {
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   font-weight: 500;
-  min-width: 40px;
-  min-height: 38px;
+  min-width: 44px;
+  min-height: 44px;
   padding-inline: 8px;
   border: 0;
   border-radius: 999px;
@@ -568,7 +574,10 @@ footer[id] {
   transform: translateY(-4px) rotate(-45deg);
 }
 
-.copy-mobile {
+/* The icon-only copy button is mobile-only. The selector carries
+ *  .site-header so it beats the later .copy-btn display rule at
+ *  equal specificity (source order would otherwise win). */
+.site-header .copy-mobile {
   display: none;
 }
 
@@ -632,13 +641,16 @@ footer[id] {
 @media (max-width: 767px) {
   .site-nav,
   .site-action-icon,
-  .copy-desktop,
   .header-lang,
   .header-theme {
     display: none;
   }
 
-  .copy-mobile {
+  .site-header .copy-desktop {
+    display: none;
+  }
+
+  .site-header .copy-mobile {
     display: inline-flex;
   }
 
@@ -653,12 +665,6 @@ footer[id] {
 
   .site-header.is-scrolled .site-header-inner {
     padding-inline: 12px;
-  }
-}
-
-@media (min-width: 768px) {
-  .copy-mobile {
-    display: none;
   }
 }
 

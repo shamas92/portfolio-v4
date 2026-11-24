@@ -152,14 +152,6 @@ const allowedAdded = new Map([
     "ThemeToggle label, previously hardcoded in ThemeToggle; now ui.theme.toDark.",
   ],
   [
-    "Switch language to German",
-    "LanguageToggle label — new control, no Spec Sheet predecessor; now ui.language.toGerman.",
-  ],
-  [
-    "Switch language to English",
-    "LanguageToggle label — new control, no Spec Sheet predecessor; now ui.language.toEnglish.",
-  ],
-  [
     "Dresden · Werkstudent eligible, 20h/wk",
     "Hero availability pill, previously hardcoded in page.tsx; now ui.hero.pill.",
   ],

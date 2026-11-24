@@ -468,8 +468,6 @@ export const deContent: SiteContent = {
     },
     language: {
       label: "Sprache",
-      toGerman: "Sprache auf Deutsch umstellen",
-      toEnglish: "Sprache auf Englisch umstellen",
     },
     hero: {
       pill: "Dresden · Werkstudent, 20 Std./Woche",

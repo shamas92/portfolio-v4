@@ -571,7 +571,7 @@ export type UiStrings = {
     iconLabel: string;
   };
   theme: { toLight: string; toDark: string };
-  language: { label: string; toGerman: string; toEnglish: string };
+  language: { label: string };
   hero: { pill: string; viewWork: string; downloadCv: string };
   work: {
     heading: string;
@@ -665,8 +665,6 @@ export const ui: UiStrings = {
   },
   language: {
     label: "Language",
-    toGerman: "Switch language to German",
-    toEnglish: "Switch language to English",
   },
   hero: {
     pill: "Dresden · Werkstudent eligible, 20h/wk",

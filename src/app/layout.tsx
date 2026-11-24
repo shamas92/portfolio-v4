@@ -117,7 +117,9 @@ export default function RootLayout({
           <SkipLink />
           <SiteHeader />
           <div className="header-spacer" aria-hidden="true" />
-          <main id="main">{children}</main>
+          <main id="main" tabIndex={-1}>
+            {children}
+          </main>
           <SiteFooter />
         </LocaleProvider>
       </body>

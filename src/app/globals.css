@@ -880,9 +880,72 @@ footer[id] {
   max-width: 60ch;
 }
 
+/* ---- Stack filter: a disclosure, closed by default ---- */
+.filter-bar {
+  margin-top: var(--space-4);
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-1) var(--space-2);
+}
+
+.filter-disclosure {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
+  color: var(--ink);
+  background: transparent;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  cursor: pointer;
+  transition:
+    border-color var(--dur-fast) var(--ease),
+    color var(--dur-fast) var(--ease);
+}
+
+.filter-disclosure:hover {
+  border-color: var(--ink);
+}
+
+.filter-disclosure-chevron {
+  display: inline-block;
+  font-size: 1.125rem;
+  line-height: 1;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.filter-disclosure[aria-expanded="true"] .filter-disclosure-chevron {
+  transform: rotate(90deg);
+}
+
+.filter-clear {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
+  color: var(--accent-ink);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+.filter-clear:hover {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
 /* ---- Stack filter pills ---- */
 .filter-pills {
-  margin-top: var(--space-4);
+  margin-top: var(--space-2);
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);
@@ -1068,17 +1131,35 @@ footer[id] {
   max-width: 60ch;
 }
 
-/* The Proof row is the card's verdict: pushed to the bottom of
-   the card, separated by a hairline, with the verified metrics
-   line in mono. */
-.flagship-row--proof {
-  margin-top: auto;
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--rule);
+/* The summary is the card's lead: one sentence, no label, in body
+   ink. The Proof strip follows it — the verdict, visible without
+   interaction, in the accent wash with the verified metrics line
+   in mono. */
+.flagship-summary {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 60ch;
 }
 
-.flagship-row--proof .flagship-row-label {
+.flagship-proof {
+  margin-top: var(--space-1);
+  padding: var(--space-2);
+  background: var(--accent-wash);
+  border-radius: 8px;
+}
+
+.flagship-proof-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
   color: var(--accent-ink);
+  margin-bottom: 2px;
+}
+
+.flagship-proof-text {
+  font-size: 1rem;
+  line-height: 1.6;
+  max-width: 60ch;
 }
 
 .flagship-proof-metrics {
@@ -1087,6 +1168,7 @@ footer[id] {
   line-height: 1.6;
   color: var(--accent-ink);
   font-weight: 500;
+  margin-top: var(--space-1);
 }
 
 .flagship-proof-metrics .proof-badge {
@@ -1097,9 +1179,54 @@ footer[id] {
   margin-right: 4px;
 }
 
+/* "How it was built": a native <details>, so the contribution and
+ * the decision are one keyboard-accessible click away and need no
+ * JavaScript. The summary is a 44px row; the chevron turns on
+ * transform only. */
+.flagship-details {
+  margin-top: var(--space-2);
+  padding-top: var(--space-2);
+  border-top: 1px solid var(--rule);
+}
+
+.flagship-details-summary {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  width: fit-content;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
+  color: var(--ink-muted);
+  cursor: pointer;
+  list-style: none;
+  border-radius: 8px;
+}
+
+.flagship-details-summary::-webkit-details-marker {
+  display: none;
+}
+
+.flagship-details-summary:hover {
+  color: var(--ink);
+}
+
+.flagship-details-chevron {
+  display: inline-block;
+  font-size: 1.125rem;
+  line-height: 1;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+.flagship-details[open] .flagship-details-chevron {
+  transform: rotate(90deg);
+}
+
 .flagship-stack {
   list-style: none;
-  padding: 0;
+  padding: var(--space-2) 0 0;
+  margin-top: auto;
   display: flex;
   flex-wrap: wrap;
   font-family: var(--font-mono);
@@ -2005,7 +2132,9 @@ footer[id] {
   .claim,
   .skip-link,
   .filter-pill,
+  .filter-disclosure-chevron,
   .flagship-card,
+  .flagship-details-chevron,
   .theme-toggle {
     transition: none;
   }
@@ -2032,6 +2161,7 @@ footer[id] {
   .skip-link,
   .copy-btn,
   .hero-actions,
+  .filter-bar,
   .filter-pills {
     display: none;
   }

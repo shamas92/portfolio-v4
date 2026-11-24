@@ -60,13 +60,19 @@ function matches(project: Project, pill: Pill): boolean {
  *  project, so the section works with JavaScript disabled too
  *  (the pills simply do not render and all six stay visible).
  *  Order is deliberate: the featured grid comes first so the work
- *  is visible in the first viewport, and the filter pills sit
- *  below it, before the earlier-projects index. */
+ *  is visible in the first viewport, and the filter sits below it,
+ *  before the earlier-projects index. The filter itself is a
+ *  disclosure, closed by default: twenty pills would otherwise
+ *  wrap into a block taller than a project card and compete with
+ *  the work. The disclosure button always shows the active
+ *  filter, and the results note stays visible below it, so the
+ *  state is clear even while the pills are closed. */
 export function WorkSection() {
   const content = useContent();
   const projects = content.projects;
   const ui = content.ui.work;
   const [active, setActive] = useState<Pill>("All");
+  const [filterOpen, setFilterOpen] = useState(false);
 
   const counts = useMemo(() => {
     const map = new Map<Pill, number>();
@@ -104,19 +110,52 @@ export function WorkSection() {
         ))}
       </div>
 
-      <div className="filter-pills" role="group" aria-label={ui.filterLabel}>
-        {ALL_PILLS.map((pill) => (
+      <div className="filter-bar">
+        <button
+          type="button"
+          className="filter-disclosure"
+          aria-expanded={filterOpen}
+          aria-controls="filter-pills"
+          onClick={() => setFilterOpen((v) => !v)}
+        >
+          <span className="filter-disclosure-label">
+            {ui.filterBy}
+            {active !== "All" && `: ${active}`}
+          </span>
+          <span className="filter-disclosure-chevron" aria-hidden="true">
+            ›
+          </span>
+        </button>
+        {active !== "All" && (
           <button
-            key={pill}
             type="button"
-            className="filter-pill"
-            aria-pressed={active === pill}
-            onClick={() => setActive(pill)}
+            className="filter-clear"
+            onClick={() => setActive("All")}
           >
-            {pill === "All" ? ui.all : pill} ({counts.get(pill) ?? 0})
+            {ui.filterClear}
           </button>
-        ))}
+        )}
       </div>
+      {filterOpen && (
+        <div
+          className="filter-pills"
+          id="filter-pills"
+          role="group"
+          aria-label={ui.filterLabel}
+        >
+          {ALL_PILLS.map((pill) => (
+            <button
+              key={pill}
+              type="button"
+              className="filter-pill"
+              aria-pressed={active === pill}
+              onClick={() => setActive(pill)}
+            >
+              {pill === "All" ? ui.all : pill} ({counts.get(pill) ?? 0})
+            </button>
+          ))}
+        </div>
+      )}
       <p className="filter-note" aria-live="polite">
         {note}
       </p>

@@ -6,7 +6,19 @@
 
 export const siteUrl = "https://portfolio-v4-rosy-five.vercel.app";
 
-export const profile = {
+export type Profile = {
+  name: string;
+  role: string;
+  location: string;
+  claim: string;
+  statusLine: string;
+  email: string;
+  github: string;
+  linkedin: string;
+  workEligibility: string;
+};
+
+export const profile: Profile = {
   name: "Shamas Ur Rehman",
   role: "Software Engineer",
   location: "Dresden, Germany",
@@ -330,7 +342,28 @@ export const projects: Project[] = [
   },
 ];
 
-export const background = {
+export type EducationEntry = {
+  degree: string;
+  school: string;
+  period: string;
+  note: string;
+};
+
+export type ExperienceEntry = {
+  role: string;
+  org: string;
+  period: string;
+  note: string;
+};
+
+export type BackgroundContent = {
+  education: EducationEntry[];
+  experience: ExperienceEntry[];
+  languages: { language: string; level: string }[];
+  certifications: { items: string[]; period: string };
+};
+
+export const background: BackgroundContent = {
   education: [
     {
       degree: "MSc Computer Science",
@@ -437,3 +470,304 @@ export const skillGroups: SkillGroup[] = [
     ],
   },
 ];
+
+/**
+ * Capabilities matrix: every technology on the site, grouped by
+ * what it does, each exactly once, as plain text with no links.
+ *
+ * Mapping (29 skills from skillGroups + 6 tags that only appear in
+ * project stacks = 35 items):
+ * - Data & Pipelines: the 8 Data & BI skills + SQL + the ETL
+ *   staging tags (Parquet, MinIO, Apache Airflow).
+ * - ML & NLP: the ML skills + Python, the language the ML work
+ *   is written in here, and SAM 3.1, the segmentation model.
+ * - Full-Stack: the remaining languages and web frameworks,
+ *   including Laravel, which only appears in the CRM stack.
+ * - Infra & DBs: the three databases + Docker, Docker Compose,
+ *   Git, Linux (Ubuntu).
+ * No skill is claimed for a project it was not linked to: the
+ * matrix groups capabilities, it does not attribute them.
+ * Column titles translate; skill names are proper nouns and do not.
+ */
+export type MatrixColumn = { title: string; skills: string[] };
+
+export const matrixColumns: MatrixColumn[] = [
+  {
+    title: "Data & Pipelines",
+    skills: [
+      "SQL",
+      "Pandas",
+      "NumPy",
+      "Matplotlib",
+      "scikit-learn",
+      "time-series analysis",
+      "anomaly detection",
+      "Tableau",
+      "Excel",
+      "Parquet",
+      "MinIO",
+      "Apache Airflow",
+    ],
+  },
+  {
+    title: "ML & NLP",
+    skills: ["Python", "PyTorch", "Hugging Face", "RAG", "NLP", "SAM 3.1"],
+  },
+  {
+    title: "Full-Stack",
+    skills: [
+      "TypeScript",
+      "JavaScript",
+      "PHP",
+      "C#",
+      "ASP.NET MVC",
+      "Next.js",
+      "React",
+      "FastAPI",
+      "Laravel",
+      "REST APIs",
+    ],
+  },
+  {
+    title: "Infra & DBs",
+    skills: [
+      "PostgreSQL",
+      "MySQL",
+      "SQL Server",
+      "Docker",
+      "Docker Compose",
+      "Git",
+      "Linux (Ubuntu)",
+    ],
+  },
+];
+
+/** Every user-visible UI string on the site, in one typed shape.
+ *  English is the source of truth; the German locale (content.de.ts)
+ *  is typed against this exact shape, so a missing German string is
+ *  a type error, not a runtime gap. Templates use {placeholder}
+ *  slots, filled by the format() helper in the locale provider.
+ *  Numbers, dates, metrics and links never live in these templates
+ *  as translated values — they are filled in from the content data
+ *  and stay byte-identical across locales. */
+export type UiStrings = {
+  skipLink: string;
+  navLabel: string;
+  nav: { work: string; background: string; stack: string; contact: string };
+  header: {
+    githubLabel: string;
+    linkedinLabel: string;
+    availabilityTooltip: string;
+    menuOpen: string;
+    menuClose: string;
+    menuNavLabel: string;
+  };
+  copy: {
+    label: string;
+    copied: string;
+    failed: string;
+    copiedLive: string;
+    failedLive: string;
+    iconLabel: string;
+  };
+  theme: { toLight: string; toDark: string };
+  language: { label: string; toGerman: string; toEnglish: string };
+  hero: { pill: string; viewWork: string; downloadCv: string };
+  work: {
+    heading: string;
+    intro: string;
+    all: string;
+    showingAll: string;
+    showingSome: string;
+    cSharpNote: string;
+    earlierSystems: string;
+    proof: string;
+    iouLabel: string;
+    metrics: string;
+    stackLabel: string;
+  };
+  background: {
+    heading: string;
+    experience: string;
+    education: string;
+    languagesLabel: string;
+    certificatesLabel: string;
+  };
+  stack: { heading: string; intro: string };
+  footer: { heading: string; closing: string };
+  caseStudy: {
+    allProjects: string;
+    problem: string;
+    architecture: string;
+    outcome: string;
+    evidence: string;
+    stack: string;
+    links: string;
+    registryHeading: string;
+    limitsHeading: string;
+  };
+  proofNote: { evidence: string; close: string };
+  assets: {
+    leaselens: {
+      ariaLabel: string;
+      title: string;
+      moveIn: string;
+      moveOut: string;
+      iou: string;
+    };
+    etl: {
+      ariaLabel: string;
+      title: string;
+      sources: string;
+      airflow: string;
+      tasks: string;
+      footer: string;
+    };
+    orator: {
+      ariaLabel: string;
+      title: string;
+      pace: string;
+      fillerWords: string;
+      clarity: string;
+    };
+  };
+  meta: { titleSuffix: string; description: string };
+};
+
+export const ui: UiStrings = {
+  skipLink: "Skip to content",
+  navLabel: "Sections",
+  nav: {
+    work: "Work",
+    background: "Background",
+    stack: "Stack",
+    contact: "Contact",
+  },
+  header: {
+    githubLabel: "Shamas Ur Rehman on GitHub",
+    linkedinLabel: "Shamas Ur Rehman on LinkedIn",
+    availabilityTooltip: "Dresden · Werkstudent 20h/wk",
+    menuOpen: "Open menu",
+    menuClose: "Close menu",
+    menuNavLabel: "Sections",
+  },
+  copy: {
+    label: "Copy email",
+    copied: "Copied ✓",
+    failed: "Copy failed — use the email link",
+    copiedLive: "Email address copied to clipboard.",
+    failedLive: "Copy failed. Use the email link instead.",
+    iconLabel: "Copy email address",
+  },
+  theme: {
+    toLight: "Switch to light mode",
+    toDark: "Switch to dark mode",
+  },
+  language: {
+    label: "Language",
+    toGerman: "Switch language to German",
+    toEnglish: "Switch language to English",
+  },
+  hero: {
+    pill: "Dresden · Werkstudent eligible, 20h/wk",
+    viewWork: "View Flagship Work",
+    downloadCv: "Download CV",
+  },
+  work: {
+    heading: "Work",
+    intro:
+      "Three flagship systems, each with its architecture and its proof. Two earlier systems follow in a compact index.",
+    all: "All",
+    showingAll: "Showing all 5 projects.",
+    showingSome: "{n} of 5 projects use {tag}.",
+    cSharpNote:
+      "No shipped project lists C#. It appears in Background — the HITEC internship and Heavy Industries Taxila.",
+    earlierSystems: "Earlier systems",
+    proof: "Proof",
+    iouLabel: "registered IoU",
+    metrics:
+      "{version} · {total} tests ({backend} backend, {frontend} frontend)",
+    stackLabel: "Stack",
+  },
+  background: {
+    heading: "Background",
+    experience: "Experience",
+    education: "Education",
+    languagesLabel: "Spoken languages",
+    certificatesLabel: "Certificates",
+  },
+  stack: {
+    heading: "Stack",
+    intro:
+      "Every skill, grouped by what it does. The pills above the projects filter them by stack.",
+  },
+  footer: {
+    heading: "Contact",
+    closing: "Every claim on this page carries its evidence.",
+  },
+  caseStudy: {
+    allProjects: "All projects",
+    problem: "Problem",
+    architecture: "Architecture",
+    outcome: "Outcome",
+    evidence: "Evidence",
+    stack: "Stack",
+    links: "Links",
+    registryHeading: "Deposit caps in the registry",
+    limitsHeading: "Limits",
+  },
+  proofNote: { evidence: "Evidence", close: "Close" },
+  assets: {
+    leaselens: {
+      ariaLabel:
+        "Split-frame schematic: move-in and move-out room boundaries aligned, with an 86.1 percent IoU reticle",
+      title: "Move-in and move-out room boundaries aligned, 86.1% IoU",
+      moveIn: "MOVE-IN",
+      moveOut: "MOVE-OUT",
+      iou: "86.1% IoU",
+    },
+    etl: {
+      ariaLabel:
+        "Pipeline diagram: sources feed MinIO and Parquet, Airflow tasks load the PostgreSQL star schema",
+      title: "Sources feed MinIO and Parquet, Airflow tasks load PostgreSQL",
+      sources: "Sources",
+      airflow: "Airflow",
+      tasks: "Tasks",
+      footer: "1 DAG · 3 TASKS · 4 TABLES",
+    },
+    orator: {
+      ariaLabel:
+        "Speech waveform with structured metric bars for pace, filler words, and clarity",
+      title: "Speech waveform with metric bars: pace, filler words, clarity",
+      pace: "PACE",
+      fillerWords: "FILLER WORDS",
+      clarity: "CLARITY",
+    },
+  },
+  meta: {
+    titleSuffix: "Software Engineer, Dresden",
+    description:
+      "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Five shipped systems, each shown with its proof.",
+  },
+};
+
+/** The full translatable content of the site, in one typed shape.
+ *  content.de.ts must satisfy this exact type. */
+export type SiteContent = {
+  profile: Profile;
+  projects: Project[];
+  background: BackgroundContent;
+  skillGroups: SkillGroup[];
+  matrixColumns: MatrixColumn[];
+  ui: UiStrings;
+};
+
+/** English content — the source of truth. */
+export const enContent: SiteContent = {
+  profile,
+  projects,
+  background,
+  skillGroups,
+  matrixColumns,
+  ui,
+};

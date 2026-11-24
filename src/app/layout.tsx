@@ -4,6 +4,8 @@ import { Geist, JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
+import { SkipLink } from "@/components/SkipLink";
+import { LocaleProvider } from "@/i18n/LocaleProvider";
 import { profile, siteUrl } from "@/content";
 
 /* Self-hosted, subsetted, with size-adjusted fallbacks (next/font
@@ -81,11 +83,12 @@ const personJsonLd = {
   sameAs: [profile.github, profile.linkedin],
 };
 
-/* No-flash theme script: injected before hydration, so a stored
- *  dark preference never flashes light. The html element carries
- *  suppressHydrationWarning because this script may change
- *  data-theme before React hydrates. */
-const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}}catch(e){}})();`;
+/* No-flash script: injected before hydration, so a stored dark
+ *  preference never flashes light and a stored German choice never
+ *  flashes English in the document language. The html element
+ *  carries suppressHydrationWarning because this script may change
+ *  data-theme and data-locale/lang before React hydrates. */
+const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}var l=localStorage.getItem('locale');if(l==='de'||l==='en'){document.documentElement.setAttribute('data-locale',l);document.documentElement.setAttribute('lang',l);}}catch(e){}})();`;
 
 export default function RootLayout({
   children,
@@ -96,6 +99,7 @@ export default function RootLayout({
     <html
       lang="en"
       data-theme="light"
+      data-locale="en"
       suppressHydrationWarning
       className={`${geist.variable} ${jetbrainsMono.variable}`}
     >
@@ -109,12 +113,13 @@ export default function RootLayout({
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
-        <a className="skip-link" href="#main">
-          Skip to content
-        </a>
-        <SiteHeader />
-        <main id="main">{children}</main>
-        <SiteFooter />
+        <LocaleProvider>
+          <SkipLink />
+          <SiteHeader />
+          <div className="header-spacer" aria-hidden="true" />
+          <main id="main">{children}</main>
+          <SiteFooter />
+        </LocaleProvider>
       </body>
     </html>
   );

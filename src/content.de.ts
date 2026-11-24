@@ -499,6 +499,23 @@ export const deContent: SiteContent = {
       heading: "Kontakt",
       closing: "Jede Aussage auf dieser Seite hat ihren Nachweis.",
     },
+    form: {
+      heading: "Nachricht schreiben",
+      nameLabel: "Name",
+      namePlaceholder: "Ihr Name",
+      emailLabel: "E-Mail",
+      emailPlaceholder: "sie@beispiel.de",
+      messageLabel: "Nachricht",
+      messagePlaceholder: "Worum geht es?",
+      submit: "Im E-Mail-Programm öffnen",
+      note: "Öffnet Ihr E-Mail-Programm mit der fertigen Nachricht — von dieser Seite wird nichts gesendet.",
+      nameRequired: "Bitte geben Sie Ihren Namen an.",
+      emailRequired: "Bitte geben Sie Ihre E-Mail-Adresse an.",
+      emailInvalid: "Diese E-Mail-Adresse sieht nicht korrekt aus.",
+      messageRequired: "Bitte schreiben Sie eine Nachricht.",
+      statusOpening:
+        "Ihr E-Mail-Programm öffnet sich mit der fertigen Nachricht. Der Versand erfolgt in Ihrem E-Mail-Programm, nicht auf dieser Seite.",
+    },
     caseStudy: {
       allProjects: "Alle Projekte",
       problem: "Problem",

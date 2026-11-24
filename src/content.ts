@@ -593,6 +593,22 @@ export type UiStrings = {
     noShippedUse: string;
   };
   footer: { heading: string; closing: string };
+  form: {
+    heading: string;
+    nameLabel: string;
+    namePlaceholder: string;
+    emailLabel: string;
+    emailPlaceholder: string;
+    messageLabel: string;
+    messagePlaceholder: string;
+    submit: string;
+    note: string;
+    nameRequired: string;
+    emailRequired: string;
+    emailInvalid: string;
+    messageRequired: string;
+    statusOpening: string;
+  };
   caseStudy: {
     allProjects: string;
     problem: string;
@@ -714,6 +730,23 @@ export const ui: UiStrings = {
   footer: {
     heading: "Contact",
     closing: "Every claim on this page carries its evidence.",
+  },
+  form: {
+    heading: "Send a message",
+    nameLabel: "Name",
+    namePlaceholder: "Your name",
+    emailLabel: "Email",
+    emailPlaceholder: "you@example.com",
+    messageLabel: "Message",
+    messagePlaceholder: "What would you like to work on?",
+    submit: "Open in your email app",
+    note: "Opens your email app with the message ready to send — nothing is sent from this page.",
+    nameRequired: "Please enter your name.",
+    emailRequired: "Please enter your email address.",
+    emailInvalid: "That email address does not look right.",
+    messageRequired: "Please write a message.",
+    statusOpening:
+      "Opening your email app with the message ready to send. Sending happens in your email app, not on this page.",
   },
   caseStudy: {
     allProjects: "All projects",

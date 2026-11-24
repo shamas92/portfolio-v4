@@ -3,9 +3,16 @@
  * Header-i18n content-integrity check.
  *
  * Part A — English unchanged: every sentence in the English content
- * at main @ 8ab0f7f (the live Engineering Spec Sheet) must survive
- * in the restructured src/content.ts or in the fresh production
- * build's rendered HTML, except allowlisted moves.
+ * at the branch baseline 50023ff (redesign/header-i18n before the
+ * polish + HITEC additions) must survive in the restructured
+ * src/content.ts or in the fresh production build's rendered HTML,
+ * except allowlisted moves.
+ *
+ * The polish update (this revision) adds the HITEC University Web
+ * Platform & Admin Panel project, derives the filter counts from
+ * the project list, renames the tier-2 heading, and removes the
+ * navbar presence dot and the stale C# note. Those sentences are
+ * allowlisted below with their reasons.
  *
  * Part B — German complete: the German locale (src/content.de.ts)
  * must carry every string exactly once, with no missing or extra
@@ -26,7 +33,7 @@ import { execSync } from "node:child_process";
 import { readFileSync, writeFileSync, readdirSync, statSync } from "node:fs";
 import { join } from "node:path";
 
-const BASELINE = "8ab0f7f";
+const BASELINE = "50023ff";
 const MIN_LEN = 15; // sentences shorter than this are labels/keys
 
 /* ---- extraction (same approach as scripts/content-integrity.mjs) ---- */
@@ -104,7 +111,40 @@ const rendered = htmlFiles(".next/server/app")
    allowlisted sentence below is copy that already shipped in the
    Spec Sheet build, now typed as content. ---- */
 
-const allowedRemoved = new Map([]);
+const allowedRemoved = new Map([
+  [
+    "Dresden · Werkstudent 20h/wk",
+    "Navbar presence-dot tooltip, removed with the dot itself (the polish brief removes the redundant dot; the hero pill carries the availability line).",
+  ],
+  [
+    "No shipped project lists C#.",
+    "C# filter note, first sentence. The new HITEC project lists C#, so the note's claim is now false; the note and its special case are removed.",
+  ],
+  [
+    "It appears in Background — the HITEC internship and Heavy Industries Taxila.",
+    "C# filter note, second sentence. Removed with the note (see above).",
+  ],
+  [
+    "Two earlier systems follow in a compact index.",
+    "Work intro, second sentence. Three earlier systems now follow (HITEC added); the sentence is replaced by the three-systems version.",
+  ],
+  [
+    "Showing all 5 projects.",
+    "Work filter note. The count is now a derived {total} placeholder (6 projects); the hard-coded 5 is gone.",
+  ],
+  [
+    "{n} of 5 projects use {tag}.",
+    "Work filter-note template. The count is now a derived {total} placeholder; the hard-coded 5 is gone.",
+  ],
+  [
+    "Earlier systems",
+    "Tier-2 heading. Renamed to Earlier & Institutional Systems now that the tier holds an institutional project.",
+  ],
+  [
+    "Five shipped systems, each shown with its proof.",
+    "Meta description, second sentence. Six shipped systems now (HITEC added).",
+  ],
+]);
 
 const allowedAdded = new Map([
   [
@@ -251,6 +291,62 @@ const allowedAdded = new Map([
     "Five shipped systems, each shown with its proof.",
     "Meta description, second sentence, previously in layout.tsx metadata; now ui.meta.description.",
   ],
+  [
+    "Showing all {total} projects.",
+    "Work filter note, derived count. Replaces the hard-coded 'Showing all 5 projects.' now that the count comes from the project list.",
+  ],
+  [
+    "{n} of {total} projects use {tag}.",
+    "Work filter-note template, derived count. Replaces the hard-coded '{n} of 5 projects use {tag}.'.",
+  ],
+  [
+    "Three earlier systems follow in a compact index.",
+    "Work intro, second sentence. Replaces 'Two earlier systems follow in a compact index.' (HITEC added).",
+  ],
+  [
+    "Earlier & Institutional Systems",
+    "Tier-2 heading. Replaces 'Earlier systems' now that the tier holds an institutional project.",
+  ],
+  [
+    "Six shipped systems, each shown with its proof.",
+    "Meta description, second sentence. Replaces 'Five shipped systems, each shown with its proof.' (HITEC added).",
+  ],
+  [
+    "HITEC University Web Platform & Admin Panel",
+    "New project (HITEC University Web Platform & Admin Panel, 2025) — title. User-briefed 2026-11-24.",
+  ],
+  [
+    "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
+    "New project — one-sentence summary. User-briefed 2026-11-24.",
+  ],
+  [
+    "Delivered during IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
+    "New project — proof / delivery line. User-briefed 2026-11-24.",
+  ],
+  [
+    "Delivered during the IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
+    "New project — Outcome block, sentence 1. The proof line restated with 'the' for sentence grammar; same facts, user-briefed 2026-11-24.",
+  ],
+  [
+    "HITEC University's web presence ran on modules that needed a database behind them, and the internal team needed an admin panel to manage content — plus a support chatbot that could answer questions from university documents.",
+    "New project — Problem block. Rephrased from the user-briefed summary and the existing Background internship entry; no new claim.",
+  ],
+  [
+    "The backend is ASP.NET MVC in C#, with a SQL Server schema behind the web modules.",
+    "New project — Architecture block, sentence 1. User-briefed stack (ASP.NET MVC, C#, SQL Server).",
+  ],
+  [
+    "The internal admin panel provides CRUD workflows for the content management system.",
+    "New project — Architecture block, sentence 2. User-briefed (admin CRUD workflows).",
+  ],
+  [
+    "A RAG support chatbot in Python/Hugging Face answers questions over university documents.",
+    "New project — Architecture block, sentence 3. From the existing Background internship entry (RAG support chatbot in Python/Hugging Face over university docs).",
+  ],
+  [
+    "Internal / Archived",
+    "New project — Tier 2 row badge. No external live URL exists, so the row links to the internal case page and carries this badge.",
+  ],
 ]);
 
 /* ---- Part A sentence check ---- */
@@ -338,6 +434,7 @@ const allowedIdentical = new Map([
   ["projects[2].slug", "URL slug, identical in both locales."],
   ["projects[3].slug", "URL slug, identical in both locales."],
   ["projects[4].slug", "URL slug, identical in both locales."],
+  ["projects[5].slug", "URL slug, identical in both locales."],
   ["projects[0].figure.value", "Metric '86.1%', identical in both locales."],
   ["projects[0].figure.label", "Unit 'IoU', identical in both locales."],
   [
@@ -433,10 +530,10 @@ const explainedIdentical = identical.filter(
 /* ---- report ---- */
 
 const lines = [];
-lines.push("# Content integrity — Spec Sheet → header-i18n");
+lines.push("# Content integrity — header-i18n + polish (HITEC project)");
 lines.push("");
 lines.push(
-  `Baseline: \`main:src/content.ts\` at commit ${BASELINE} (the live Engineering Spec Sheet). New source: \`src/content.ts\` + \`src/content.de.ts\` on \`redesign/header-i18n\`, checked against the fresh production build's rendered HTML (English SSR) and a runtime deep comparison of the two locales (Node type-stripping import).`,
+  `Baseline: \`src/content.ts\` at commit ${BASELINE} (redesign/header-i18n before the polish + HITEC additions). New source: \`src/content.ts\` + \`src/content.de.ts\` on \`redesign/header-i18n\`, checked against the fresh production build's rendered HTML (English SSR) and a runtime deep comparison of the two locales (Node type-stripping import). Additions and removals in the polish update are allowlisted below with their reasons.`,
 );
 lines.push("");
 lines.push("## Part A — English unchanged");

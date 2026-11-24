@@ -1,60 +1,45 @@
-# Content integrity — Spec Sheet → header-i18n
+# Content integrity — header-i18n + polish (HITEC project)
 
-Baseline: `main:src/content.ts` at commit 8ab0f7f (the live Engineering Spec Sheet). New source: `src/content.ts` + `src/content.de.ts` on `redesign/header-i18n`, checked against the fresh production build's rendered HTML (English SSR) and a runtime deep comparison of the two locales (Node type-stripping import).
+Baseline: `src/content.ts` at commit 50023ff (redesign/header-i18n before the polish + HITEC additions). New source: `src/content.ts` + `src/content.de.ts` on `redesign/header-i18n`, checked against the fresh production build's rendered HTML (English SSR) and a runtime deep comparison of the two locales (Node type-stripping import). Additions and removals in the polish update are allowlisted below with their reasons.
 
 ## Part A — English unchanged
 
-- Old sentences checked: 140
-- Old sentences preserved verbatim or as part of a longer note: 140
-- Old sentences removed under the allowlist: 0
+- Old sentences checked: 176
+- Old sentences preserved verbatim or as part of a longer note: 168
+- Old sentences removed under the allowlist: 8
 - Unexplained missing sentences: 0
-- New sentences added under the allowlist: 36
+- New sentences added under the allowlist: 14
 - Unexplained added sentences: 0
 - Links: 6 old, 6 new, 0 missing, 0 added
 - Images: 2 old, 2 new, 0 missing, 0 added
 
 ### Removed sentences (allowlisted)
 
-- None.
+- “Dresden · Werkstudent 20h/wk”: Navbar presence-dot tooltip, removed with the dot itself (the polish brief removes the redundant dot; the hero pill carries the availability line).
+- “Two earlier systems follow in a compact index.”: Work intro, second sentence. Three earlier systems now follow (HITEC added); the sentence is replaced by the three-systems version.
+- “Showing all 5 projects.”: Work filter note. The count is now a derived {total} placeholder (6 projects); the hard-coded 5 is gone.
+- “{n} of 5 projects use {tag}.”: Work filter-note template. The count is now a derived {total} placeholder; the hard-coded 5 is gone.
+- “No shipped project lists C#.”: C# filter note, first sentence. The new HITEC project lists C#, so the note's claim is now false; the note and its special case are removed.
+- “It appears in Background — the HITEC internship and Heavy Industries Taxila.”: C# filter note, second sentence. Removed with the note (see above).
+- “Earlier systems”: Tier-2 heading. Renamed to Earlier & Institutional Systems now that the tier holds an institutional project.
+- “Five shipped systems, each shown with its proof.”: Meta description, second sentence. Six shipped systems now (HITEC added).
 
 ### Added sentences (allowlisted)
 
-- “Data & Pipelines”: Capabilities-matrix column heading, previously hardcoded in CapabilitiesMatrix; now content.matrixColumns[0].title.
-- “Skip to content”: Skip-link label, previously hardcoded in layout.tsx; now ui.skipLink.
-- “Shamas Ur Rehman on GitHub”: GitHub icon aria-label, previously hardcoded in SiteHeader; now ui.header.githubLabel.
-- “Shamas Ur Rehman on LinkedIn”: LinkedIn icon aria-label, previously hardcoded in SiteHeader; now ui.header.linkedinLabel.
-- “Dresden · Werkstudent 20h/wk”: Presence-dot tooltip, previously hardcoded in SiteHeader; now ui.header.presence.
-- “Copy failed — use the email link”: CopyEmailButton failure title, previously hardcoded in CopyEmailButton; now ui.copyEmail.copyFailed.
-- “Email address copied to clipboard.”: CopyEmailButton aria-live announcement, previously hardcoded in CopyEmailButton; now ui.copyEmail.copiedAnnouncement.
-- “Use the email link instead.”: CopyEmailButton failure announcement, previously hardcoded in CopyEmailButton; now ui.copyEmail.failedAnnouncement.
-- “Copy email address”: CopyEmailButton aria-label, previously hardcoded in CopyEmailButton; now ui.copyEmail.iconLabel.
-- “Switch to light mode”: ThemeToggle label, previously hardcoded in ThemeToggle; now ui.theme.toLight.
-- “Switch to dark mode”: ThemeToggle label, previously hardcoded in ThemeToggle; now ui.theme.toDark.
-- “Dresden · Werkstudent eligible, 20h/wk”: Hero availability pill, previously hardcoded in page.tsx; now ui.hero.pill.
-- “View Flagship Work”: Hero CTA label, previously hardcoded in page.tsx; now ui.hero.viewWork.
-- “Three flagship systems, each with its architecture and its proof.”: Work section intro, first sentence, previously hardcoded in page.tsx; now ui.work.intro.
-- “Two earlier systems follow in a compact index.”: Work section intro, second sentence, previously hardcoded in page.tsx; now ui.work.intro.
-- “Showing all 5 projects.”: Work filter note, previously composed in WorkSection; now ui.work.showingAll.
-- “{n} of 5 projects use {tag}.”: Work filter-note template, previously composed in WorkSection; now ui.work.showingSome.
-- “No shipped project lists C#.”: C# filter note, first sentence, previously composed in WorkSection; now ui.work.cSharpNote.
-- “It appears in Background — the HITEC internship and Heavy Industries Taxila.”: C# filter note, second sentence, previously composed in WorkSection; now ui.work.cSharpNote.
-- “Earlier systems”: Work section tier-2 heading, previously hardcoded in WorkSection; now ui.work.earlierSystems.
-- “{version} · {total} tests ({backend} backend, {frontend} frontend)”: Flagship metrics template, previously composed in FlagshipCard from the figure/version/tests fields; now ui.work.metrics.
-- “Spoken languages”: Background metadata-strip label, previously hardcoded in Background; now ui.background.languagesLabel.
-- “Every skill, grouped by what it does.”: Stack section intro, first sentence, previously hardcoded in page.tsx; now ui.stack.intro.
-- “The pills above the projects filter them by stack.”: Stack section intro, second sentence, previously hardcoded in page.tsx; now ui.stack.intro.
-- “Every claim on this page carries its evidence.”: Footer closing line, previously hardcoded in SiteFooter; now ui.footer.closing.
-- “Deposit caps in the registry”: Case-study registry heading, previously hardcoded in CaseStudy; now ui.caseStudy.registryHeading.
-- “Split-frame schematic: move-in and move-out room boundaries aligned, with an 86.1 percent IoU reticle”: LeaseLens SVG aria-label, previously hardcoded in SpecAssets; now ui.assets.leaselens.ariaLabel.
-- “Move-in and move-out room boundaries aligned, 86.1% IoU”: LeaseLens SVG title, previously hardcoded in SpecAssets; now ui.assets.leaselens.title.
-- “Pipeline diagram: sources feed MinIO and Parquet, Airflow tasks load the PostgreSQL star schema”: ETL SVG aria-label, previously hardcoded in SpecAssets; now ui.assets.etl.ariaLabel.
-- “Sources feed MinIO and Parquet, Airflow tasks load PostgreSQL”: ETL SVG title, previously hardcoded in SpecAssets; now ui.assets.etl.title.
-- “1 DAG · 3 TASKS · 4 TABLES”: ETL SVG footer label, previously hardcoded in SpecAssets; now ui.assets.etl.footer.
-- “Speech waveform with structured metric bars for pace, filler words, and clarity”: OratorPath SVG aria-label, previously hardcoded in SpecAssets; now ui.assets.orator.ariaLabel.
-- “Speech waveform with metric bars: pace, filler words, clarity”: OratorPath SVG title, previously hardcoded in SpecAssets; now ui.assets.orator.title.
-- “Software Engineer, Dresden”: Document title suffix, previously in layout.tsx metadata; now ui.meta.titleSuffix.
-- “Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden.”: Meta description, first sentence, previously in layout.tsx metadata; now ui.meta.description.
-- “Five shipped systems, each shown with its proof.”: Meta description, second sentence, previously in layout.tsx metadata; now ui.meta.description.
+- “Internal / Archived”: New project — Tier 2 row badge. No external live URL exists, so the row links to the internal case page and carries this badge.
+- “HITEC University Web Platform & Admin Panel”: New project (HITEC University Web Platform & Admin Panel, 2025) — title. User-briefed 2026-11-24.
+- “Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.”: New project — one-sentence summary. User-briefed 2026-11-24.
+- “Delivered during IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.”: New project — proof / delivery line. User-briefed 2026-11-24.
+- “HITEC University's web presence ran on modules that needed a database behind them, and the internal team needed an admin panel to manage content — plus a support chatbot that could answer questions from university documents.”: New project — Problem block. Rephrased from the user-briefed summary and the existing Background internship entry; no new claim.
+- “The backend is ASP.NET MVC in C#, with a SQL Server schema behind the web modules.”: New project — Architecture block, sentence 1. User-briefed stack (ASP.NET MVC, C#, SQL Server).
+- “The internal admin panel provides CRUD workflows for the content management system.”: New project — Architecture block, sentence 2. User-briefed (admin CRUD workflows).
+- “A RAG support chatbot in Python/Hugging Face answers questions over university documents.”: New project — Architecture block, sentence 3. From the existing Background internship entry (RAG support chatbot in Python/Hugging Face over university docs).
+- “Delivered during the IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.”: New project — Outcome block, sentence 1. The proof line restated with 'the' for sentence grammar; same facts, user-briefed 2026-11-24.
+- “Three earlier systems follow in a compact index.”: Work intro, second sentence. Replaces 'Two earlier systems follow in a compact index.' (HITEC added).
+- “Showing all {total} projects.”: Work filter note, derived count. Replaces the hard-coded 'Showing all 5 projects.' now that the count comes from the project list.
+- “{n} of {total} projects use {tag}.”: Work filter-note template, derived count. Replaces the hard-coded '{n} of 5 projects use {tag}.'.
+- “Earlier & Institutional Systems”: Tier-2 heading. Replaces 'Earlier systems' now that the tier holds an institutional project.
+- “Six shipped systems, each shown with its proof.”: Meta description, second sentence. Replaces 'Five shipped systems, each shown with its proof.' (HITEC added).
 
 ### Links
 
@@ -72,11 +57,11 @@ Baseline: `main:src/content.ts` at commit 8ab0f7f (the live Engineering Spec She
 
 ## Part B — German complete
 
-- English string leaves: 329
-- German string leaves: 328
+- English string leaves: 343
+- German string leaves: 342
 - Keys in English but not German: 1 (1 allowlisted)
 - Keys in German but not English: 0 (0 allowlisted)
-- German values byte-identical to English: 163 (163 explained as proper nouns, links, numbers, or the verbatim quote)
+- German values byte-identical to English: 170 (170 explained as proper nouns, links, numbers, or the verbatim quote)
 - Unexplained identical values: 0
 
 ### Missing keys in German
@@ -134,18 +119,25 @@ Baseline: `main:src/content.ts` at commit 8ab0f7f (the live Engineering Spec She
 - `projects[2].stack[1]` = “Hugging Face”: skill / stack / certificate name — proper noun, does not translate
 - `projects[2].stack[2]` = “NLP”: skill / stack / certificate name — proper noun, does not translate
 - `projects[2].evidence.kind` = “citation”: evidence-kind key (quote / citation)
-- `projects[3].slug` = “quality-crm”: URL slug, identical in both locales.
-- `projects[3].title` = “Quality Management & Defect-Tracking CRM”: project title — proper noun
-- `projects[3].year` = “2024”: year / test count — number, identical by rule
-- `projects[3].stack[0]` = “Laravel”: skill / stack / certificate name — proper noun, does not translate
-- `projects[3].stack[1]` = “MySQL”: skill / stack / certificate name — proper noun, does not translate
-- `projects[3].stack[2]` = “PHP”: skill / stack / certificate name — proper noun, does not translate
-- `projects[4].slug` = “upliftu”: URL slug, identical in both locales.
-- `projects[4].title` = “UpliftU”: project title — proper noun
+- `projects[3].slug` = “hitec-cms”: URL slug, identical in both locales.
+- `projects[3].year` = “2025”: year / test count — number, identical by rule
+- `projects[3].stack[0]` = “C#”: skill / stack / certificate name — proper noun, does not translate
+- `projects[3].stack[1]` = “ASP.NET MVC”: skill / stack / certificate name — proper noun, does not translate
+- `projects[3].stack[2]` = “SQL Server”: skill / stack / certificate name — proper noun, does not translate
+- `projects[3].stack[3]` = “Python”: skill / stack / certificate name — proper noun, does not translate
+- `projects[3].stack[4]` = “RAG”: skill / stack / certificate name — proper noun, does not translate
+- `projects[4].slug` = “quality-crm”: URL slug, identical in both locales.
+- `projects[4].title` = “Quality Management & Defect-Tracking CRM”: project title — proper noun
 - `projects[4].year` = “2024”: year / test count — number, identical by rule
-- `projects[4].stack[0]` = “Python”: skill / stack / certificate name — proper noun, does not translate
-- `projects[4].stack[1]` = “Hugging Face”: skill / stack / certificate name — proper noun, does not translate
-- `projects[4].stack[2]` = “NLP”: skill / stack / certificate name — proper noun, does not translate
+- `projects[4].stack[0]` = “Laravel”: skill / stack / certificate name — proper noun, does not translate
+- `projects[4].stack[1]` = “MySQL”: skill / stack / certificate name — proper noun, does not translate
+- `projects[4].stack[2]` = “PHP”: skill / stack / certificate name — proper noun, does not translate
+- `projects[5].slug` = “upliftu”: URL slug, identical in both locales.
+- `projects[5].title` = “UpliftU”: project title — proper noun
+- `projects[5].year` = “2024”: year / test count — number, identical by rule
+- `projects[5].stack[0]` = “Python”: skill / stack / certificate name — proper noun, does not translate
+- `projects[5].stack[1]` = “Hugging Face”: skill / stack / certificate name — proper noun, does not translate
+- `projects[5].stack[2]` = “NLP”: skill / stack / certificate name — proper noun, does not translate
 - `background.education[0].school` = “TU Dresden”: institution / degree name — proper noun
 - `background.education[0].note` = “Scalable Data Engineering, Data Visualization, Requirements Engineering.”: course titles — proper nouns
 - `background.education[1].degree` = “BSc Software Engineering”: institution / degree name — proper noun

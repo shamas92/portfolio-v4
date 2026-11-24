@@ -5,7 +5,7 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useContent } from "@/i18n/LocaleProvider";
-import { CopyEmailButton } from "./CopyEmailButton";
+import { DownloadCvButton } from "./DownloadCvButton";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
 
@@ -30,8 +30,8 @@ const SECTION_IDS = ["work", "background", "stack", "contact"] as const;
 /** The global header, rebuilt: a fixed bar that is a full-width
  *  flush container at scroll top and morphs into a centered
  *  floating pill once the user scrolls past 24px. Three zones —
- *  wordmark + presence, sliding-pill section nav, utility cluster
- *  — and a mobile dropdown menu below 768px.
+ *  wordmark, sliding-pill section nav, utility cluster — and a
+ *  mobile dropdown menu below 768px.
  *
  *  The header is fixed, so the layout reserves its at-top height
  *  with a .header-spacer div; the morph never moves page content.
@@ -173,18 +173,6 @@ export function SiteHeader() {
             </span>
             <span className="site-name-text">{content.profile.name}</span>
           </Link>
-          <span
-            className="presence has-tooltip"
-            title={ui.header.availabilityTooltip}
-          >
-            <span className="presence-dot" aria-hidden="true" />
-            <span className="visually-hidden">
-              {ui.header.availabilityTooltip}
-            </span>
-            <span className="tooltip" aria-hidden="true">
-              {ui.header.availabilityTooltip}
-            </span>
-          </span>
         </div>
 
         <nav className="site-nav" aria-label={ui.navLabel}>
@@ -235,8 +223,11 @@ export function SiteHeader() {
               LinkedIn
             </span>
           </a>
-          <CopyEmailButton variant="pill" className="copy-desktop" />
-          <CopyEmailButton variant="pill" iconOnly className="copy-mobile" />
+          <DownloadCvButton className="copy-btn copy-btn--pill copy-desktop" />
+          <DownloadCvButton
+            className="copy-btn copy-btn--pill copy-btn--icon copy-mobile"
+            iconOnly
+          />
           <div className="header-lang">
             <LanguageToggle />
           </div>

@@ -5,13 +5,15 @@ import { useContent, useLocale, type Locale } from "@/i18n/LocaleProvider";
 /** Segmented DE | EN language control. A separate control from
  *  the theme toggle: it switches the whole site's language, the
  *  theme toggle only switches the colour scheme. The active
- *  language is a cobalt segment; the control is two real buttons
- *  with aria-pressed inside a group labelled "Language" (or
- *  "Sprache"), so the accessible name of each option is its visible
- *  text — DE / EN — and a screen reader hears the group label plus
- *  the pressed state. No per-option aria-label: one would replace
- *  the visible text in the accessible name and fail the
- *  label-in-name check. */
+ *  language is a neutral segment (bg-neutral-100 / dark
+ *  bg-neutral-800) with primary ink text — deliberately
+ *  low-contrast, so it never competes with the Download CV CTA.
+ *  The control is two real buttons with aria-pressed inside a
+ *  group labelled "Language" (or "Sprache"), so the accessible name
+ *  of each option is its visible text — DE / EN — and a screen
+ *  reader hears the group label plus the pressed state. No
+ *  per-option aria-label: one would replace the visible text in
+ *  the accessible name and fail the label-in-name check. */
 export function LanguageToggle() {
   const { locale, setLocale } = useLocale();
   const content = useContent();

@@ -41,11 +41,11 @@ function CheckIcon() {
 }
 
 /** Copy-email action. Three shapes from one component: the outline
- *  button the footer uses, the high-contrast pill the header uses,
- *  and the icon-only pill the mobile header uses. The label swaps
- *  inline to "Copied ✓" for 2 seconds with a scale pop, and the
- *  icon morphs from envelope to check (transform/opacity only).
- *  An aria-live region announces the result. */
+ *  button the footer uses, a high-contrast pill, and an icon-only
+ *  pill. The label swaps inline to "Copied ✓" for 2 seconds with a
+ *  scale pop, and the icon morphs from envelope to check
+ *  (transform/opacity only). An aria-live region announces the
+ *  result. */
 export function CopyEmailButton({
   variant = "outline",
   iconOnly = false,

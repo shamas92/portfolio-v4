@@ -19,7 +19,14 @@
   --accent-light: #1d4ed8;
   --accent-wash-light: #dbeafe;
   --accent-on-wash-light: #1d4ed8;
-  --presence-light: #047857;
+  /* Presence / status dot — emerald #10B981 in BOTH themes (the
+     polish brief fixes this value; it reads on the dark ground
+     too). A live-status colour, not the accent. */
+  --presence-light: #10b981;
+  /* Language toggle active segment — Tailwind neutral-100 /
+     neutral-800. Deliberately low contrast so it never competes
+     with the solid Download CV CTA. */
+  --lang-active-light: #f5f5f5;
   --shadow-light: 0 8px 24px rgb(20 20 19 / 0.08);
   /* raw values — dark */
   --ground-dark: #0c0c0b;
@@ -31,6 +38,7 @@
   --accent-wash-dark: #172554;
   --accent-on-wash-dark: #60a5fa;
   --presence-dark: #10b981;
+  --lang-active-dark: #262626;
   --shadow-dark: 0 8px 24px rgb(0 0 0 / 0.45);
 
   /* semantic aliases (light default; the toggle switches
@@ -47,6 +55,7 @@
   --accent-wash: var(--accent-wash-light);
   /* presence dot — emerald, a live-status colour, not the accent */
   --presence: var(--presence-light);
+  --lang-active: var(--lang-active-light);
   --shadow: var(--shadow-light);
 
   /* type roles */
@@ -94,6 +103,7 @@ html[data-theme="dark"] {
   --focus: var(--accent-dark);
   --accent-wash: var(--accent-wash-dark);
   --presence: var(--presence-dark);
+  --lang-active: var(--lang-active-dark);
   --shadow: var(--shadow-dark);
 }
 
@@ -244,7 +254,7 @@ footer[id] {
   box-shadow: var(--shadow);
 }
 
-/* ---- Header left: monogram + wordmark + presence dot ---- */
+/* ---- Header left: monogram + wordmark ---- */
 .header-left {
   display: flex;
   align-items: center;
@@ -281,6 +291,7 @@ footer[id] {
   height: 28px;
   flex: none;
   border: 1px solid var(--ink);
+  border-radius: 8px;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 500;
@@ -299,36 +310,6 @@ footer[id] {
   }
 }
 
-/* Presence dot: 6px emerald, slow pulse ring (transform/opacity
-   only). The tooltip is the availability line; screen readers get
-   it as visually hidden text. */
-.presence {
-  position: relative;
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  padding-inline: 4px;
-  cursor: default;
-}
-
-.presence-dot {
-  position: relative;
-  flex: none;
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: var(--presence);
-}
-
-.presence-dot::after {
-  content: "";
-  position: absolute;
-  inset: -4px;
-  border-radius: 50%;
-  border: 1px solid var(--presence);
-  animation: dot-pulse 3s var(--ease) infinite;
-}
-
 /* ---- Header center: sliding-pill section nav ---- */
 .site-nav {
   display: flex;
@@ -345,7 +326,7 @@ footer[id] {
   align-items: center;
   min-height: 44px;
   padding-inline: 12px;
-  border-radius: 999px;
+  border-radius: 8px;
 }
 
 .site-nav a:hover {
@@ -358,7 +339,7 @@ footer[id] {
   content: "";
   position: absolute;
   inset: 6px 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--rule);
   opacity: 0;
   transition: opacity var(--dur-fast) var(--ease);
@@ -378,7 +359,7 @@ footer[id] {
 .nav-pill {
   position: absolute;
   inset: 6px 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--accent-wash);
   z-index: 0;
 }
@@ -406,7 +387,7 @@ footer[id] {
   flex: none;
   color: var(--ink-muted);
   text-decoration: none;
-  border-radius: 999px;
+  border-radius: 8px;
   transition:
     color var(--dur-med) var(--ease),
     background-color var(--dur-med) var(--ease);
@@ -441,7 +422,7 @@ footer[id] {
   color: var(--ink);
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 4px 10px;
   box-shadow: var(--shadow);
   transition:
@@ -458,12 +439,16 @@ footer[id] {
   }
 }
 
-/* ---- Language toggle: segmented DE | EN ---- */
+/* ---- Language toggle: segmented DE | EN, deliberately
+   low-contrast. The active segment is a neutral fill
+   (bg-neutral-100 / dark bg-neutral-800) with primary ink text;
+   the inactive language is muted secondary ink. No blue anywhere
+   in the toggle, so it never competes with the Download CV CTA. ---- */
 .lang-toggle {
   display: inline-flex;
   align-items: center;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: 8px;
   padding: 2px;
   gap: 2px;
 }
@@ -476,7 +461,7 @@ footer[id] {
   min-height: 44px;
   padding-inline: 8px;
   border: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: transparent;
   color: var(--ink-muted);
   cursor: pointer;
@@ -490,8 +475,8 @@ footer[id] {
 }
 
 .lang-option[aria-pressed="true"] {
-  background: var(--accent);
-  color: var(--bg);
+  background: var(--lang-active);
+  color: var(--ink);
 }
 
 /* ---- Theme toggle: sun/moon rotate in on switch ---- */
@@ -503,7 +488,7 @@ footer[id] {
   height: 44px;
   background: transparent;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: 8px;
   color: var(--ink);
   cursor: pointer;
   transition:
@@ -553,7 +538,7 @@ footer[id] {
   height: 44px;
   background: transparent;
   border: 1px solid var(--rule);
-  border-radius: 999px;
+  border-radius: 8px;
   cursor: pointer;
 }
 
@@ -673,6 +658,15 @@ footer[id] {
   padding-block: var(--space-12) var(--space-8);
 }
 
+/* Desktop: tighter vertical pacing so the Work section divider
+   and heading peek above the fold on 1080p/900p laptop screens.
+   Mobile keeps the generous pacing. */
+@media (min-width: 1024px) {
+  .hero {
+    padding-block: var(--space-8) var(--space-6);
+  }
+}
+
 .hero-name {
   font-family: var(--font-display);
   font-weight: 600;
@@ -684,12 +678,13 @@ footer[id] {
 
 .hero-claim {
   margin-top: var(--space-3);
-  font-weight: 600;
+  font-weight: 400;
   font-size: var(--text-lede);
   line-height: 1.35;
   letter-spacing: -0.02em;
   text-wrap: balance;
   max-width: 26ch;
+  color: var(--ink-muted);
 }
 
 /* Availability pill: mono, hairline border, accent dot with a
@@ -714,7 +709,7 @@ footer[id] {
   width: 8px;
   height: 8px;
   border-radius: 50%;
-  background: var(--accent);
+  background: var(--presence);
 }
 
 .status-dot::after {
@@ -722,7 +717,7 @@ footer[id] {
   position: absolute;
   inset: -4px;
   border-radius: 50%;
-  border: 1px solid var(--accent);
+  border: 1px solid var(--presence);
   animation: dot-pulse 2.4s var(--ease) infinite;
 }
 
@@ -776,6 +771,7 @@ footer[id] {
   text-decoration: none;
   cursor: pointer;
   border: 1px solid transparent;
+  border-radius: 8px;
   transition:
     background-color var(--dur-med) var(--ease),
     color var(--dur-med) var(--ease),
@@ -1174,6 +1170,23 @@ footer[id] {
   font-size: 1rem;
   line-height: 1.6;
   max-width: 60ch;
+}
+
+/* Internal / Archived badge on the tier-2 row: mono, hairline,
+   8px radius like the rest of the header geometry. */
+.index-badge {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 8px;
+  padding: 2px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: var(--ink-muted);
+  vertical-align: middle;
+  white-space: nowrap;
 }
 
 .index-stack {
@@ -1718,6 +1731,7 @@ footer[id] {
   color: var(--ink);
   background: transparent;
   border: 1px solid var(--ink);
+  border-radius: 8px;
   min-height: 44px;
   padding: var(--space-1) var(--space-2);
   cursor: pointer;
@@ -1738,7 +1752,7 @@ footer[id] {
 }
 
 .copy-btn--pill {
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--ink);
   border-color: var(--ink);
   color: var(--bg);
@@ -1754,10 +1768,17 @@ footer[id] {
   width: 44px;
   height: 44px;
   padding: 0;
-  border-radius: 999px;
+  border-radius: 8px;
   background: var(--ink);
   border-color: var(--ink);
   color: var(--bg);
+}
+
+/* Download icon for the icon-only CV button in the mobile header. */
+.download-icon {
+  width: 18px;
+  height: 18px;
+  flex: none;
 }
 
 .copy-btn--icon:hover {
@@ -1867,7 +1888,6 @@ footer[id] {
   }
 
   .status-dot::after,
-  .presence-dot::after,
   .etl-flow {
     animation: none;
   }

@@ -568,7 +568,8 @@ export const deContent: SiteContent = {
         clarity: "KLARHEIT",
         window: "OratorPath — Sprachanalyse",
         paper: "Spectrum of Engineering Sciences · Bd. 3, Heft 7 · 2025",
-        caption: "Mockup der Sprachanalyse — schematische Balken, keine Messwerte.",
+        caption:
+          "Mockup der Sprachanalyse — schematische Balken, keine Messwerte.",
       },
     },
     meta: {

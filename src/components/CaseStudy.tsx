@@ -52,11 +52,11 @@ export function CaseStudy({ slug }: { slug: string }) {
   const caseAsset = caseAssets[slug];
   const hasEvidence = Boolean(
     project.figure ||
-      project.evidence ||
-      project.image ||
-      project.registry ||
-      project.limits ||
-      caseAsset,
+    project.evidence ||
+    project.image ||
+    project.registry ||
+    project.limits ||
+    caseAsset,
   );
 
   return (

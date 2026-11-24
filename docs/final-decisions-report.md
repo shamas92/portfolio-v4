@@ -164,19 +164,21 @@ Stack with no gap where Evidence was.
 Merged `redesign/header-i18n` into `main` as a fast-forward (main
 had not moved from `8ab0f7f`); pushed to GitHub
 `shamas92/portfolio-v4`; deployed with the Vercel CLI
-(`vercel --prod --yes`). Live verification at
+(`vercel --prod --yes`, 33s). Live verification at
 https://portfolio-v4-rosy-five.vercel.app: home 200, all six case
-pages 200, oxide-red accent and Newsreader headings in the served
-CSS, no "No figures were measured" string in the live HTML of the
-three no-figure pages, Download CV in the header, German toggle
-present. Deployment id: [see §8].
+pages 200, oxide-red accent (`#9A3324` in the served CSS, zero
+cobalt values) and Newsreader / Inter Tight in the served CSS, no
+"No figures were measured" string in the live HTML of the three
+no-figure pages, Download CV in the header (CV PDF 200), German
+toggle present (DE/EN options in the live HTML). Deployment id:
+see §8.
 
 ## 8. Deployment record
 
-- Branch tip merged: [commit]
-- `main` after merge: [commit]
-- Pushed to `origin/main`: [yes, commit]
-- Vercel deployment id: [id]
+- Branch tip merged: `be7e5f3`
+- `main` after merge: `be7e5f3`
+- Pushed to `origin/main`: yes, `be7e5f3`
+- Vercel deployment id: `portfolio-v4-6rt7358mp-shamas92s-projects.vercel.app`
 - Live URL: https://portfolio-v4-rosy-five.vercel.app
 
 ## Deliberately left out / unsure

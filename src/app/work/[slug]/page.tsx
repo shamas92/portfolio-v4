@@ -54,7 +54,7 @@ export default async function CaseStudyPage({
   if (!project) notFound();
   return (
     <div className="page">
-      <CaseStudy project={project} />
+      <CaseStudy slug={slug} />
     </div>
   );
 }

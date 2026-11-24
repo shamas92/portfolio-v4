@@ -1,7 +1,9 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import { Newsreader } from "next/font/google";
-import type { Project } from "@/content";
+import { useContent } from "@/i18n/LocaleProvider";
 import { Annotated } from "./ProofNote";
 import { Todo } from "./Todo";
 
@@ -20,8 +22,13 @@ const newsreaderItalic = Newsreader({
  *  A block is omitted when the project has no verified content for
  *  it; the plain status line stays where Evidence would be empty.
  *  Sections stack plainly with anchor ids; the header nav covers
- *  site navigation (no rail). */
-export function CaseStudy({ project }: { project: Project }) {
+ *  site navigation (no rail). The page looks the project up in the
+ *  current locale's content by slug — the server page already
+ *  validated the slug, so the lookup always succeeds. */
+export function CaseStudy({ slug }: { slug: string }) {
+  const content = useContent();
+  const ui = content.ui.caseStudy;
+  const project = content.projects.find((p) => p.slug === slug)!;
   const hasEvidence = Boolean(
     project.figure ||
     project.evidence ||
@@ -35,7 +42,7 @@ export function CaseStudy({ project }: { project: Project }) {
     <>
       <div className="case-head">
         <Link className="case-back" href="/#work">
-          All projects
+          {ui.allProjects}
         </Link>
         <h1 className="case-title">{project.title}</h1>
         <p className="case-meta">
@@ -49,7 +56,7 @@ export function CaseStudy({ project }: { project: Project }) {
         aria-labelledby="problem-head"
       >
         <h2 className="case-block-head" id="problem-head">
-          Problem
+          {ui.problem}
         </h2>
         <Annotated
           prose={project.problem}
@@ -63,7 +70,7 @@ export function CaseStudy({ project }: { project: Project }) {
         aria-labelledby="architecture-head"
       >
         <h2 className="case-block-head" id="architecture-head">
-          Architecture
+          {ui.architecture}
         </h2>
         <Annotated
           prose={project.architecture}
@@ -77,7 +84,7 @@ export function CaseStudy({ project }: { project: Project }) {
         aria-labelledby="outcome-head"
       >
         <h2 className="case-block-head" id="outcome-head">
-          Outcome
+          {ui.outcome}
         </h2>
         <Annotated
           prose={project.outcome}
@@ -92,7 +99,7 @@ export function CaseStudy({ project }: { project: Project }) {
           aria-labelledby="evidence-head"
         >
           <h2 className="case-block-head" id="evidence-head">
-            Evidence
+            {ui.evidence}
           </h2>
 
           {project.figure && (
@@ -134,7 +141,7 @@ export function CaseStudy({ project }: { project: Project }) {
 
           {project.registry && (
             <div>
-              <h3 className="case-block-head">Deposit caps in the registry</h3>
+              <h3 className="case-block-head">{ui.registryHeading}</h3>
               <ul className="registry-list">
                 {project.registry.map((r) => (
                   <li key={r.jurisdiction}>
@@ -148,7 +155,7 @@ export function CaseStudy({ project }: { project: Project }) {
 
           {project.limits && (
             <div>
-              <h3 className="case-block-head">Limits</h3>
+              <h3 className="case-block-head">{ui.limitsHeading}</h3>
               <ul className="limits-list">
                 {project.limits.map((limit) => (
                   <li key={limit}>{limit}</li>
@@ -165,7 +172,7 @@ export function CaseStudy({ project }: { project: Project }) {
 
       <section className="case-block" id="stack" aria-labelledby="stack-head">
         <h2 className="case-block-head" id="stack-head">
-          Stack
+          {ui.stack}
         </h2>
         <ul className="case-stack-list">
           {project.stack.map((s) => (
@@ -177,7 +184,7 @@ export function CaseStudy({ project }: { project: Project }) {
       {(project.links.length > 0 || project.todoLinks) && (
         <section className="case-block" id="links" aria-labelledby="links-head">
           <h2 className="case-block-head" id="links-head">
-            Links
+            {ui.links}
           </h2>
           <div className="case-links">
             {project.links.map((l) => (

@@ -5,19 +5,20 @@
  * connectors carry the animated dash flow; everything else is
  * static. No invented numbers: the OratorPath bars are schematic
  * (no numeric labels), and the LeaseLens 86.1% IoU label is a
- * verified figure.
+ * verified figure. Labels come from the locale content, so the
+ * diagrams read in German too.
  */
+"use client";
+
+import { useContent } from "@/i18n/LocaleProvider";
 
 const mono = "var(--font-mono)";
 
 export function LeaseLensAsset() {
+  const labels = useContent().ui.assets.leaselens;
   return (
-    <svg
-      viewBox="0 0 400 200"
-      role="img"
-      aria-label="Split-frame schematic: move-in and move-out room boundaries aligned, with an 86.1 percent IoU reticle"
-    >
-      <title>Move-in and move-out room boundaries aligned, 86.1% IoU</title>
+    <svg viewBox="0 0 400 200" role="img" aria-label={labels.ariaLabel}>
+      <title>{labels.title}</title>
       {/* room outline */}
       <rect
         x="28"
@@ -104,7 +105,7 @@ export function LeaseLensAsset() {
         letterSpacing="1"
         fill="currentColor"
       >
-        MOVE-IN
+        {labels.moveIn}
       </text>
       <text
         x="372"
@@ -115,7 +116,7 @@ export function LeaseLensAsset() {
         letterSpacing="1"
         fill="var(--accent)"
       >
-        MOVE-OUT
+        {labels.moveOut}
       </text>
       <text
         x="200"
@@ -127,29 +128,24 @@ export function LeaseLensAsset() {
         letterSpacing="1"
         fill="var(--accent)"
       >
-        86.1% IoU
+        {labels.iou}
       </text>
     </svg>
   );
 }
 
 export function EtlAsset() {
+  const labels = useContent().ui.assets.etl;
   const nodes = [
-    { x: 12, lines: ["Sources"] },
+    { x: 12, lines: [labels.sources] },
     { x: 112, lines: ["MinIO", "Parquet"] },
-    { x: 212, lines: ["Airflow", "Tasks"] },
+    { x: 212, lines: [labels.airflow, labels.tasks] },
     { x: 312, lines: ["PostgreSQL"] },
   ];
   const connectors = [88, 188, 288];
   return (
-    <svg
-      viewBox="0 0 400 200"
-      role="img"
-      aria-label="Pipeline diagram: sources feed MinIO and Parquet, Airflow tasks load the PostgreSQL star schema"
-    >
-      <title>
-        Sources feed MinIO and Parquet, Airflow tasks load PostgreSQL
-      </title>
+    <svg viewBox="0 0 400 200" role="img" aria-label={labels.ariaLabel}>
+      <title>{labels.title}</title>
       {connectors.map((x) => (
         <g key={x}>
           <line
@@ -207,27 +203,22 @@ export function EtlAsset() {
         fill="currentColor"
         opacity="0.65"
       >
-        1 DAG · 3 TASKS · 4 TABLES
+        {labels.footer}
       </text>
     </svg>
   );
 }
 
 export function OratorPathAsset() {
+  const labels = useContent().ui.assets.orator;
   const bars = [
-    { label: "PACE", x: 30, width: 64 },
-    { label: "FILLER WORDS", x: 150, width: 34 },
-    { label: "CLARITY", x: 270, width: 82 },
+    { label: labels.pace, x: 30, width: 64 },
+    { label: labels.fillerWords, x: 150, width: 34 },
+    { label: labels.clarity, x: 270, width: 82 },
   ];
   return (
-    <svg
-      viewBox="0 0 400 200"
-      role="img"
-      aria-label="Speech waveform with structured metric bars for pace, filler words, and clarity"
-    >
-      <title>
-        Speech waveform with metric bars: pace, filler words, clarity
-      </title>
+    <svg viewBox="0 0 400 200" role="img" aria-label={labels.ariaLabel}>
+      <title>{labels.title}</title>
       {/* waveform */}
       <polyline
         points="20,65 28,52 36,78 44,44 52,86 60,58 68,70 76,48 84,80 92,62 100,55 108,74 116,40 124,88 132,60 140,68 148,50 156,82 164,58 172,66 180,46 188,84 196,62 204,56 212,76 220,44 228,86 236,60 244,70 252,52 260,80 268,64 276,58 284,72 292,48 300,84 308,62 316,56 324,74 332,42 340,88 348,60 356,68 364,54 372,76 380,65"

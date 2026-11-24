@@ -1,15 +1,22 @@
-import { background } from "@/content";
+"use client";
+
+import { useContent } from "@/i18n/LocaleProvider";
 
 /** Background: Experience on the left, Education on the right
  *  (two-column desktop grid), with spoken languages and
  *  certificates compressed into a horizontal metadata strip
- *  underneath. Every fact is rendered from content.ts verbatim. */
+ *  underneath. Every fact is rendered from the locale content
+ *  verbatim. */
 export function Background() {
+  const content = useContent();
+  const background = content.background;
+  const ui = content.ui.background;
+
   return (
     <>
       <div className="bg-grid">
         <div>
-          <h3 className="bg-col-head">Experience</h3>
+          <h3 className="bg-col-head">{ui.experience}</h3>
           <ol className="timeline">
             {background.experience.map((x) => (
               <li className="timeline-row" key={x.role + x.org}>
@@ -26,7 +33,7 @@ export function Background() {
         </div>
 
         <div>
-          <h3 className="bg-col-head">Education</h3>
+          <h3 className="bg-col-head">{ui.education}</h3>
           <ol className="timeline">
             {background.education.map((e) => (
               <li className="timeline-row" key={e.degree}>
@@ -45,7 +52,7 @@ export function Background() {
 
       <div className="meta-strip">
         <div>
-          <p className="meta-group-label">Spoken languages</p>
+          <p className="meta-group-label">{ui.languagesLabel}</p>
           <p className="meta-group-items">
             {background.languages
               .map((l) => `${l.language} ${l.level}`)
@@ -53,7 +60,7 @@ export function Background() {
           </p>
         </div>
         <div>
-          <p className="meta-group-label">Certificates</p>
+          <p className="meta-group-label">{ui.certificatesLabel}</p>
           <p className="meta-group-items">
             {background.certifications.items.join(" · ")}{" "}
             <span className="meta-period">

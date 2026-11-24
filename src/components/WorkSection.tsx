@@ -1,7 +1,8 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { projects, type Project } from "@/content";
+import { format, useContent } from "@/i18n/LocaleProvider";
+import type { Project } from "@/content";
 import { FlagshipCard } from "./FlagshipCard";
 import { IndexRow } from "./IndexRow";
 
@@ -10,9 +11,9 @@ const TIER2 = ["quality-crm", "upliftu"];
 
 /** Pills, in the order the brief names them, then the remaining
  *  project stack tags alphabetically. Counts are the number of
- *  shipped projects whose stack matches the pill. */
+ *  shipped projects whose stack matches the pill. "All" is the
+ *  only pill label that translates; the rest are stack tags. */
 const PILLS = [
-  "All",
   "Python",
   "TypeScript",
   "SQL",
@@ -34,7 +35,10 @@ const PILLS = [
   "SAM 3.1",
 ] as const;
 
-type Pill = (typeof PILLS)[number];
+type Pill = (typeof PILLS)[number] | "All";
+
+/** "All" first, then the stack tags. */
+const ALL_PILLS: Pill[] = ["All", ...PILLS];
 
 /** A project matches a pill when one of its stack tags is the pill,
  *  or the pill is a shorthand for a tag: Docker covers Docker
@@ -57,15 +61,18 @@ function matches(project: Project, pill: Pill): boolean {
  *  project, so the section works with JavaScript disabled too
  *  (the pills simply do not render and all five stay visible). */
 export function WorkSection() {
+  const content = useContent();
+  const projects = content.projects;
+  const ui = content.ui.work;
   const [active, setActive] = useState<Pill>("All");
 
   const counts = useMemo(() => {
     const map = new Map<Pill, number>();
-    for (const pill of PILLS) {
+    for (const pill of ALL_PILLS) {
       map.set(pill, projects.filter((p) => matches(p, pill)).length);
     }
     return map;
-  }, []);
+  }, [projects]);
 
   const flagships = FLAGSHIPS.map((slug) =>
     projects.find((p) => p.slug === slug)!,
@@ -75,10 +82,10 @@ export function WorkSection() {
 
   const note =
     active === "All"
-      ? "Showing all 5 projects."
+      ? ui.showingAll
       : active === "C#"
-        ? "No shipped project lists C#. It appears in Background — the HITEC internship and Heavy Industries Taxila."
-        : `${matched} of 5 projects use ${active}.`;
+        ? ui.cSharpNote
+        : format(ui.showingSome, { n: matched, tag: active });
 
   return (
     <>
@@ -87,7 +94,7 @@ export function WorkSection() {
         role="group"
         aria-label="Filter projects by stack"
       >
-        {PILLS.map((pill) => (
+        {ALL_PILLS.map((pill) => (
           <button
             key={pill}
             type="button"
@@ -95,7 +102,7 @@ export function WorkSection() {
             aria-pressed={active === pill}
             onClick={() => setActive(pill)}
           >
-            {pill} ({counts.get(pill) ?? 0})
+            {pill === "All" ? ui.all : pill} ({counts.get(pill) ?? 0})
           </button>
         ))}
       </div>
@@ -113,7 +120,7 @@ export function WorkSection() {
         ))}
       </div>
 
-      <h3 className="index-heading">Earlier systems</h3>
+      <h3 className="index-heading">{ui.earlierSystems}</h3>
       <ul className="index-list">
         {tier2.map((project) => (
           <IndexRow

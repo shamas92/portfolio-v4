@@ -1,6 +1,8 @@
+"use client";
+
 import Link from "next/link";
 import type { CSSProperties } from "react";
-import { profile } from "@/content";
+import { useContent } from "@/i18n/LocaleProvider";
 import { DownloadCvButton } from "@/components/DownloadCvButton";
 import { Reveal } from "@/components/Reveal";
 import { WorkSection } from "@/components/WorkSection";
@@ -13,23 +15,26 @@ const delay = (ms: number) =>
   ({ "--entrance-delay": `${ms}ms` }) as CSSProperties;
 
 export default function Home() {
+  const content = useContent();
+  const ui = content.ui;
+
   return (
     <div className="page">
       <header className="hero">
-        <h1 className="hero-name">{profile.name}</h1>
+        <h1 className="hero-name">{content.profile.name}</h1>
         <p className="hero-claim" data-entrance style={delay(40)}>
-          I build data &amp; ML systems — and prove every claim on this page.
+          {content.profile.claim}
         </p>
         <p className="hero-pill" data-entrance style={delay(80)}>
           <span className="status-dot" aria-hidden="true" />
-          Dresden · Werkstudent eligible, 20h/wk
+          {ui.hero.pill}
         </p>
         <p className="hero-status" data-entrance style={delay(120)}>
-          {profile.statusLine}
+          {content.profile.statusLine}
         </p>
         <div className="hero-actions" data-entrance style={delay(160)}>
           <Link className="btn btn-primary" href="#work">
-            View Flagship Work
+            {ui.hero.viewWork}
           </Link>
           <DownloadCvButton className="btn btn-secondary" />
         </div>
@@ -43,12 +48,9 @@ export default function Home() {
       >
         <Reveal>
           <h2 className="section-head" id="work-head">
-            Work
+            {ui.work.heading}
           </h2>
-          <p className="section-intro">
-            Three flagship systems, each with its architecture and its proof.
-            Two earlier systems follow in a compact index.
-          </p>
+          <p className="section-intro">{ui.work.intro}</p>
         </Reveal>
         <WorkSection />
       </section>
@@ -61,7 +63,7 @@ export default function Home() {
       >
         <Reveal>
           <h2 className="section-head" id="background-head">
-            Background
+            {ui.background.heading}
           </h2>
         </Reveal>
         <Background />
@@ -75,12 +77,9 @@ export default function Home() {
       >
         <Reveal>
           <h2 className="section-head" id="stack-head">
-            Stack
+            {ui.stack.heading}
           </h2>
-          <p className="section-intro">
-            Every skill, grouped by what it does. The pills above the projects
-            filter them by stack.
-          </p>
+          <p className="section-intro">{ui.stack.intro}</p>
         </Reveal>
         <CapabilitiesMatrix />
       </section>

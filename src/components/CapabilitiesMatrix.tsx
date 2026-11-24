@@ -1,75 +1,17 @@
-/**
- * Capabilities matrix: every technology on the site, grouped by
- * what it does, each exactly once, as plain text with no links.
- *
- * Mapping (29 skills from skillGroups + 6 tags that only appear in
- * project stacks = 35 items):
- * - Data & Pipelines: the 8 Data & BI skills + SQL + the ETL
- *   staging tags (Parquet, MinIO, Apache Airflow).
- * - ML & NLP: the ML skills + Python, the language the ML work
- *   is written in here, and SAM 3.1, the segmentation model.
- * - Full-Stack: the remaining languages and web frameworks,
- *   including Laravel, which only appears in the CRM stack.
- * - Infra & DBs: the three databases + Docker, Docker Compose,
- *   Git, Linux (Ubuntu).
- * No skill is claimed for a project it was not linked to: the
- * matrix groups capabilities, it does not attribute them.
- */
-const columns: { title: string; skills: string[] }[] = [
-  {
-    title: "Data & Pipelines",
-    skills: [
-      "SQL",
-      "Pandas",
-      "NumPy",
-      "Matplotlib",
-      "scikit-learn",
-      "time-series analysis",
-      "anomaly detection",
-      "Tableau",
-      "Excel",
-      "Parquet",
-      "MinIO",
-      "Apache Airflow",
-    ],
-  },
-  {
-    title: "ML & NLP",
-    skills: ["Python", "PyTorch", "Hugging Face", "RAG", "NLP", "SAM 3.1"],
-  },
-  {
-    title: "Full-Stack",
-    skills: [
-      "TypeScript",
-      "JavaScript",
-      "PHP",
-      "C#",
-      "ASP.NET MVC",
-      "Next.js",
-      "React",
-      "FastAPI",
-      "Laravel",
-      "REST APIs",
-    ],
-  },
-  {
-    title: "Infra & DBs",
-    skills: [
-      "PostgreSQL",
-      "MySQL",
-      "SQL Server",
-      "Docker",
-      "Docker Compose",
-      "Git",
-      "Linux (Ubuntu)",
-    ],
-  },
-];
+"use client";
 
+import { useContent } from "@/i18n/LocaleProvider";
+
+/** Capabilities matrix: every technology on the site, grouped by
+ *  what it does, each exactly once, as plain text with no links.
+ *  Column titles come from the locale content; skill names are
+ *  proper nouns and do not translate. The mapping (29 skills +
+ *  6 stack-only tags = 35 items) is documented in content.ts. */
 export function CapabilitiesMatrix() {
+  const content = useContent();
   return (
     <div className="matrix">
-      {columns.map((col) => (
+      {content.matrixColumns.map((col) => (
         <div className="matrix-col" key={col.title}>
           <h3 className="matrix-col-head">{col.title}</h3>
           <ul className="matrix-list">

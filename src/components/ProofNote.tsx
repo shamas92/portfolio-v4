@@ -2,6 +2,7 @@
 
 import { useRef, useState } from "react";
 import type { Prose } from "@/content";
+import { useContent } from "@/i18n/LocaleProvider";
 
 function CheckIcon() {
   return (
@@ -66,6 +67,8 @@ export function NotePanel({
   note: string;
   onClose: () => void;
 }) {
+  const content = useContent();
+  const ui = content.ui.proofNote;
   return (
     <div
       className="margin-note"
@@ -76,11 +79,11 @@ export function NotePanel({
     >
       <p className="margin-note-head">
         <CheckIcon />
-        Evidence
+        {ui.evidence}
       </p>
       <p>{note}</p>
       <button type="button" className="margin-note-close" onClick={onClose}>
-        Close
+        {ui.close}
       </button>
     </div>
   );

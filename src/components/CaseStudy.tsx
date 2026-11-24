@@ -5,6 +5,7 @@ import Link from "next/link";
 import { Newsreader } from "next/font/google";
 import { useContent } from "@/i18n/LocaleProvider";
 import { Annotated } from "./ProofNote";
+import { EtlAsset, LeaseLensAsset, OratorPathAsset } from "./SpecAssets";
 
 /* The italic serif for quotes and citations. Loaded only on case
    pages, so the home page never pays for it. */
@@ -15,6 +16,21 @@ const newsreaderItalic = Newsreader({
   display: "swap",
   variable: "--font-newsreader-italic",
 });
+
+/** The three flagship projects also show their interface mockup
+ *  in the Evidence section (the same asset as the home card).
+ *  The other three projects have no mockup. */
+const caseAssets: Record<
+  string,
+  {
+    Component: () => React.JSX.Element;
+    captionKey: "leaselens" | "etl" | "orator";
+  }
+> = {
+  leaselens: { Component: LeaseLensAsset, captionKey: "leaselens" },
+  "sales-etl-pipeline": { Component: EtlAsset, captionKey: "etl" },
+  oratorpath: { Component: OratorPathAsset, captionKey: "orator" },
+};
 
 /** One case-study page: the same blocks for every project —
  *  Problem, Contribution, Decision, Result, Evidence, Stack,
@@ -33,12 +49,14 @@ export function CaseStudy({ slug }: { slug: string }) {
   const content = useContent();
   const ui = content.ui.caseStudy;
   const project = content.projects.find((p) => p.slug === slug)!;
+  const caseAsset = caseAssets[slug];
   const hasEvidence = Boolean(
     project.figure ||
-    project.evidence ||
-    project.image ||
-    project.registry ||
-    project.limits,
+      project.evidence ||
+      project.image ||
+      project.registry ||
+      project.limits ||
+      caseAsset,
   );
 
   return (
@@ -131,6 +149,15 @@ export function CaseStudy({ slug }: { slug: string }) {
               <p>“{project.evidence.text}”</p>
               <cite>{project.evidence.cite}</cite>
             </div>
+          )}
+
+          {caseAsset && (
+            <figure className="case-figure">
+              <caseAsset.Component />
+              <figcaption>
+                {content.ui.assets[caseAsset.captionKey].caption}
+              </figcaption>
+            </figure>
           )}
 
           {project.image && (

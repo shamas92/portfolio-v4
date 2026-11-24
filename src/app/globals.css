@@ -1873,7 +1873,8 @@ footer[id] {
   max-width: 720px;
 }
 
-.case-figure img {
+.case-figure img,
+.case-figure svg {
   width: 100%;
   height: auto;
   display: block;

@@ -250,14 +250,6 @@ export const projects: Project[] = [
     ],
     proofCallout:
       "One DAG, three tasks, four tables: dim_date, dim_customer, dim_product, fact_sales.",
-    image: {
-      src: "/images/etl-diagram.webp",
-      width: 1440,
-      height: 1200,
-      alt: "Diagram of the ETL pipeline: one DAG, three tasks, four tables",
-      caption:
-        "Pipeline diagram: three tasks, four tables. Airflow TaskFlow, Parquet/MinIO staging, PostgreSQL.",
-    },
     links: [
       {
         label: "Sales ETL Pipeline on GitHub",
@@ -630,6 +622,11 @@ export type UiStrings = {
       moveIn: string;
       moveOut: string;
       iou: string;
+      window: string;
+      deposit: string;
+      cap: string;
+      excess: string;
+      status: string;
       caption: string;
     };
     etl: {
@@ -639,6 +636,8 @@ export type UiStrings = {
       airflow: string;
       tasks: string;
       footer: string;
+      window: string;
+      schema: string;
       caption: string;
     };
     orator: {
@@ -647,6 +646,8 @@ export type UiStrings = {
       pace: string;
       fillerWords: string;
       clarity: string;
+      window: string;
+      paper: string;
       caption: string;
     };
   };
@@ -765,32 +766,44 @@ export const ui: UiStrings = {
   assets: {
     leaselens: {
       ariaLabel:
-        "Split-frame schematic: move-in and move-out room boundaries aligned, with an 86.1 percent IoU reticle",
-      title: "Move-in and move-out room boundaries aligned, 86.1% IoU",
+        "Interface mockup of the LeaseLens evidence review: move-in and move-out room boundaries registered against each other, deposit figures, and an 86.1 percent registered IoU",
+      title:
+        "LeaseLens evidence review mockup — registered move-in and move-out boundaries, 86.1% IoU",
       moveIn: "MOVE-IN",
       moveOut: "MOVE-OUT",
       iou: "86.1% IoU",
+      window: "LeaseLens — Evidence review",
+      deposit: "DEPOSIT",
+      cap: "CAP",
+      excess: "EXCESS",
+      status: "86.1% registered IoU — single-pair score, no baseline",
       caption:
-        "Schematic of the registration check — an illustration, not a product screenshot.",
+        "Interface mockup of the evidence review — an illustration, not a product screenshot.",
     },
     etl: {
       ariaLabel:
-        "Pipeline diagram: sources feed MinIO and Parquet, Airflow tasks load the PostgreSQL star schema",
-      title: "Sources feed MinIO and Parquet, Airflow tasks load PostgreSQL",
+        "Interface mockup of the Sales ETL pipeline: sources feed MinIO and Parquet staging, Airflow tasks load the PostgreSQL star schema",
+      title:
+        "Sales ETL pipeline mockup — sources, MinIO and Parquet, Airflow tasks, PostgreSQL star schema",
       sources: "Sources",
       airflow: "Airflow",
       tasks: "Tasks",
       footer: "1 DAG · 3 TASKS · 4 TABLES",
-      caption: "Pipeline diagram — a schematic, not a product screenshot.",
+      window: "Sales ETL Pipeline — Airflow",
+      schema: "STAR SCHEMA",
+      caption: "Pipeline mockup — an illustration, not a product screenshot.",
     },
     orator: {
       ariaLabel:
-        "Speech waveform with structured metric bars for pace, filler words, and clarity",
-      title: "Speech waveform with metric bars: pace, filler words, clarity",
+        "Interface mockup of the OratorPath speech analysis: waveform with schematic metric bars for pace, filler words, and clarity",
+      title:
+        "OratorPath speech-analysis mockup — waveform and metric bars: pace, filler words, clarity",
       pace: "PACE",
       fillerWords: "FILLER WORDS",
       clarity: "CLARITY",
-      caption: "Speech metrics — schematic bars, no measured values.",
+      window: "OratorPath — Speech analysis",
+      paper: "Spectrum of Engineering Sciences · Vol. 3, Issue 7 · 2025",
+      caption: "Speech-analysis mockup — schematic bars, no measured values.",
     },
   },
   meta: {

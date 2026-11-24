@@ -173,14 +173,6 @@ export const deContent: SiteContent = {
       ],
       proofCallout:
         "Ein DAG, drei Tasks, vier Tabellen: dim_date, dim_customer, dim_product, fact_sales.",
-      image: {
-        src: "/images/etl-diagram.webp",
-        width: 1440,
-        height: 1200,
-        alt: "Diagramm der ETL-Pipeline: ein DAG, drei Tasks, vier Tabellen",
-        caption:
-          "Pipeline-Diagramm: drei Tasks, vier Tabellen. Airflow TaskFlow, Parquet/MinIO-Staging, PostgreSQL.",
-      },
       links: [
         {
           label: "Sales-ETL-Pipeline auf GitHub",
@@ -533,35 +525,44 @@ export const deContent: SiteContent = {
     assets: {
       leaselens: {
         ariaLabel:
-          "Geteiltes Schema: Einzugs- und Auszugsgrenzen eines Zimmers, ausgerichtet, mit einem 86.1-Prozent-IoU-Fadenkreuz",
+          "Interface-Mockup der LeaseLens-Nachweisprüfung: Einzugs- und Auszugsgrenzen eines Zimmers, registriert gegeneinander, Kautionszahlen und eine 86.1-prozentige registrierte IoU",
         title:
-          "Einzugs- und Auszugsgrenzen eines Zimmers, ausgerichtet, 86.1% IoU",
+          "LeaseLens-Mockup der Nachweisprüfung — registrierte Einzugs- und Auszugsgrenzen, 86.1% IoU",
         moveIn: "EINZUG",
         moveOut: "AUSZUG",
         iou: "86.1% IoU",
+        window: "LeaseLens — Nachweisprüfung",
+        deposit: "KAUTION",
+        cap: "OBERGRENZE",
+        excess: "MEHRBETRAG",
+        status: "86.1% registrierte IoU — Einzelpaar-Wert, ohne Basiswert",
         caption:
-          "Schema der Registrierungsprüfung — Illustration, kein Produkt-Screenshot.",
+          "Interface-Mockup der Nachweisprüfung — Illustration, kein Produkt-Screenshot.",
       },
       etl: {
         ariaLabel:
-          "Pipeline-Diagramm: Quellen speisen MinIO und Parquet, Airflow-Tasks laden das PostgreSQL-Star-Schema",
+          "Interface-Mockup der Sales-ETL-Pipeline: Quellen speisen MinIO- und Parquet-Staging, Airflow-Tasks laden das PostgreSQL-Star-Schema",
         title:
-          "Quellen speisen MinIO und Parquet, Airflow-Tasks laden PostgreSQL",
+          "Sales-ETL-Pipeline-Mockup — Quellen, MinIO und Parquet, Airflow-Tasks, PostgreSQL-Star-Schema",
         sources: "Quellen",
         airflow: "Airflow",
         tasks: "Tasks",
         footer: "1 DAG · 3 TASKS · 4 TABELLEN",
-        caption: "Pipeline-Diagramm — schematisch, kein Produkt-Screenshot.",
+        window: "Sales-ETL-Pipeline — Airflow",
+        schema: "STAR-SCHEMA",
+        caption: "Pipeline-Mockup — Illustration, kein Produkt-Screenshot.",
       },
       orator: {
         ariaLabel:
-          "Sprachwellenform mit strukturierten Kennzahlenbalken für Tempo, Füllwörter und Klarheit",
+          "Interface-Mockup der OratorPath-Sprachanalyse: Wellenform mit schematischen Kennzahlenbalken für Tempo, Füllwörter und Klarheit",
         title:
-          "Sprachwellenform mit Kennzahlenbalken: Tempo, Füllwörter, Klarheit",
+          "OratorPath-Mockup der Sprachanalyse — Wellenform und Kennzahlenbalken: Tempo, Füllwörter, Klarheit",
         pace: "TEMPO",
         fillerWords: "FÜLLWÖRTER",
         clarity: "KLARHEIT",
-        caption: "Sprachmetriken — schematische Balken, keine Messwerte.",
+        window: "OratorPath — Sprachanalyse",
+        paper: "Spectrum of Engineering Sciences · Bd. 3, Heft 7 · 2025",
+        caption: "Mockup der Sprachanalyse — schematische Balken, keine Messwerte.",
       },
     },
     meta: {

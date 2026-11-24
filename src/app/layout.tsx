@@ -1,6 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import Script from "next/script";
-import { Geist, JetBrains_Mono } from "next/font/google";
+import { Inter_Tight, JetBrains_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
@@ -10,13 +10,23 @@ import { profile, siteUrl } from "@/content";
 
 /* Self-hosted, subsetted, with size-adjusted fallbacks (next/font
    generates the fallback metrics, so there is no layout shift).
-   latin-ext covers ä ö ü ß. The italic serif used by the case-study
-   quote lives in CaseStudy.tsx, so it is only loaded on case pages. */
-const geist = Geist({
+   latin-ext covers ä ö ü ß. Newsreader is the display serif,
+   Inter Tight the body grotesque (user decision 2026-11-24);
+   JetBrains Mono stays for years, figures, labels and metadata.
+   The italic serif used by the case-study quote lives in
+   CaseStudy.tsx, so it is only loaded on case pages. */
+const newsreader = Newsreader({
   subsets: ["latin", "latin-ext"],
   weight: ["400", "500", "600", "700"],
   display: "swap",
-  variable: "--font-geist",
+  variable: "--font-newsreader",
+});
+
+const interTight = Inter_Tight({
+  subsets: ["latin", "latin-ext"],
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+  variable: "--font-inter-tight",
 });
 
 const jetbrainsMono = JetBrains_Mono({
@@ -101,7 +111,7 @@ export default function RootLayout({
       data-theme="light"
       data-locale="en"
       suppressHydrationWarning
-      className={`${geist.variable} ${jetbrainsMono.variable}`}
+      className={`${newsreader.variable} ${interTight.variable} ${jetbrainsMono.variable}`}
     >
       <head>
         <Script id="theme" strategy="beforeInteractive">

@@ -72,3 +72,25 @@ Full detail: `docs/header-polish-report.md`.
   uses the outline shape); left in place.
 - Vercel Git connect still open (needs the user's sign-in); this branch
   is not deployed.
+
+## Final decisions (2026-11-24, on top of this addendum)
+
+The user's five final decisions, applied on this branch before the
+merge — full detail in `docs/final-decisions-report.md`:
+
+- **Oxide red** replaces Technical Cobalt (`#9A3324` light /
+  `#E07856` dark, washes `#F9E7E0` / `#33150F`); contrast rechecked,
+  all accent pairs pass 4.5:1. The emerald hero dot is untouched.
+- **Newsreader + Inter Tight** replace Geist (JetBrains Mono
+  unchanged). Both load via `next/font`, latin + latin-ext.
+- **Evidence block omitted** for Quality CRM, UpliftU and HITEC —
+  no block, no status line, in either locale. LeaseLens, ETL and
+  OratorPath keep theirs.
+- **Keep the work pages** and **add the theme toggle**: both were
+  already the branch's state; verified, no change.
+
+Verification: build/lint/Prettier clean, content integrity zero
+unexplained differences, axe 0 violations (home EN/DE, HITEC EN/DE,
+LeaseLens EN), Lighthouse home mobile 75–81 / desktop 95, zero
+console errors. The merge and deploy record is in
+`docs/final-decisions-report.md` §7–§8.

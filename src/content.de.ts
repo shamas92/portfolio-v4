@@ -37,6 +37,7 @@ export const deContent: SiteContent = {
       slug: "leaselens",
       title: "LeaseLens",
       year: 2026,
+      category: "Hackathon",
       rowOutcome:
         "Ein Arbeitsbereich für Mieternachweise, der Kautionsforderungen mit Mietvertrag und Gesetz abgleicht.",
       rowProof:
@@ -137,6 +138,7 @@ export const deContent: SiteContent = {
       slug: "sales-etl-pipeline",
       title: "Sales ETL Pipeline",
       year: 2026,
+      category: "Data Engineering",
       rowOutcome:
         "Verkaufsdaten aus mehreren Quellen, geladen in eine einzige verlässliche Form.",
       rowProof: "Ein DAG, drei Tasks, vier Tabellen.",
@@ -185,6 +187,7 @@ export const deContent: SiteContent = {
       slug: "oratorpath",
       title: "OratorPath",
       year: 2025,
+      category: "Abschlussarbeit & Paper",
       rowOutcome:
         "Gemessenes Feedback für Entwickler, die öffentlich sprechen.",
       rowProof: "Peer-reviewte Publikation, 2025.",
@@ -222,6 +225,7 @@ export const deContent: SiteContent = {
       slug: "hitec-cms",
       title: "HITEC University Webplattform & Admin-Panel",
       year: 2025,
+      category: "Intern / Archiviert",
       rowOutcome:
         "Datenbankgestützte Universitäts-Webmodule, ein internes CMS-Admin-Panel sowie ein integrierter RAG-Support-Chatbot.",
       rowProof:
@@ -251,6 +255,7 @@ export const deContent: SiteContent = {
       slug: "quality-crm",
       title: "Quality Management & Defect-Tracking CRM",
       year: 2024,
+      category: "Fehlerverfolgung",
       rowOutcome:
         "Defekte und Qualitätsprobleme in einem Datensatz statt in informellen Notizen.",
       rowProof: "Als akademisches Projekt veröffentlicht.",
@@ -274,6 +279,7 @@ export const deContent: SiteContent = {
       slug: "upliftu",
       title: "UpliftU",
       year: 2024,
+      category: "Studierenden-Support",
       rowOutcome:
         "Gesprächsbasierte Unterstützung für Studierende, in strukturierter Form.",
       rowProof: "Als akademisches Projekt veröffentlicht.",
@@ -450,23 +456,15 @@ export const deContent: SiteContent = {
     },
     work: {
       heading: "Projekte",
-      intro:
-        "Ausgewählte Projekte zuerst — mit Problem, Beitrag, einer Entscheidung und dem Nachweis.",
+      intro: "Sechs Systeme, jedes mit Zusammenfassung und Nachweis.",
       all: "Alle",
       showingAll: "Alle {total} Projekte werden angezeigt.",
       showingSome: "{n} von {total} Projekten verwenden {tag}.",
-      earlierSystems: "Frühere Projekte",
       filterLabel: "Projekte nach Stack filtern",
-      detailsLabel: "Wie es gebaut wurde",
       filterBy: "Nach Technologie filtern",
       filterClear: "Filter zurücksetzen",
       proof: "Nachweis",
-      iouLabel: "registered IoU",
-      metrics:
-        "{version} · {total} Tests ({backend} Backend, {frontend} Frontend)",
-      stackLabel: "Stack",
-      builtLabel: "Gebaut",
-      decisionLabel: "Entscheidung",
+      viewCaseStudy: "Fallstudie ansehen",
     },
     background: {
       heading: "Werdegang",
@@ -570,8 +568,35 @@ export const deContent: SiteContent = {
         caption:
           "Mockup der Sprachanalyse — schematische Balken, keine Messwerte.",
       },
+      hitec: {
+        ariaLabel:
+          "Interface-Mockup des HITEC-Admin-Panels: Modulliste, Inhaltstabelle und der RAG-Support-Chatbot, der aus Hochschuldokumenten antwortet",
+        title:
+          "HITEC-Admin-Panel-Mockup — Webmodule, Inhaltsverwaltung, RAG-Support-Chatbot",
+        window: "HITEC — Admin-Panel",
+        status: "Intern / Archiviert",
+        caption: "Admin-Panel-Mockup — Illustration, kein Produkt-Screenshot.",
+      },
+      quality: {
+        ariaLabel:
+          "Interface-Mockup der Quality-CRM-Fehlerliste: Fehler in einem Datensatz mit Status und Verantwortlichem",
+        title:
+          "Quality-CRM-Mockup — Fehlerliste mit Status und Verantwortlichem",
+        window: "Quality CRM — Fehlerverfolgung",
+        status: "Laravel · MySQL",
+        caption:
+          "Fehlerverfolgungs-Mockup — Illustration, kein Produkt-Screenshot.",
+      },
+      upliftu: {
+        ariaLabel:
+          "Interface-Mockup von UpliftU: strukturierte Studierendenbetreuung mit Gespräch und Formular",
+        title: "UpliftU-Mockup — strukturierte Studierendenbetreuung",
+        window: "UpliftU — Studierendenbetreuung",
+        status: "Python · Hugging Face NLP",
+        caption:
+          "Studierendenbetreuungs-Mockup — Illustration, kein Produkt-Screenshot.",
+      },
     },
-    heroDeck: { placeholder: "Platzhalter" },
     meta: {
       titleSuffix: "Softwareentwickler, Dresden",
       description:

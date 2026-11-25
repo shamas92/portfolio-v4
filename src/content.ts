@@ -49,15 +49,20 @@ export type Project = {
   slug: string;
   title: string;
   year: number;
+  /** Short honest category for the Work grid's overlay pill,
+   *  drawn from the project's own role: Hackathon, Data
+   *  Engineering, Thesis & Paper, Internal / Archived,
+   *  Defect Tracking, Student Support. */
+  category: string;
   /** One-sentence outcome for the Work row. */
   rowOutcome: string;
   /** One proof statement for the Work row. */
   rowProof: string;
   stack: string[];
   /** What he built on this project — one or two sentences, used on
-   *  the flagship card ("Built") and the case page (Contribution).
-   *  States the work, never the team size: solo vs team is not
-   *  verifiable from the repo or the content, so it is not claimed. */
+   *  the case page (Contribution). States the work, never the team
+   *  size: solo vs team is not verifiable from the repo or the
+   *  content, so it is not claimed. */
   contribution: string;
   /** The one meaningful technical decision, with its trade-off —
    *  one or two sentences, used on the card ("Decision") and the
@@ -76,8 +81,8 @@ export type Project = {
   version?: string;
   /** Test counts at the release, when measured. */
   tests?: { total: number; backend: number; frontend: number };
-  /** Plain-English proof callout for the flagship card, composed
-   *  verbatim from the project's own figure, tests and notes. */
+  /** Plain-English proof callout, composed verbatim from the
+   *  project's own figure, tests and notes. */
   proofCallout?: string;
   /** Concrete technical scope for the tier-2 index rows, drawn
    *  only from the project's own problem, contribution and decision
@@ -114,6 +119,7 @@ export const projects: Project[] = [
     slug: "leaselens",
     title: "LeaseLens",
     year: 2026,
+    category: "Hackathon",
     rowOutcome:
       "A tenant evidence workspace that checks deposit claims against the lease and the law.",
     rowProof:
@@ -215,6 +221,7 @@ export const projects: Project[] = [
     slug: "sales-etl-pipeline",
     title: "Sales ETL Pipeline",
     year: 2026,
+    category: "Data Engineering",
     rowOutcome:
       "Sales data from several sources, loaded into one trustworthy shape.",
     rowProof: "One DAG, three tasks, four tables.",
@@ -263,6 +270,7 @@ export const projects: Project[] = [
     slug: "oratorpath",
     title: "OratorPath",
     year: 2025,
+    category: "Thesis & Paper",
     rowOutcome: "Measured feedback for developers who speak in public.",
     rowProof: "Peer-reviewed publication, 2025.",
     stack: ["PyTorch", "Hugging Face", "NLP"],
@@ -299,6 +307,7 @@ export const projects: Project[] = [
     slug: "hitec-cms",
     title: "HITEC University Web Platform & Admin Panel",
     year: 2025,
+    category: "Internal / Archived",
     rowOutcome:
       "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
     rowProof:
@@ -328,6 +337,7 @@ export const projects: Project[] = [
     slug: "quality-crm",
     title: "Quality Management & Defect-Tracking CRM",
     year: 2024,
+    category: "Defect Tracking",
     rowOutcome: "Defects and quality issues in one record, not informal notes.",
     rowProof: "Shipped as an academic project.",
     stack: ["Laravel", "MySQL", "PHP"],
@@ -350,6 +360,7 @@ export const projects: Project[] = [
     slug: "upliftu",
     title: "UpliftU",
     year: 2024,
+    category: "Student Support",
     rowOutcome: "Conversational support for students, in a structured form.",
     rowProof: "Shipped as an academic project.",
     stack: ["Python", "Hugging Face", "NLP"],
@@ -555,17 +566,11 @@ export type UiStrings = {
     all: string;
     showingAll: string;
     showingSome: string;
-    earlierSystems: string;
     filterLabel: string;
-    detailsLabel: string;
     filterBy: string;
     filterClear: string;
     proof: string;
-    iouLabel: string;
-    metrics: string;
-    stackLabel: string;
-    builtLabel: string;
-    decisionLabel: string;
+    viewCaseStudy: string;
   };
   background: {
     heading: string;
@@ -656,11 +661,28 @@ export type UiStrings = {
       paper: string;
       caption: string;
     };
+    hitec: {
+      ariaLabel: string;
+      title: string;
+      window: string;
+      status: string;
+      caption: string;
+    };
+    quality: {
+      ariaLabel: string;
+      title: string;
+      window: string;
+      status: string;
+      caption: string;
+    };
+    upliftu: {
+      ariaLabel: string;
+      title: string;
+      window: string;
+      status: string;
+      caption: string;
+    };
   };
-  /** The hero deck's dummy mockups: the only localised word is the
-   *  placeholder tag; the four type names (Dashboard, App, Data,
-   *  Mobile) are the same in both locales. */
-  heroDeck: { placeholder: string };
   meta: { titleSuffix: string; description: string };
 };
 
@@ -700,23 +722,15 @@ export const ui: UiStrings = {
   },
   work: {
     heading: "Work",
-    intro:
-      "Featured work first, with the problem, the contribution, and the evidence.",
+    intro: "Six systems, each with its summary and its proof.",
     all: "All",
     showingAll: "Showing all {total} projects.",
     showingSome: "{n} of {total} projects use {tag}.",
-    earlierSystems: "Earlier projects",
     filterLabel: "Filter projects by stack",
-    detailsLabel: "How it was built",
     filterBy: "Filter by technology",
     filterClear: "Clear filter",
     proof: "Proof",
-    iouLabel: "registered IoU",
-    metrics:
-      "{version} · {total} tests ({backend} backend, {frontend} frontend)",
-    stackLabel: "Stack",
-    builtLabel: "Built",
-    decisionLabel: "Decision",
+    viewCaseStudy: "View case study",
   },
   background: {
     heading: "Background",
@@ -819,8 +833,35 @@ export const ui: UiStrings = {
       paper: "Spectrum of Engineering Sciences · Vol. 3, Issue 7 · 2025",
       caption: "Speech-analysis mockup — schematic bars, no measured values.",
     },
+    hitec: {
+      ariaLabel:
+        "Interface mockup of the HITEC admin panel: web-module list, content table, and the RAG support chatbot answering from university documents",
+      title:
+        "HITEC admin panel mockup — web modules, content management, RAG support chatbot",
+      window: "HITEC — Admin Panel",
+      status: "Internal / Archived",
+      caption:
+        "Admin panel mockup — an illustration, not a product screenshot.",
+    },
+    quality: {
+      ariaLabel:
+        "Interface mockup of the Quality CRM defect list: defects in one record with status and owner",
+      title: "Quality CRM mockup — defect list with status and owner",
+      window: "Quality CRM — Defect tracking",
+      status: "Laravel · MySQL",
+      caption:
+        "Defect-tracking mockup — an illustration, not a product screenshot.",
+    },
+    upliftu: {
+      ariaLabel:
+        "Interface mockup of UpliftU student support: a structured conversation with a support form",
+      title: "UpliftU mockup — structured student support conversation",
+      window: "UpliftU — Student support",
+      status: "Python · Hugging Face NLP",
+      caption:
+        "Student-support mockup — an illustration, not a product screenshot.",
+    },
   },
-  heroDeck: { placeholder: "Placeholder" },
   meta: {
     titleSuffix: "Software Engineer, Dresden",
     description:

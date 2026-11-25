@@ -65,22 +65,19 @@ export function WorkCard({
       }`}
     >
       <div className={`work-card-inner${dimmed ? " work-dim" : ""}`}>
-        <Link
-          href={`/work/${project.slug}`}
-          className="work-visual"
-          aria-label={`${project.title} — ${ui.viewCaseStudy}`}
-        >
+        <Link href={`/work/${project.slug}`} className="work-visual">
           <span className="work-visual-asset" aria-hidden="true">
             {Asset ? <Asset /> : null}
           </span>
           <span className="work-visual-scrim" aria-hidden="true" />
-          <span className="work-category" aria-hidden="true">
-            {project.category}
-          </span>
-          <span className="work-visual-foot" aria-hidden="true">
+          <span className="work-category">{project.category}</span>
+          <span className="work-visual-foot">
             <span className="work-visual-title">{project.title}</span>
             <span className="work-view">
-              {ui.viewCaseStudy} <span className="work-view-arrow">↗</span>
+              {ui.viewCaseStudy}{" "}
+              <span className="work-view-arrow" aria-hidden="true">
+                ↗
+              </span>
             </span>
           </span>
         </Link>

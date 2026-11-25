@@ -45,6 +45,20 @@
   --lang-active-dark: #262626;
   --shadow-dark: 0 8px 24px rgb(0 0 0 / 0.45);
   --deck-shadow-dark: rgb(0 0 0 / 0.6);
+  /* Overlay scrim for the Work grid's image-led cards: a dark
+     gradient wash at the foot of each visual, so the white
+     overlay title and pills stay legible in both themes. A
+     legibility device, not decoration — the only gradient on
+     the page. The same in both themes. */
+  --scrim: linear-gradient(
+    to top,
+    rgb(0 0 0 / 0.72),
+    rgb(0 0 0 / 0.28) 55%,
+    transparent
+  );
+  /* White text on the scrim — the same in both themes, since
+     the scrim is black in both. */
+  --on-scrim: #ffffff;
 
   /* semantic aliases (light default; the toggle switches
      data-theme on <html>, never the media query) */
@@ -151,8 +165,8 @@ body {
    200ms instead of snapping. Text flips instantly, so contrast
    is never worse than the endpoints. Layout transitions (the
    header morph, the reveals) are untouched — their selectors
-   are not in this list, and the header inner and the flagship
-   card already transition background-color and border-color.
+   are not in this list, and the header inner and the work card
+   already transition background-color and border-color.
    The whole block sits under no-preference, so under reduced
    motion the switch is instant, as before. The no-flash script
    in the document head still applies the stored theme before
@@ -172,8 +186,7 @@ body {
   .site-footer,
   .mobile-menu,
   .hero-pill,
-  .flagship-visual,
-  .index-row,
+  .work-card,
   .certificate,
   .location-panel,
   .form-field input,
@@ -183,14 +196,14 @@ body {
       border-color 200ms var(--ease);
   }
 
-  /* The flagship card is also a reveal (opacity/transform
-     400ms), and the reveal rule outranks the card's own
-     transition, so the card's surface snapped on a theme change
-     while its visual faded. The surface transition joins the
-     reveal transition here, at a specificity the reveal rule
-     cannot override. Inside no-preference, so reduced motion
-     still gets no transition at all. */
-  .flagship-card.reveal.is-visible {
+  /* The work card is also a reveal (opacity/transform 400ms),
+     and the reveal rule outranks the card's own transition, so
+     the card's surface snapped on a theme change while its
+     visual faded. The surface transition joins the reveal
+     transition here, at a specificity the reveal rule cannot
+     override. Inside no-preference, so reduced motion still
+     gets no transition at all. */
+  .work-card.reveal.is-visible {
     transition:
       opacity var(--dur-reveal) var(--ease),
       transform var(--dur-reveal) var(--ease),
@@ -262,6 +275,15 @@ footer[id] {
   margin: 0 auto;
   padding-inline: max(var(--space-3), env(safe-area-inset-left))
     max(var(--space-3), env(safe-area-inset-right));
+  /* Deck scroll variables live here (not on the hero) so both
+     the deck and the Work grid inherit them; the scroll
+     listener in page.tsx writes them. The defaults are the
+     no-JS / reduced-motion state: the deck at its rest fan,
+     the grid fully visible. */
+  --deck-progress: 0;
+  --deck-lag: 0px;
+  --grid-reveal: 1;
+  --deck-fade: 1;
 }
 
 @media (max-width: 767px) {
@@ -751,11 +773,12 @@ footer[id] {
 .hero {
   /* The deck overlaps into the Work section as it fans out, so
      the hero paints above it (z-index 1, under the fixed
-     header's 50). The deck itself never takes pointer input. */
+     header's 50). The deck itself never takes pointer input.
+     (The deck scroll variables live on .page, not here: a
+     declaration here would override the values the scroll
+     listener writes on .page for the whole hero subtree.) */
   position: relative;
   z-index: 1;
-  --deck-progress: 0;
-  --deck-lag: 0px;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
@@ -884,27 +907,37 @@ footer[id] {
   font-size: var(--text-small);
 }
 
-/* ---- Hero deck: four dummy mockup cards, fanned at rest ----
+/* ---- Hero deck: the three deck projects' real mockups, fanned
+ *  at rest, docking onto the Work grid's first row on scroll ----
  *  The deck is the hero's right column on desktop and stacks
  *  below the copy under 1024px. Its cards are absolutely
  *  positioned on the deck's centre and moved by CSS variables:
  *  --ox/--oy and --rr are the fanned rest state, --sx/--sy and
- *  --sr the spread state, --ss the spread scale. --deck-progress
- *  (0→1, set from page.tsx, smoothstep-eased) interpolates
- *  between them; --deck-lag translates the whole deck down as
- *  the page scrolls up, so it lags the text and stays in view
- *  longer. Transform only, so there is no layout shift. The deck
+ *  --sr the spread/docked state, --ss the docked scale.
+ *  --deck-progress (0→1, set from page.tsx, smoothstep-eased)
+ *  interpolates rotation, scale and the vertical offset;
+ *  --deck-x (0→1) interpolates the horizontal spread — on
+ *  desktop it is weighted late, so the cards stay fanned while
+ *  the hero text is still visible and sweep across only once it
+ *  has left (below 1024px it equals --deck-progress). --deck-lag
+ *  translates the whole deck down as the page scrolls up: on
+ *  desktop it equals the scroll distance up to the docking
+ *  offset, pinning the deck while the grid scrolls up to meet
+ *  it; below 1024px it is 0.5× scroll capped at 160px.
+ *  Transform/opacity only, so there is no layout shift. The deck
  *  is aria-hidden and pointer-events none (see HeroDeck.tsx).
- *  The deck lands as a 2×2 spread that scrolls away above the
- *  grid — it does NOT land as the grid, because its four cards
- *  are dummy placeholders and the grid is three real projects;
- *  morphing placeholders into real cards would be a
- *  bait-and-switch, and the counts do not match (4 vs 3). */
+ *  On desktop the per-card --sx/--sy/--sr/--ss are measured at
+ *  runtime from the grid's real rects (page.tsx) and written as
+ *  inline custom properties, overriding the CSS fallbacks here;
+ *  below 1024px the CSS values own the spread. The deck's own
+ *  opacity is --deck-fade: it cross-fades out as the grid's
+ *  first row fades in (--grid-reveal). */
 .hero-deck {
   position: relative;
   height: 340px;
   pointer-events: none;
   transform: translateY(var(--deck-lag, 0px));
+  opacity: var(--deck-fade, 1);
 }
 
 .deck-card {
@@ -912,12 +945,12 @@ footer[id] {
   left: 50%;
   top: 50%;
   width: 320px;
-  aspect-ratio: 8 / 5;
+  aspect-ratio: 5 / 3;
   transform-origin: center;
   transform: translate(
       calc(
         -50% + var(--ox, 0px) + (var(--sx, 0px) - var(--ox, 0px)) *
-          var(--deck-progress, 0)
+          var(--deck-x, var(--deck-progress, 0))
       ),
       calc(
         -50% + var(--oy, 0px) + (var(--sy, 0px) - var(--oy, 0px)) *
@@ -943,49 +976,40 @@ footer[id] {
   box-shadow: 0 12px 24px var(--deck-shadow);
 }
 
-/* Fanned rest (rotations -5° to +13°, each card peeking at a
-   different edge) and the 2×2 spread (near-upright, shifted
-   left into the space the text vacates, so the spread stays
-   inside the viewport at 1024px). */
+/* Fanned rest (rotations -5° to +7°, each card peeking at a
+   different edge) and the fallback spread (a three-card row
+   fanning left into the space the text vacates, used only if
+   the runtime measurement in page.tsx cannot run — the
+   measured docking offsets replace these on desktop). */
 .deck-card--a {
-  --ox: -20px;
-  --oy: -16px;
-  --rr: -5deg;
-  --sx: -300px;
+  --ox: 0px;
+  --oy: -10px;
+  --rr: -1deg;
+  --sx: -560px;
   --sy: 20px;
   --sr: -2deg;
   --ss: 1.08;
-  z-index: 1;
+  z-index: 3;
 }
 .deck-card--b {
-  --ox: 20px;
+  --ox: 22px;
   --oy: -18px;
-  --rr: -1deg;
-  --sx: 50px;
+  --rr: 7deg;
+  --sx: -280px;
   --sy: 20px;
-  --sr: 1deg;
+  --sr: 0deg;
   --ss: 1.08;
   z-index: 2;
 }
 .deck-card--c {
-  --ox: -18px;
-  --oy: 16px;
-  --rr: 7deg;
-  --sx: -300px;
-  --sy: 250px;
+  --ox: -24px;
+  --oy: 12px;
+  --rr: -5deg;
+  --sx: 0px;
+  --sy: 20px;
   --sr: 2deg;
   --ss: 1.08;
-  z-index: 3;
-}
-.deck-card--d {
-  --ox: 18px;
-  --oy: 18px;
-  --rr: 13deg;
-  --sx: 50px;
-  --sy: 250px;
-  --sr: -1deg;
-  --ss: 1.08;
-  z-index: 4;
+  z-index: 1;
 }
 
 /* Deck entrance: each card settles from .98 scale and 12px
@@ -1008,7 +1032,8 @@ footer[id] {
 }
 
 /* Tablet (768–1023px): the hero stacks, so the deck is full
-   width; the spread stays a 2×2 with smaller offsets. */
+   width; the spread fans downward in a vertical stack and
+   scrolls away — no docking onto the one-column grid. */
 @media (max-width: 1023px) {
   .hero-deck {
     height: 300px;
@@ -1017,41 +1042,33 @@ footer[id] {
     width: 280px;
   }
   .deck-card--a {
-    --ox: -14px;
-    --oy: -12px;
-    --sx: -160px;
-    --sy: 16px;
-    --ss: 1.1;
+    --ox: 0px;
+    --oy: -8px;
+    --sx: 0px;
+    --sy: 0px;
+    --ss: 1.05;
   }
   .deck-card--b {
-    --ox: 14px;
+    --ox: 16px;
     --oy: -14px;
-    --sx: 160px;
-    --sy: 16px;
-    --ss: 1.1;
+    --sx: 0px;
+    --sy: 200px;
+    --ss: 1.05;
   }
   .deck-card--c {
-    --ox: -12px;
-    --oy: 12px;
-    --sx: -160px;
-    --sy: 230px;
-    --ss: 1.1;
-  }
-  .deck-card--d {
-    --ox: 12px;
-    --oy: 14px;
-    --sx: 160px;
-    --sy: 230px;
-    --ss: 1.1;
+    --ox: -18px;
+    --oy: 10px;
+    --sx: 0px;
+    --sy: 400px;
+    --ss: 1.05;
   }
 }
 
 /* Phones: the deck is a compact fanned stack below the copy;
-   on scroll it fans downward in a vertical stack (a 2×2 would
-   not fit a 343px column), overlapping into the Work section
-   and scrolling away above the grid. The cards are 200px wide
-   (not 220px) so the fanned stack's bounding box fits a 170px
-   deck without crowding the copy above it. */
+   on scroll it fans downward in a vertical stack, overlapping
+   into the Work section and scrolling away above the grid. The
+   cards are 200px wide so the fanned stack's bounding box fits
+   a 170px deck without crowding the copy above it. */
 @media (max-width: 767px) {
   .hero-deck {
     height: 170px;
@@ -1060,10 +1077,10 @@ footer[id] {
     width: 200px;
   }
   .deck-card--a {
-    --ox: -12px;
-    --oy: -10px;
+    --ox: 0px;
+    --oy: -8px;
     --sx: 0px;
-    --sy: -10px;
+    --sy: 0px;
     --ss: 1.05;
   }
   .deck-card--b {
@@ -1078,13 +1095,6 @@ footer[id] {
     --oy: 10px;
     --sx: 0px;
     --sy: 290px;
-    --ss: 1.05;
-  }
-  .deck-card--d {
-    --ox: 10px;
-    --oy: 12px;
-    --sx: 0px;
-    --sy: 440px;
     --ss: 1.05;
   }
 }
@@ -1342,32 +1352,35 @@ footer[id] {
   opacity: 0.35;
 }
 
-/* The index rows dim on the filter; the flagship card's dimming
-   transition lives in the theme cross-fade block
-   (.flagship-card.reveal.is-visible). */
-.index-row {
-  transition: opacity var(--dur-med) var(--ease);
-}
+/* The work card's dimming transition lives on its inner
+   wrapper (.work-card-inner), so the reveal opacity on the
+   article and the dim never fight. */
 
-/* ---- Flagship cards: three-up editorial grid ---- */
+/* ---- Work grid: six image-led cards ---- */
 /* One head-to-content rhythm: every section's first content
    block sits 24px (space-3) below its head or intro. The
    sub-section dividers (index headings, filter bar) keep 32px. */
-.flagship-grid {
+.work-grid {
   margin-top: var(--space-3);
   display: grid;
   gap: var(--space-3);
   grid-template-columns: minmax(0, 1fr);
 }
 
+@media (min-width: 768px) {
+  .work-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
 @media (min-width: 1024px) {
-  .flagship-grid {
+  .work-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
 }
 
 /* Desktop fold pacing: the hero and Work section lose a little
-   on 1080p/900p laptop screens. The first flagship card tops now
+   on 1080p/900p laptop screens. The first work card tops now
    clear the fold because the filter pills sit below the grid,
    not above it — these trims are the remainder. This block sits
    after the rules it overrides, so it wins the cascade. Mobile
@@ -1388,7 +1401,7 @@ footer[id] {
 
 /* Phones: the hero gains a 170px deck below the copy, so the
    copy margins tighten to give some of that height back and
-   keep the first flagship card near the fold. */
+   keep the first work card near the fold. */
 @media (max-width: 767px) {
   .hero {
     gap: var(--space-2);
@@ -1412,12 +1425,13 @@ footer[id] {
   }
 }
 
-/* One card geometry for the whole page: the flagship cards use
-   the same 8px radius as the certificate plates and the location
-   panel (they were square before, the only square cards on the
-   page). overflow: hidden clips the visual area to the card's
-   top corners. */
-.flagship-card {
+/* One card geometry for the whole page: the work cards use the
+   same 8px radius as the certificate plates and the location
+   panel. overflow: hidden clips the visual to the card's top
+   corners. The visual leads, edge to edge, with the reference's
+   overlay labels on it; the summary and the proof sit below in
+   the body. */
+.work-card {
   background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -1428,44 +1442,154 @@ footer[id] {
   /* No transition here: the card is a reveal, and the reveal
      rule outranks this selector, so a transition declared here
      would be dead. The card's transition lives in the theme
-     cross-fade block (.flagship-card.reveal.is-visible). */
+     cross-fade block (.work-card.reveal.is-visible). */
+}
+
+/* Row 1 is the deck's destination: its opacity is the moment's
+   --grid-reveal, driven by the scroll listener in page.tsx
+   (0 at rest, 1 once the deck has docked). The default is 1,
+   so the grid shows fully without JavaScript and under reduced
+   motion. */
+.work-card--row1 {
+  opacity: var(--grid-reveal, 1);
+}
+
+/* The hover lift and the filter dim live on the inner wrapper,
+   not the card: the card's transform belongs to the Reveal
+   (row 2), so lift and dim compose here without fighting it. */
+.work-card-inner {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+  transition:
+    transform var(--dur-med) var(--ease),
+    opacity var(--dur-med) var(--ease);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .flagship-card:hover {
+  .work-card:hover .work-card-inner {
+    transform: translateY(-2px);
+  }
+
+  .work-card:hover {
     border-color: var(--ink);
   }
 }
 
-.flagship-card:focus-within {
+.work-card:focus-within {
   border-color: var(--ink);
 }
 
-.flagship-visual {
-  border-bottom: 1px solid var(--rule);
-  background: var(--bg);
-  padding: var(--space-3);
-  color: var(--ink);
+/* The visual is the whole link to the case page: the SVG
+   mockup fills the card's width (5:3), the dark scrim washes
+   the foot so the white overlay text stays legible in both
+   themes, and the category pill, title and "View case study"
+   pill sit on it, as in the reference. */
+.work-visual {
+  position: relative;
+  display: block;
+  overflow: hidden;
+  text-decoration: none;
 }
 
-.flagship-visual svg {
+.work-visual-asset {
+  display: block;
+}
+
+.work-visual-asset svg {
   display: block;
   width: 100%;
   height: auto;
+  /* The photograph zoom of the taste-skill's hover layer,
+     applied to the mockup: the visual grows 1.03 inside its
+     frame on hover/focus, the frame never grows. 600ms in,
+     400ms out. */
+  transition: transform 400ms var(--ease);
 }
 
-/* The visuals are schematic diagrams, not product screenshots:
-   the caption says so plainly, in the same mono voice as the
-   other metadata. */
-.flagship-visual-caption {
-  margin-top: var(--space-2);
+@media (hover: hover) and (pointer: fine) {
+  .work-card:hover .work-visual-asset svg {
+    transform: scale(1.03);
+    transition-duration: 600ms;
+  }
+}
+
+.work-visual-scrim {
+  position: absolute;
+  inset: auto 0 0 0;
+  height: 55%;
+  background: var(--scrim);
+  pointer-events: none;
+}
+
+.work-category {
+  position: absolute;
+  top: var(--space-2);
+  left: var(--space-2);
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
   font-family: var(--font-mono);
   font-size: var(--text-mono-sm);
-  line-height: 1.5;
-  color: var(--ink-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
 }
 
-.flagship-body {
+.work-visual-foot {
+  position: absolute;
+  left: var(--space-2);
+  right: var(--space-2);
+  bottom: var(--space-2);
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.work-visual-title {
+  flex: 1;
+  min-width: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-title-md);
+  line-height: 1.25;
+  letter-spacing: -0.025em;
+  color: var(--on-scrim);
+}
+
+.work-view {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 12px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: var(--bg);
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.work-view-arrow {
+  display: inline-block;
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-card:hover .work-view-arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
+/* The body: year, one-sentence summary, and the proof — the
+   verdict, visible without interaction. No caption under the
+   visual: the mockups are schematic diagrams, and the case
+   page's Evidence section carries the honest caption. */
+.work-body {
   padding: var(--space-3);
   display: flex;
   flex-direction: column;
@@ -1473,191 +1597,29 @@ footer[id] {
   flex: 1;
 }
 
-.flagship-year {
+.work-year {
   font-family: var(--font-mono);
   font-size: var(--text-mono);
   color: var(--ink-muted);
 }
 
-.flagship-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-title-lg);
-  line-height: 1.25;
-  letter-spacing: -0.025em;
-}
-
-.flagship-title a {
-  color: var(--ink);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-}
-
-.flagship-title a:hover {
-  color: var(--accent-ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.flagship-title .flagship-arrow {
-  display: inline-block;
-  transition: transform var(--dur-fast) var(--ease);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .flagship-title a:hover .flagship-arrow {
-    transform: translateX(3px);
-  }
-}
-
-.flagship-rows {
-  display: grid;
-  gap: var(--space-2);
-  margin-top: var(--space-1);
-}
-
-.flagship-row-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  font-weight: 500;
-  color: var(--ink-muted);
-  margin-bottom: 2px;
-}
-
-.flagship-row-text {
+.work-summary {
   font-size: var(--text-body);
   line-height: 1.6;
   max-width: 60ch;
 }
 
-/* The summary is the card's lead: one sentence, no label, in body
-   ink. The Proof strip follows it — the verdict, visible without
-   interaction, in the accent wash with the verified metrics line
-   in mono. */
-.flagship-summary {
+.work-proof {
   font-size: var(--text-body);
   line-height: 1.6;
   max-width: 60ch;
 }
 
-.flagship-proof {
-  margin-top: var(--space-1);
-  padding: var(--space-2);
-  background: var(--accent-wash);
-  border-radius: 8px;
-}
-
-.flagship-proof-label {
+.work-proof-label {
   font-family: var(--font-mono);
   font-size: var(--text-mono);
   font-weight: 500;
   color: var(--accent-ink);
-  margin-bottom: 2px;
-}
-
-.flagship-proof-text {
-  font-size: var(--text-body);
-  line-height: 1.6;
-  max-width: 60ch;
-}
-
-.flagship-proof-metrics {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  line-height: 1.6;
-  color: var(--accent-ink);
-  font-weight: 500;
-  margin-top: var(--space-1);
-}
-
-.flagship-proof-metrics .proof-badge {
-  display: inline-block;
-  border: 1px solid var(--accent);
-  border-radius: 999px;
-  padding: 2px 8px;
-  margin-right: 4px;
-}
-
-/* "How it was built": a native <details>, so the contribution and
- * the decision are one keyboard-accessible click away and need no
- * JavaScript. The summary is a 44px row; the chevron turns on
- * transform only. */
-.flagship-details {
-  margin-top: var(--space-2);
-  padding-top: var(--space-2);
-  border-top: 1px solid var(--rule);
-}
-
-.flagship-details-summary {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  width: fit-content;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  font-weight: 500;
-  color: var(--ink-muted);
-  cursor: pointer;
-  list-style: none;
-  border-radius: 8px;
-}
-
-.flagship-details-summary::-webkit-details-marker {
-  display: none;
-}
-
-.flagship-details-summary:hover {
-  color: var(--ink);
-}
-
-.flagship-details-chevron {
-  display: inline-block;
-  font-size: 1.125rem;
-  line-height: 1;
-  transition: transform var(--dur-fast) var(--ease);
-}
-
-.flagship-details[open] .flagship-details-chevron {
-  transform: rotate(90deg);
-}
-
-.flagship-stack {
-  list-style: none;
-  padding: var(--space-2) 0 0;
-  margin-top: auto;
-  display: flex;
-  flex-wrap: wrap;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  color: var(--ink-muted);
-}
-
-.flagship-stack li + li::before {
-  content: ",\00a0";
-}
-
-.flagship-link {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-  font-weight: 600;
-  font-size: var(--text-small);
-}
-
-.flagship-link .flagship-arrow {
-  display: inline-block;
-  transition: transform var(--dur-fast) var(--ease);
-}
-
-@media (hover: hover) and (pointer: fine) {
-  .flagship-link:hover .flagship-arrow {
-    transform: translateX(3px);
-  }
 }
 
 /* ---- ETL diagram flow: dashoffset only, slow and understated ---- */
@@ -1669,113 +1631,6 @@ footer[id] {
 @keyframes dash-flow {
   to {
     stroke-dashoffset: -24;
-  }
-}
-
-/* ---- Tier-2 index: compact border-separated rows ---- */
-.index-heading {
-  margin-top: var(--space-4);
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  font-weight: 500;
-  color: var(--ink-muted);
-}
-
-.index-list {
-  list-style: none;
-  padding: 0;
-  border-top: 1px solid var(--rule);
-}
-
-.index-row {
-  display: grid;
-  grid-template-columns: 72px minmax(0, 1fr);
-  gap: var(--space-1) var(--space-3);
-  padding-block: var(--space-3);
-  border-bottom: 1px solid var(--rule);
-}
-
-.index-year {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  color: var(--ink-muted);
-  padding-top: 4px;
-}
-
-.index-main {
-  display: grid;
-  gap: var(--space-1);
-  align-content: start;
-}
-
-.index-title {
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-title-md);
-  line-height: 1.25;
-  letter-spacing: -0.025em;
-}
-
-.index-title a {
-  color: var(--ink);
-  text-decoration: none;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  min-height: 44px;
-}
-
-.index-title a:hover {
-  color: var(--accent-ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
-.index-scope {
-  font-size: var(--text-body);
-  line-height: 1.6;
-  max-width: 60ch;
-}
-
-/* Internal / Archived badge on the tier-2 row: mono, hairline,
-   8px radius like the rest of the header geometry. */
-.index-badge {
-  display: inline-flex;
-  align-items: center;
-  margin-left: 8px;
-  padding: 2px 8px;
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono-sm);
-  font-weight: 500;
-  color: var(--ink-muted);
-  vertical-align: middle;
-  white-space: nowrap;
-}
-
-.index-stack {
-  list-style: none;
-  padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  color: var(--ink-muted);
-}
-
-.index-stack li + li::before {
-  content: ",\00a0";
-}
-
-@media (max-width: 767px) {
-  .index-row {
-    grid-template-columns: minmax(0, 1fr);
-    gap: 0;
-  }
-
-  .index-year {
-    padding-top: 0;
   }
 }
 
@@ -2278,7 +2133,7 @@ footer[id] {
 }
 
 /* One figure treatment for the Evidence section: the same framed
-   presentation as the flagship card's visual area (hairline
+   presentation as the work card's visual area (hairline
    border, 8px radius, ground background, 24px padding), so the
    mockup reads identically on the card and on its case page.
    The mockup caption uses the same mono label as the card; the
@@ -2823,8 +2678,8 @@ footer[id] {
   .skip-link,
   .filter-pill,
   .filter-disclosure-chevron,
-  .flagship-card,
-  .flagship-details-chevron,
+  .work-card,
+  .work-card-inner,
   .theme-toggle {
     transition: none;
   }

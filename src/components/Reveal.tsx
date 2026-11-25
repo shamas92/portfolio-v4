@@ -9,10 +9,10 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
  *
  *  The threshold is overridable because a tall target can sit
  *  with its top in the viewport while less than 20% of it is
- *  visible — the flagship cards are ~1100px tall, so at 1440x900
- *  only ~18% shows on load and a 0.2 threshold never fires
- *  until the reader scrolls. Those cards pass 0.05, so the work
- *  is visible on arrival instead of blank. */
+ *  visible — the work cards are ~500px tall, so at 1440x900
+ *  the 0.2 default fires once ~100px shows. A taller target
+ *  passes a lower threshold, so the work is visible on arrival
+ *  instead of blank. */
 export function useReveal<T extends HTMLElement>(threshold = 0.2) {
   const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);

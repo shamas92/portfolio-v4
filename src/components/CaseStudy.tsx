@@ -17,7 +17,7 @@ const newsreaderItalic = Newsreader({
   variable: "--font-newsreader-italic",
 });
 
-/** The three flagship projects also show their interface mockup
+/** The three deck projects also show their interface mockup
  *  in the Evidence section (the same asset as the home card).
  *  The other three projects have no mockup. */
 const caseAssets: Record<
@@ -35,7 +35,7 @@ const caseAssets: Record<
 /** One case-study page: the same blocks for every project —
  *  Problem, Contribution, Decision, Result, Evidence, Stack,
  *  Links. Contribution and Decision are one or two sentences each
- *  (the same text as the flagship card); Result is the outcome
+ *  (the same text as the work card); Result is the outcome
  *  prose. A block is omitted when the project has no verified
  *  content for it; projects with no verified figure have no
  *  Evidence block at all (user decision 2026-11-24). The Links

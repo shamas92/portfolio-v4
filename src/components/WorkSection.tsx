@@ -3,11 +3,7 @@
 import { useMemo, useState } from "react";
 import { format, useContent } from "@/i18n/LocaleProvider";
 import type { Project } from "@/content";
-import { FlagshipCard } from "./FlagshipCard";
-import { IndexRow } from "./IndexRow";
-
-const FLAGSHIPS = ["leaselens", "sales-etl-pipeline", "oratorpath"];
-const TIER2 = ["hitec-cms", "quality-crm", "upliftu"];
+import { WorkCard } from "./WorkCard";
 
 /** Pills, in the order the brief names them, then the remaining
  *  project stack tags alphabetically. Counts are the number of
@@ -54,19 +50,27 @@ function matches(project: Project, pill: Pill): boolean {
   return false;
 }
 
-/** The filter highlights in place with CSS opacity transitions:
+/** The Work grid: all six projects as equal image-led cards in
+ *  one 3×2 grid (3 columns on desktop, 2 on tablet, 1 on a
+ *  phone), in the reference's style — the SVG visual leads,
+ *  overlay labels on it, summary and proof below. The
+ *  Featured/Earlier distinction is gone: the three deck
+ *  projects are row 1 (and the hero deck's destination), the
+ *  three former index rows are row 2, with their own honest
+ *  SVG mockups now.
+ *
+ *  The filter highlights in place with CSS opacity transitions:
  *  matching cards stay full, the rest dim. No layout library is
  *  needed because nothing reorders — the filter never hides a
  *  project, so the section works with JavaScript disabled too
  *  (the pills simply do not render and all six stay visible).
- *  Order is deliberate: the featured grid comes first so the work
- *  is visible in the first viewport, and the filter sits below it,
- *  before the earlier-projects index. The filter itself is a
- *  disclosure, closed by default: twenty pills would otherwise
- *  wrap into a block taller than a project card and compete with
- *  the work. The disclosure button always shows the active
- *  filter, and the results note stays visible below it, so the
- *  state is clear even while the pills are closed. */
+ *  The filter sits below the grid, so the first project is
+ *  visible in the first viewport. The disclosure is closed by
+ *  default: twenty pills would otherwise wrap into a block
+ *  taller than a project card and compete with the work. The
+ *  disclosure button always shows the active filter, and the
+ *  results note stays visible below it, so the state is clear
+ *  even while the pills are closed. */
 export function WorkSection() {
   const content = useContent();
   const projects = content.projects;
@@ -82,10 +86,6 @@ export function WorkSection() {
     return map;
   }, [projects]);
 
-  const flagships = FLAGSHIPS.map((slug) =>
-    projects.find((p) => p.slug === slug)!,
-  );
-  const tier2 = TIER2.map((slug) => projects.find((p) => p.slug === slug)!);
   const matched = projects.filter((p) => matches(p, active)).length;
 
   const note =
@@ -99,11 +99,12 @@ export function WorkSection() {
 
   return (
     <>
-      <div className="flagship-grid">
-        {flagships.map((project) => (
-          <FlagshipCard
+      <div className="work-grid">
+        {projects.map((project, i) => (
+          <WorkCard
             key={project.slug}
             project={project}
+            row={i < 3 ? 1 : 2}
             dimmed={!matches(project, active)}
           />
         ))}
@@ -158,17 +159,6 @@ export function WorkSection() {
       <p className="filter-note" aria-live="polite">
         {note}
       </p>
-
-      <h3 className="index-heading">{ui.earlierSystems}</h3>
-      <ul className="index-list">
-        {tier2.map((project) => (
-          <IndexRow
-            key={project.slug}
-            project={project}
-            dimmed={!matches(project, active)}
-          />
-        ))}
-      </ul>
     </>
   );
 }

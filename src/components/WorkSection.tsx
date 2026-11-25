@@ -52,12 +52,12 @@ function matches(project: Project, pill: Pill): boolean {
 
 /** The Work grid: all six projects as equal image-led cards in
  *  one 3×2 grid (3 columns on desktop, 2 on tablet, 1 on a
- *  phone), in the reference's style — the SVG visual leads,
- *  overlay labels on it, summary and proof below. The
- *  Featured/Earlier distinction is gone: the three deck
- *  projects are row 1 (and the hero deck's destination), the
- *  three former index rows are row 2, with their own honest
- *  SVG mockups now.
+ *  phone), in the reference's style — the photo leads, overlay
+ *  labels on it, summary and proof below. The Featured/Earlier
+ *  distinction is gone: all six cards are the hero deck's
+ *  destination, and their opacity is the docking moment's
+ *  --grid-reveal (see WorkCard), so there is no per-row reveal
+ *  any more — the deck IS the reveal.
  *
  *  The filter highlights in place with CSS opacity transitions:
  *  matching cards stay full, the rest dim. No layout library is
@@ -100,11 +100,10 @@ export function WorkSection() {
   return (
     <>
       <div className="work-grid">
-        {projects.map((project, i) => (
+        {projects.map((project) => (
           <WorkCard
             key={project.slug}
             project={project}
-            row={i < 3 ? 1 : 2}
             dimmed={!matches(project, active)}
           />
         ))}

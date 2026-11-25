@@ -1,0 +1,45 @@
+import Image from "next/image";
+
+/** Slug → the project's created visual in public/projects. One
+ *  file per project, the same in light and dark mode: the photo
+ *  never changes on theme toggle. (The SVG mockups these replace
+ *  had dark variants; the photos do not.) The files are created
+ *  visuals — a device showing the project against a backdrop —
+ *  not photographs of the real products and not screenshots, and
+ *  nothing on the device screens is quoted as project content. */
+const PHOTOS: Record<string, string> = {
+  leaselens: "/projects/leaselens.jpg",
+  "sales-etl-pipeline": "/projects/sales-etl.jpg",
+  oratorpath: "/projects/oratorpath.jpg",
+  "hitec-cms": "/projects/hitec.jpg",
+  "quality-crm": "/projects/quality-crm.jpg",
+  upliftu: "/projects/upliftu.jpg",
+};
+
+/** A project's photo, cropped to the card's 5:3 frame
+ *  (object-fit: cover — the files are 3:2, so the frame trims a
+ *  little top and bottom, never the device). next/image serves a
+ *  responsive size, and the deck and the grid use the same sizes
+ *  string, so the browser reuses one optimised file per width
+ *  instead of fetching the same photo twice. Decorative inside
+ *  its link or deck card (alt ""), never a screenshot claim. */
+export function ProjectPhoto({
+  slug,
+  eager,
+}: {
+  slug: string;
+  eager?: boolean;
+}) {
+  const src = PHOTOS[slug];
+  if (!src) return null;
+  return (
+    <Image
+      src={src}
+      alt=""
+      fill
+      sizes="(max-width: 767px) 90vw, (max-width: 1023px) 45vw, 360px"
+      loading={eager ? "eager" : "lazy"}
+      style={{ objectFit: "cover" }}
+    />
+  );
+}

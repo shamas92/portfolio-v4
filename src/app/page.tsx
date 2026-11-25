@@ -19,19 +19,23 @@ const delay = (ms: number) =>
   ({ "--entrance-delay": `${ms}ms` }) as CSSProperties;
 
 const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
-const smoothstep = (p: number) => {
+/* Quintic smootherstep: zero first and second derivatives at
+   both ends, so the deck eases out of rest and into the dock
+   with no visible kink — softer than smoothstep at the ends,
+   where the eye catches a step. */
+const smootherstep = (p: number) => {
   const t = clamp01(p);
-  return t * t * (3 - 2 * t);
+  return t * t * t * (t * (t * 6 - 15) + 10);
 };
 
 /** Home: hero (role, focus, location, availability, one primary
- *  action) in a two-column split with the fanned deck of the
- *  three deck projects' real mockups on the right, Work (all six
- *  projects in one 3×2 image-led grid), Background (with the
- *  first-person About as its lead), Skills, Certificates,
- *  Contact (the footer). The work is the first thing after the
- *  hero; the filter pills sit below the grid, not above it, so
- *  the first project is visible in the first viewport. */
+ *  action) in a two-column split with the fanned deck of all six
+ *  projects' photos on the right, Work (all six projects in one
+ *  3×2 image-led grid), Background (with the first-person About
+ *  as its lead), Skills, Certificates, Contact (the footer). The
+ *  work is the first thing after the hero; the filter pills sit
+ *  below the grid, not above it, so the first project is visible
+ *  in the first viewport. */
 export default function Home() {
   const content = useContent();
   const { locale } = useLocale();
@@ -47,12 +51,12 @@ export default function Home() {
   /* Hero deck scroll — the deck becomes the grid, like the
    *  reference. The scroll variables live on the .page element
    *  (not the hero), so both the deck and the Work grid read
-   *  them: --deck-progress (0→1, smoothstep-eased), --deck-x
+   *  them: --deck-progress (0→1, smootherstep-eased), --deck-x
    *  (the horizontal spread, weighted late on desktop so the
    *  cards stay fanned while the hero text is still visible),
-   *  --deck-lag (the deck's parallax), --grid-reveal (row 1 of
-   *  the grid, 0→1 as the deck docks) and --deck-fade (the deck,
-   *  1→0 over the same range).
+   *  --deck-lag (the deck's parallax), --grid-reveal (the grid,
+   *  0→1 as the deck docks) and --deck-fade (the deck, 1→0 over
+   *  the same range).
    *
    *  Desktop (1024px and up): the deck pins in the viewport —
    *  the lag equals the scroll distance, capped at the docking
@@ -61,20 +65,32 @@ export default function Home() {
    *  the deck's pinned position; the per-card final offsets and
    *  scale are measured from the grid's real rects, so each deck
    *  card lands exactly over its own grid card's visual and the
-   *  cross-fade is seamless. The effect reverses on scroll-up.
-   *  Below 1024px there is no docking: the hero stacks, the
-   *  deck fans downward and scrolls away (the previous round's
-   *  model: progress over 320px, lag 0.5× scroll capped at
-   *  160px), and the grid reveals with the site's Reveal — a
-   *  three-card fan cannot dock onto a one-column grid in a
-   *  compact scroll range.
+   *  cross-fade is seamless. Row 2's cards travel down as well:
+   *  their --sy is the measured distance from the pinned deck
+   *  centre to their own visual's centre. The effect reverses
+   *  on scroll-up. Below 1024px there is no docking: the hero
+   *  stacks, the deck stays a compact six-card fan and scrolls
+   *  away (no pin, no parallax — it moves 1:1 with the page,
+   *  so it never drifts over the Work heading), and the grid
+   *  shows fully — a six-card fan cannot dock onto a
+   *  one-column grid in a compact scroll range.
+   *
+   *  Smoothness: the scroll position sets a target, and the
+   *  displayed progress is damped toward it (0.22 per frame,
+   *  ~250ms to settle), so the deck glides instead of stepping
+   *  with the wheel. The pin (--deck-lag) is the one value
+   *  written straight from the scroll, so the deck never drifts
+   *  from its pinned spot after the scroll stops; the spread,
+   *  the rotation, the scale and the cross-fade settle toward
+   *  it. The loop runs only while the deck is settling and
+   *  stops once it lands, so an idle page costs nothing.
    *
    *  A passive rAF scroll listener, skipped under reduced
    *  motion and without JavaScript (the variables keep their
    *  CSS defaults: deck at its rest fan, grid fully visible).
    *  useLayoutEffect so the first update lands before paint —
    *  the grid must not flash visible before the listener hides
-   *  row 1. The hero text itself has no scroll transform: it
+   *  it. The hero text itself has no scroll transform: it
    *  scrolls up normally and stays fully opaque until it leaves
    *  the viewport, like the reference. */
   useLayoutEffect(() => {
@@ -83,8 +99,91 @@ export default function Home() {
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let raf = 0;
     let disposed = false;
+    /* The scroll-derived target and the displayed value: the
+       loop damps the displayed one toward the target. */
+    let targetP = 0;
+    let currentP = 0;
+    /* The deck pin, written straight from the scroll. */
+    let lagY = 0;
+    const LERP = 0.22;
+    const SETTLE = 0.0005;
 
     const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
+
+    /* The deck's own variables (progress, spread, pin). The
+       reveal reads the same progress, so the cross-fade and the
+       spread settle together. */
+    const writeDeck = (p: number, lag: number) => {
+      const eased = smootherstep(p);
+      const spread = smootherstep((p - 0.45) / 0.55);
+      page.style.setProperty("--deck-progress", eased.toFixed(3));
+      page.style.setProperty("--deck-x", spread.toFixed(3));
+      page.style.setProperty("--deck-lag", `${lag.toFixed(1)}px`);
+    };
+
+    const writeReveal = (p: number) => {
+      if (desktopRef.current && dockOkRef.current) {
+        const reveal = smootherstep((p - 0.8) / 0.2);
+        page.style.setProperty("--grid-reveal", reveal.toFixed(3));
+        page.style.setProperty("--deck-fade", (1 - reveal).toFixed(3));
+      } else {
+        /* No docking — below 1024px, or before the dock is
+           measured: the grid is fully visible and the compact
+           fan stays fully visible too. It scrolls away; it
+           does not fade out. The old fallback wrote fade 0
+           here, which hid the whole deck on phones and
+           tablets. */
+        page.style.setProperty("--grid-reveal", "1");
+        page.style.setProperty("--deck-fade", "1");
+      }
+    };
+
+    /* The settle loop: one frame damps the displayed progress a
+       fifth of the way to its target, then stops once it lands.
+       It never runs on an idle page. */
+    const tick = () => {
+      raf = 0;
+      if (disposed) return;
+      const diff = targetP - currentP;
+      if (Math.abs(diff) < SETTLE) {
+        currentP = targetP;
+        writeDeck(currentP, lagY);
+        writeReveal(currentP);
+        return;
+      }
+      currentP += diff * LERP;
+      writeDeck(currentP, lagY);
+      writeReveal(currentP);
+      raf = requestAnimationFrame(tick);
+    };
+
+    const kick = () => {
+      if (!raf) raf = requestAnimationFrame(tick);
+    };
+
+    /* Read the scroll, set the target and the pin, write the
+       current state, and start the loop if the deck still has
+       settling to do. Called on scroll, resize, font load and
+       locale change. */
+    const sync = () => {
+      const y = window.scrollY;
+      if (desktopRef.current && dockOkRef.current && dockRef.current > 0) {
+        targetP = clamp01(y / dockRef.current);
+        lagY = Math.min(y, dockRef.current);
+      } else {
+        targetP = 0;
+        /* No pin below 1024px: the compact fan scrolls 1:1
+           with the page. A lag here (the earlier 0.5×, capped
+           at 160px) let the fan drift down over the Work
+           heading as the section scrolled up under it — the
+           photos covered the heading on phones. */
+        lagY = 0;
+      }
+      page.style.setProperty("--deck-lag", `${lagY.toFixed(1)}px`);
+      writeDeck(currentP, lagY);
+      writeReveal(currentP);
+      if (Math.abs(targetP - currentP) >= SETTLE) kick();
+    };
 
     const measure = (): boolean => {
       desktopRef.current = isDesktop();
@@ -105,14 +204,17 @@ export default function Home() {
       }
       const deck = page.querySelector<HTMLElement>(".hero-deck");
       const gridVisuals = Array.from(
-        page.querySelectorAll<HTMLElement>(".work-card--row1 .work-visual"),
+        page.querySelectorAll<HTMLElement>(".work-card .work-visual"),
       );
-      if (!deck || deckCards.length !== 3 || gridVisuals.length !== 3) {
+      if (!deck || deckCards.length !== 6 || gridVisuals.length !== 6) {
         dockOkRef.current = false;
         return false;
       }
-      /* Force the deck to rest so the rects are the rest rects. */
+      /* Force the deck to rest so the rects are the rest rects.
+         The caller re-syncs before the next paint, so the deck
+         never visibly jumps. */
       page.style.setProperty("--deck-progress", "0");
+      page.style.setProperty("--deck-x", "0");
       page.style.setProperty("--deck-lag", "0px");
       const y = window.scrollY;
       const deckRect = deck.getBoundingClientRect();
@@ -139,9 +241,16 @@ export default function Home() {
           "--sx",
           `${(r.left + r.width / 2 - deckCx).toFixed(1)}px`,
         );
-        /* Vertical docking comes from the lag (the pinned deck),
-           not from the card offset, so the final y offset is 0. */
-        card.style.setProperty("--sy", "0px");
+        /* Row 1 lands through the lag (the pinned deck), so its
+           final y offset is 0; row 2's cards travel down to the
+           second row — the distance from the pinned deck centre
+           to their own visual's centre. Each card is measured
+           from its own visual, so differing body heights across
+           columns cannot throw a row off. */
+        card.style.setProperty(
+          "--sy",
+          `${(r.top + y + r.height / 2 - deckCy - dock).toFixed(1)}px`,
+        );
         card.style.setProperty("--sr", "0deg");
         card.style.setProperty("--ss", (r.width / card.offsetWidth).toFixed(3));
       }
@@ -149,55 +258,15 @@ export default function Home() {
       return true;
     };
 
-    const update = () => {
-      raf = 0;
-      const y = window.scrollY;
-      if (desktopRef.current && dockOkRef.current && dockRef.current > 0) {
-        const dock = dockRef.current;
-        const p = clamp01(y / dock);
-        const eased = smoothstep(p);
-        /* The horizontal sweep starts late: the cards stay
-           fanned (rotating and growing on --deck-progress) while
-           the hero text is still visible, and spread across
-           only once it has left. */
-        const spread = smoothstep((p - 0.45) / 0.55);
-        const reveal = smoothstep((p - 0.8) / 0.2);
-        page.style.setProperty("--deck-progress", eased.toFixed(3));
-        page.style.setProperty("--deck-x", spread.toFixed(3));
-        page.style.setProperty(
-          "--deck-lag",
-          `${Math.min(y, dock).toFixed(1)}px`,
-        );
-        page.style.setProperty("--grid-reveal", reveal.toFixed(3));
-        page.style.setProperty("--deck-fade", (1 - reveal).toFixed(3));
-      } else {
-        const p = Math.min(y / 320, 1);
-        const eased = smoothstep(p);
-        page.style.setProperty("--deck-progress", eased.toFixed(3));
-        page.style.setProperty("--deck-x", eased.toFixed(3));
-        page.style.setProperty(
-          "--deck-lag",
-          `${Math.min(y * 0.5, 160).toFixed(1)}px`,
-        );
-        page.style.setProperty("--grid-reveal", "1");
-        page.style.setProperty("--deck-fade", "1");
-      }
-    };
-
     const onScroll = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(update);
+      sync();
     };
     const onResize = () => {
-      if (raf) return;
-      raf = requestAnimationFrame(() => {
-        raf = 0;
-        measure();
-        update();
-      });
+      measure();
+      sync();
     };
     measure();
-    update();
+    sync();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
     /* Fonts change the hero's height (the name is Newsreader),
@@ -207,7 +276,7 @@ export default function Home() {
       document.fonts.ready.then(() => {
         if (disposed) return;
         measure();
-        update();
+        sync();
       });
     }
     return () => {

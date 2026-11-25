@@ -50,23 +50,31 @@
      overlay title and pills stay legible in both themes. A
      legibility device, not decoration — the only gradient on
      the page. The same in both themes. It stays dark through
-     the top of a four-line title (HITEC, Quality CRM wrap to
-     four lines at 20px in the foot's width): the 20px bold
-     title is WCAG large text, so the wash holds at least
-     ~0.5 alpha where the top line sits, which clears the
-     3:1 large-text bar even over the mockups' lightest
-     panels. */
+     the top of a five-line title: at phone widths the "View
+     case study" pill squeezes the title, so HITEC and Quality
+     CRM wrap to five lines, and the top line sits where the
+     wash is thinnest. The 20px bold title is WCAG large text,
+     so the wash must hold at least ~0.68 alpha where that top
+     line sits to clear the 3:1 large-text bar even over the
+     brightest photo (the HITEC office, near-white behind the
+     top line — a thinner wash measured 1:1 there). The scrim
+     is 85% of the visual tall for the same reason: at 320px a
+     five-line title's top reaches 81% of the visual's height. */
   --scrim: linear-gradient(
     to top,
-    rgb(0 0 0 / 0.8),
-    rgb(0 0 0 / 0.68) 55%,
-    rgb(0 0 0 / 0.5) 78%,
-    rgb(0 0 0 / 0.12) 92%,
-    transparent
+    rgb(0 0 0 / 0.85),
+    rgb(0 0 0 / 0.8) 55%,
+    rgb(0 0 0 / 0.7) 80%,
+    rgb(0 0 0 / 0.55) 92%,
+    rgb(0 0 0 / 0.35)
   );
   /* White text on the scrim — the same in both themes, since
      the scrim is black in both. */
   --on-scrim: #ffffff;
+  /* The accent as it reads on the dark scrim: the dark theme's
+     oxide, in both themes, so the proof label on the hover
+     overlay keeps its accent coding without going muddy. */
+  --on-scrim-accent: var(--accent-dark);
 
   /* semantic aliases (light default; the toggle switches
      data-theme on <html>, never the media query) */
@@ -189,7 +197,10 @@ body {
 
   /* Every surface cross-fades, not just the ones listed here
      first: the certificate plates, the location panel and the
-     form fields snapped while the sections around them faded. */
+     form fields snapped while the sections around them faded.
+     The work card's surface joins here; its opacity is the
+     docking moment's --grid-reveal, written every frame by the
+     scroll loop, so it needs no transition of its own. */
   .section,
   .site-footer,
   .mobile-menu,
@@ -200,21 +211,6 @@ body {
   .form-field input,
   .form-field textarea {
     transition:
-      background-color 200ms var(--ease),
-      border-color 200ms var(--ease);
-  }
-
-  /* The work card is also a reveal (opacity/transform 400ms),
-     and the reveal rule outranks the card's own transition, so
-     the card's surface snapped on a theme change while its
-     visual faded. The surface transition joins the reveal
-     transition here, at a specificity the reveal rule cannot
-     override. Inside no-preference, so reduced motion still
-     gets no transition at all. */
-  .work-card.reveal.is-visible {
-    transition:
-      opacity var(--dur-reveal) var(--ease),
-      transform var(--dur-reveal) var(--ease),
       background-color 200ms var(--ease),
       border-color 200ms var(--ease);
   }
@@ -915,19 +911,20 @@ footer[id] {
   font-size: var(--text-small);
 }
 
-/* ---- Hero deck: the three deck projects' real mockups, fanned
- *  at rest, docking onto the Work grid's first row on scroll ----
+/* ---- Hero deck: all six projects' photos, fanned at rest,
+ *  docking onto both rows of the Work grid on scroll ----
  *  The deck is the hero's right column on desktop and stacks
  *  below the copy under 1024px. Its cards are absolutely
  *  positioned on the deck's centre and moved by CSS variables:
  *  --ox/--oy and --rr are the fanned rest state, --sx/--sy and
  *  --sr the spread/docked state, --ss the docked scale.
- *  --deck-progress (0→1, set from page.tsx, smoothstep-eased)
- *  interpolates rotation, scale and the vertical offset;
- *  --deck-x (0→1) interpolates the horizontal spread — on
- *  desktop it is weighted late, so the cards stay fanned while
- *  the hero text is still visible and sweep across only once it
- *  has left (below 1024px it equals --deck-progress). --deck-lag
+ *  --deck-progress (0→1, set from page.tsx, smootherstep-eased
+ *  and damped toward its target) interpolates rotation, scale
+ *  and the vertical offset; --deck-x (0→1) interpolates the
+ *  horizontal spread — on desktop it is weighted late, so the
+ *  cards stay fanned while the hero text is still visible and
+ *  sweep across only once it has left (below 1024px it is 0:
+ *  the fan stays compact and scrolls away). --deck-lag
  *  translates the whole deck down as the page scrolls up: on
  *  desktop it equals the scroll distance up to the docking
  *  offset, pinning the deck while the grid scrolls up to meet
@@ -937,15 +934,17 @@ footer[id] {
  *  On desktop the per-card --sx/--sy/--sr/--ss are measured at
  *  runtime from the grid's real rects (page.tsx) and written as
  *  inline custom properties, overriding the CSS fallbacks here;
- *  below 1024px the CSS values own the spread. The deck's own
- *  opacity is --deck-fade: it cross-fades out as the grid's
- *  first row fades in (--grid-reveal). */
+ *  below 1024px the CSS values own the fan. The deck's own
+ *  opacity is --deck-fade: it cross-fades out as the grid
+ *  fades in (--grid-reveal). will-change keeps the cards on the
+ *  compositor through the dock. */
 .hero-deck {
   position: relative;
   height: 340px;
   pointer-events: none;
   transform: translateY(var(--deck-lag, 0px));
   opacity: var(--deck-fade, 1);
+  will-change: transform, opacity;
 }
 
 .deck-card {
@@ -955,6 +954,7 @@ footer[id] {
   width: 320px;
   aspect-ratio: 5 / 3;
   transform-origin: center;
+  will-change: transform;
   transform: translate(
       calc(
         -50% + var(--ox, 0px) + (var(--sx, 0px) - var(--ox, 0px)) *
@@ -974,49 +974,87 @@ footer[id] {
     scale(calc(1 + (var(--ss, 1) - 1) * var(--deck-progress, 0)));
 }
 
-.deck-card svg {
+/* The photo fills the card (next/image fill + cover: the 3:2
+   file is cropped to the 5:3 frame). A soft shadow grounds
+   each card (and a hairline edge from the frame); the shadow
+   follows the rounded border box. The photo is the same file in
+   both themes — nothing here switches on the theme. */
+.deck-card img {
   display: block;
-  width: 100%;
-  height: auto;
   border-radius: 8px;
-  /* A soft shadow grounds each card (and a hairline edge from
-     the SVG frame); the shadow follows the rounded border box. */
   box-shadow: 0 12px 24px var(--deck-shadow);
 }
 
-/* Fanned rest (rotations -5° to +7°, each card peeking at a
-   different edge) and the fallback spread (a three-card row
-   fanning left into the space the text vacates, used only if
-   the runtime measurement in page.tsx cannot run — the
-   measured docking offsets replace these on desktop). */
+.deck-card-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+
+/* Fanned rest (rotations -8° to +9°, each card peeking at a
+   different edge — the back cards peek furthest, since they
+   show the least) and the fallback spread (a six-card row pair
+   fanning out from the deck's centre, used only if the runtime
+   measurement in page.tsx cannot run — the measured docking
+   offsets replace these on desktop). */
 .deck-card--a {
   --ox: 0px;
-  --oy: -10px;
+  --oy: -6px;
   --rr: -1deg;
-  --sx: -560px;
-  --sy: 20px;
-  --sr: -2deg;
-  --ss: 1.08;
-  z-index: 3;
+  --sx: -674px;
+  --sy: 0px;
+  --sr: 0deg;
+  --ss: 1.07;
+  z-index: 6;
 }
 .deck-card--b {
-  --ox: 22px;
-  --oy: -18px;
-  --rr: 7deg;
-  --sx: -280px;
-  --sy: 20px;
+  --ox: 26px;
+  --oy: -16px;
+  --rr: 6deg;
+  --sx: -293px;
+  --sy: 0px;
   --sr: 0deg;
-  --ss: 1.08;
-  z-index: 2;
+  --ss: 1.07;
+  z-index: 5;
 }
 .deck-card--c {
-  --ox: -24px;
-  --oy: 12px;
+  --ox: -28px;
+  --oy: 8px;
   --rr: -5deg;
-  --sx: 0px;
-  --sy: 20px;
-  --sr: 2deg;
-  --ss: 1.08;
+  --sx: 88px;
+  --sy: 0px;
+  --sr: 0deg;
+  --ss: 1.07;
+  z-index: 4;
+}
+.deck-card--d {
+  --ox: 46px;
+  --oy: -24px;
+  --rr: 9deg;
+  --sx: -674px;
+  --sy: 430px;
+  --sr: 0deg;
+  --ss: 1.07;
+  z-index: 3;
+}
+.deck-card--e {
+  --ox: -48px;
+  --oy: 18px;
+  --rr: -8deg;
+  --sx: -293px;
+  --sy: 430px;
+  --sr: 0deg;
+  --ss: 1.07;
+  z-index: 2;
+}
+.deck-card--f {
+  --ox: 14px;
+  --oy: 26px;
+  --rr: 3deg;
+  --sx: 88px;
+  --sy: 430px;
+  --sr: 0deg;
+  --ss: 1.07;
   z-index: 1;
 }
 
@@ -1040,8 +1078,11 @@ footer[id] {
 }
 
 /* Tablet (768–1023px): the hero stacks, so the deck is full
-   width; the spread fans downward in a vertical stack and
-   scrolls away — no docking onto the one-column grid. */
+   width; the six cards stay a compact fan and scroll away with
+   the hero — no docking onto the one-column grid, and no
+   vertical fan-out (six cards fanned downward would run ~700px
+   long and slide over the grid). --deck-progress stays 0 below
+   1024px (page.tsx), so only the rest fan below matters. */
 @media (max-width: 1023px) {
   .hero-deck {
     height: 300px;
@@ -1051,32 +1092,40 @@ footer[id] {
   }
   .deck-card--a {
     --ox: 0px;
-    --oy: -8px;
-    --sx: 0px;
-    --sy: 0px;
-    --ss: 1.05;
+    --oy: -5px;
+    --rr: -1deg;
   }
   .deck-card--b {
-    --ox: 16px;
+    --ox: 22px;
     --oy: -14px;
-    --sx: 0px;
-    --sy: 200px;
-    --ss: 1.05;
+    --rr: 6deg;
   }
   .deck-card--c {
-    --ox: -18px;
-    --oy: 10px;
-    --sx: 0px;
-    --sy: 400px;
-    --ss: 1.05;
+    --ox: -24px;
+    --oy: 7px;
+    --rr: -5deg;
+  }
+  .deck-card--d {
+    --ox: 39px;
+    --oy: -20px;
+    --rr: 9deg;
+  }
+  .deck-card--e {
+    --ox: -41px;
+    --oy: 15px;
+    --rr: -8deg;
+  }
+  .deck-card--f {
+    --ox: 12px;
+    --oy: 22px;
+    --rr: 3deg;
   }
 }
 
 /* Phones: the deck is a compact fanned stack below the copy;
-   on scroll it fans downward in a vertical stack, overlapping
-   into the Work section and scrolling away above the grid. The
-   cards are 200px wide so the fanned stack's bounding box fits
-   a 170px deck without crowding the copy above it. */
+   on scroll it drifts with the hero and scrolls away above the
+   grid. The cards are 200px wide so the fanned stack's bounding
+   box fits a 170px deck without crowding the copy above it. */
 @media (max-width: 767px) {
   .hero-deck {
     height: 170px;
@@ -1086,24 +1135,33 @@ footer[id] {
   }
   .deck-card--a {
     --ox: 0px;
-    --oy: -8px;
-    --sx: 0px;
-    --sy: 0px;
-    --ss: 1.05;
+    --oy: -4px;
+    --rr: -1deg;
   }
   .deck-card--b {
-    --ox: 12px;
-    --oy: -12px;
-    --sx: 0px;
-    --sy: 140px;
-    --ss: 1.05;
+    --ox: 16px;
+    --oy: -10px;
+    --rr: 6deg;
   }
   .deck-card--c {
-    --ox: -10px;
-    --oy: 10px;
-    --sx: 0px;
-    --sy: 290px;
-    --ss: 1.05;
+    --ox: -17px;
+    --oy: 5px;
+    --rr: -5deg;
+  }
+  .deck-card--d {
+    --ox: 28px;
+    --oy: -14px;
+    --rr: 9deg;
+  }
+  .deck-card--e {
+    --ox: -29px;
+    --oy: 11px;
+    --rr: -8deg;
+  }
+  .deck-card--f {
+    --ox: 8px;
+    --oy: 16px;
+    --rr: 3deg;
   }
 }
 
@@ -1398,8 +1456,8 @@ footer[id] {
     margin-top: var(--space-3);
   }
 
-  /* 124px, not 24px: the first row of the grid is the deck's
-     destination and sits at opacity 0 until the deck docks, so
+  /* 124px, not 24px: both rows of the grid are the deck's
+     destination and sit at opacity 0 until the deck docks, so
      at rest the space below the Work intro is row 1's empty
      slot — a blank band that read as a hole (269px of it in the
      first viewport at 1440x900). Pushing the whole Work section
@@ -1411,9 +1469,9 @@ footer[id] {
      (first card top 631px to 731px) — the same 100px, because
      the band IS the space above the first card. The docking
      offset is measured at runtime from the real rects
-     (page.tsx), so the deck still lands exactly on row 1; the
-     spread and reveal formulas are unchanged and scale to the
-     longer dock. Desktop only: the phone grid has no docking
+     (page.tsx), so the deck still lands exactly on both rows;
+     the spread and reveal formulas are unchanged and scale to
+     the longer dock. Desktop only: the phone grid has no docking
      and no band (the first card peeks by 24px there). */
   #work {
     padding-top: 124px;
@@ -1460,18 +1518,14 @@ footer[id] {
   display: flex;
   flex-direction: column;
   min-width: 0;
-  /* No transition here: the card is a reveal, and the reveal
-     rule outranks this selector, so a transition declared here
-     would be dead. The card's transition lives in the theme
-     cross-fade block (.work-card.reveal.is-visible). */
-}
-
-/* Row 1 is the deck's destination: its opacity is the moment's
-   --grid-reveal, driven by the scroll listener in page.tsx
-   (0 at rest, 1 once the deck has docked). The default is 1,
-   so the grid shows fully without JavaScript and under reduced
-   motion. */
-.work-card--row1 {
+  /* The deck's destination: the card's opacity is the moment's
+     --grid-reveal, driven by the scroll listener in page.tsx
+     (0 at rest, 1 once the deck has docked). The default is 1,
+     so the grid shows fully without JavaScript and under
+     reduced motion. No transition here: the card is a reveal,
+     and the reveal rule outranks this selector, so a transition
+     declared here would be dead. The card's transition lives in
+     the theme cross-fade block. */
   opacity: var(--grid-reveal, 1);
 }
 
@@ -1502,11 +1556,12 @@ footer[id] {
   border-color: var(--ink);
 }
 
-/* The visual is the whole link to the case page: the SVG
-   mockup fills the card's width (5:3), the dark scrim washes
-   the foot so the white overlay text stays legible in both
-   themes, and the category pill, title and "View case study"
-   pill sit on it, as in the reference. */
+/* The visual is the whole link to the case page: the photo
+   fills the card's width (5:3), the dark scrim washes the foot
+   so the white overlay text stays legible in both themes, and
+   the category pill, title and "View case study" pill sit on
+   it, as in the reference. The photo is the same file in light
+   and dark mode. */
 .work-visual {
   position: relative;
   display: block;
@@ -1515,22 +1570,22 @@ footer[id] {
 }
 
 .work-visual-asset {
+  position: relative;
   display: block;
+  aspect-ratio: 5 / 3;
 }
 
-.work-visual-asset svg {
+.work-visual-asset img {
   display: block;
-  width: 100%;
-  height: auto;
   /* The photograph zoom of the taste-skill's hover layer,
-     applied to the mockup: the visual grows 1.03 inside its
+     applied to the photo: the visual grows 1.03 inside its
      frame on hover/focus, the frame never grows. 600ms in,
      400ms out. */
   transition: transform 400ms var(--ease);
 }
 
 @media (hover: hover) and (pointer: fine) {
-  .work-card:hover .work-visual-asset svg {
+  .work-card:hover .work-visual-asset img {
     transform: scale(1.03);
     transition-duration: 600ms;
   }
@@ -1539,12 +1594,112 @@ footer[id] {
 .work-visual-scrim {
   position: absolute;
   inset: auto 0 0 0;
-  /* 70% so the wash reaches past the top of a four-line
+  /* 85% so the wash reaches past the top of a five-line
      overlay title; the gradient above holds it dark
      through that line. */
-  height: 70%;
+  height: 85%;
   background: var(--scrim);
   pointer-events: none;
+}
+
+/* The description overlay: a dark wash over the photo with the
+   card's summary and proof — the same words as the body below,
+   so hover and focus add nothing new, they just bring the
+   verdict onto the image. It fades and rises 8px in 180ms, and
+   it is pointer-events none, so it can never block the link it
+   sits inside. The wash holds dark through the text's lowest
+   line and clears before the "View case study" pill, which
+   stays visible. The category pill and the title fade out with
+   it — the description needs their room — and return when the
+   pointer or the focus leaves. Touch has no hover, so the same
+   summary and proof stay in the body.
+ *
+ *  The text is clamped: six lines at 15px/1.4, five where the
+ *  three-column cards run narrow (1024–1279px). The longest
+ *  description (HITEC, seven lines at 1440, eight at 1024)
+ *  ends with an ellipsis — a preview, not a cut: the full
+ *  summary and proof sit in the body directly below the visual.
+ *  Without the clamp the longest text would run under the pill
+ *  or off the visual's bottom edge at narrow widths. */
+.work-visual-desc {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(
+    to bottom,
+    rgb(0 0 0 / 0.72),
+    rgb(0 0 0 / 0.62) 60%,
+    rgb(0 0 0 / 0.45) 80%,
+    rgb(0 0 0 / 0.12) 92%,
+    transparent
+  );
+  padding: 12px var(--space-2);
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--dur-med) var(--ease),
+    transform var(--dur-med) var(--ease);
+}
+
+.work-visual-desc-text {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  line-clamp: 6;
+  -webkit-line-clamp: 6;
+}
+
+/* The three-column cards run narrow here (309–340px), so the
+   longest description wraps to eight lines; five fit above the
+   pill. The two-column and one-column cards below 1024px are
+   as wide as the 1440px ones, so they keep six. */
+@media (min-width: 1024px) and (max-width: 1279px) {
+  .work-visual-desc-text {
+    line-clamp: 5;
+    -webkit-line-clamp: 5;
+  }
+}
+
+.work-visual-desc-summary,
+.work-visual-desc-proof {
+  display: block;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  color: var(--on-scrim);
+  text-shadow: 0 1px 4px rgb(0 0 0 / 0.5);
+}
+
+.work-visual-desc-proof {
+  margin-top: 4px;
+}
+
+.work-visual-desc-proof-label {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  font-weight: 500;
+  color: var(--on-scrim-accent);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-card:hover .work-visual-desc {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .work-card:hover .work-category,
+  .work-card:hover .work-visual-title {
+    opacity: 0;
+  }
+}
+
+.work-card:focus-within .work-visual-desc {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.work-card:focus-within .work-category,
+.work-card:focus-within .work-visual-title {
+  opacity: 0;
 }
 
 .work-category {
@@ -1560,6 +1715,9 @@ footer[id] {
   font-weight: 500;
   letter-spacing: 0.02em;
   white-space: nowrap;
+  /* Fades with the description overlay (the overlay needs its
+     room); the transition is here so the fade is smooth. */
+  transition: opacity var(--dur-med) var(--ease);
 }
 
 .work-visual-foot {
@@ -1583,8 +1741,27 @@ footer[id] {
   color: var(--on-scrim);
   /* The top line of a four-line title sits where the wash
      is thinnest; a soft shadow holds the glyphs readable
-     over the mockup's lightest panels. */
+     over the photo's lightest areas. Fades with the
+     description overlay, like the category pill. */
   text-shadow: 0 1px 4px rgb(0 0 0 / 0.4);
+  transition: opacity var(--dur-med) var(--ease);
+}
+
+/* At 320px a five-line title runs into the category pill: the
+   visual is only 172px tall and the title fills it (HITEC
+   overlaps the pill by 42px). Below 360px the visual goes 4:3
+   — taller, so the title has room under the pill — and the
+   title drops to 17px. This sits after the title rule on
+   purpose: same specificity, so it must come later to win.
+   The deck never docks below 1024px, so the taller visual
+   changes nothing but the card's own proportions. */
+@media (max-width: 359px) {
+  .work-visual-asset {
+    aspect-ratio: 4 / 3;
+  }
+  .work-visual-title {
+    font-size: 17px;
+  }
 }
 
 .work-view {
@@ -1615,8 +1792,8 @@ footer[id] {
 
 /* The body: year, one-sentence summary, and the proof — the
    verdict, visible without interaction. No caption under the
-   visual: the mockups are schematic diagrams, and the case
-   page's Evidence section carries the honest caption. */
+   visual: the photos are created visuals, not screenshots, and
+   the case page's Evidence section carries the honest caption. */
 .work-body {
   padding: var(--space-3);
   display: flex;

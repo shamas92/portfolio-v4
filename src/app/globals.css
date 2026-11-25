@@ -28,6 +28,10 @@
      with the solid Download CV CTA. */
   --lang-active-light: #f5f5f5;
   --shadow-light: 0 8px 24px rgb(20 20 19 / 0.08);
+  /* deck card shadow (the colour only; the offset/blur live
+     in the deck rules) — a touch stronger than --shadow so the
+     fanned cards read as separate sheets */
+  --deck-shadow-light: rgb(20 20 19 / 0.16);
   /* raw values — dark */
   --ground-dark: #0c0c0b;
   --surface-dark: #141413;
@@ -40,6 +44,7 @@
   --presence-dark: #10b981;
   --lang-active-dark: #262626;
   --shadow-dark: 0 8px 24px rgb(0 0 0 / 0.45);
+  --deck-shadow-dark: rgb(0 0 0 / 0.6);
 
   /* semantic aliases (light default; the toggle switches
      data-theme on <html>, never the media query) */
@@ -57,6 +62,7 @@
   --presence: var(--presence-light);
   --lang-active: var(--lang-active-light);
   --shadow: var(--shadow-light);
+  --deck-shadow: var(--deck-shadow-light);
 
   /* type roles */
   --font-display: var(--font-newsreader), "Newsreader", Georgia, serif;
@@ -114,6 +120,7 @@ html[data-theme="dark"] {
   --presence: var(--presence-dark);
   --lang-active: var(--lang-active-dark);
   --shadow: var(--shadow-dark);
+  --deck-shadow: var(--deck-shadow-dark);
 }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -740,27 +747,32 @@ footer[id] {
   }
 }
 
-/* ---- Hero ---- */
+/* ---- Hero: two-column split (copy left, deck right) ---- */
 .hero {
-  padding-block: var(--space-12) var(--space-8);
+  /* The deck overlaps into the Work section as it fans out, so
+     the hero paints above it (z-index 1, under the fixed
+     header's 50). The deck itself never takes pointer input. */
+  position: relative;
+  z-index: 1;
+  --deck-progress: 0;
+  --deck-lag: 0px;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  align-items: center;
+  padding-block: var(--space-4) var(--space-2);
 }
 
-/* Phones: the hero padding is the single biggest cost before
-   the work, so it tightens here. The desktop tightening lives
-   in the fold-pacing block below. */
-@media (max-width: 767px) {
-  .hero {
-    padding-block: var(--space-6) var(--space-4);
-  }
-}
-
-/* Desktop: tighter hero padding on 1080p/900p laptop screens.
-   The fold-pacing overrides that also trim the Work section live
-   after the flagship grid rules, so they win the cascade. */
 @media (min-width: 1024px) {
   .hero {
-    padding-block: var(--space-4) var(--space-3);
+    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    gap: var(--space-6);
   }
+}
+
+/* The copy column: the hero's words, unchanged. */
+.hero-copy {
+  min-width: 0;
 }
 
 .hero-name {
@@ -863,36 +875,207 @@ footer[id] {
   font-size: var(--text-small);
 }
 
-/* ---- Hero scroll transformation: the hero expands as the
-   reader scrolls the first 160px — the name grows toward the
-   reader (scale 1 → 1.22, anchored at its baseline so it grows
-   upward into the hero's top padding and never collides with
-   the claim below it) while the supporting lines drift up a
-   touch and fade only to 0.92, so the role, the ask, the
-   location pill and the action stay legible throughout.
-   --hero-progress is set from page.tsx (0 at the top, 1 at
-   160px). Transform/opacity only, so there is no layout shift
-   and the fold does not move; the effect reverses on scroll-up.
-   Without JavaScript the variable stays 0. Under reduced
-   motion the rules are overridden to none (see the
-   reduced-motion block). */
-.hero {
-  --hero-progress: 0;
+/* ---- Hero deck: four dummy mockup cards, fanned at rest ----
+ *  The deck is the hero's right column on desktop and stacks
+ *  below the copy under 1024px. Its cards are absolutely
+ *  positioned on the deck's centre and moved by CSS variables:
+ *  --ox/--oy and --rr are the fanned rest state, --sx/--sy and
+ *  --sr the spread state, --ss the spread scale. --deck-progress
+ *  (0→1, set from page.tsx, smoothstep-eased) interpolates
+ *  between them; --deck-lag translates the whole deck down as
+ *  the page scrolls up, so it lags the text and stays in view
+ *  longer. Transform only, so there is no layout shift. The deck
+ *  is aria-hidden and pointer-events none (see HeroDeck.tsx).
+ *  The deck lands as a 2×2 spread that scrolls away above the
+ *  grid — it does NOT land as the grid, because its four cards
+ *  are dummy placeholders and the grid is three real projects;
+ *  morphing placeholders into real cards would be a
+ *  bait-and-switch, and the counts do not match (4 vs 3). */
+.hero-deck {
+  position: relative;
+  height: 340px;
+  pointer-events: none;
+  transform: translateY(var(--deck-lag, 0px));
 }
 
-.hero-name {
-  transform: translateY(calc(var(--hero-progress, 0) * -10px))
-    scale(calc(1 + var(--hero-progress, 0) * 0.22));
-  transform-origin: left bottom;
+.deck-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 320px;
+  aspect-ratio: 8 / 5;
+  transform-origin: center;
+  transform: translate(
+      calc(
+        -50% + var(--ox, 0px) + (var(--sx, 0px) - var(--ox, 0px)) *
+          var(--deck-progress, 0)
+      ),
+      calc(
+        -50% + var(--oy, 0px) + (var(--sy, 0px) - var(--oy, 0px)) *
+          var(--deck-progress, 0)
+      )
+    )
+    rotate(
+      calc(
+        var(--rr, 0deg) + (var(--sr, 0deg) - var(--rr, 0deg)) *
+          var(--deck-progress, 0)
+      )
+    )
+    scale(calc(1 + (var(--ss, 1) - 1) * var(--deck-progress, 0)));
 }
 
-.hero-claim,
-.hero-ask,
-.hero-pill,
-.hero-status,
-.hero-actions {
-  transform: translateY(calc(var(--hero-progress, 0) * -12px));
-  opacity: calc(1 - var(--hero-progress, 0) * 0.08);
+.deck-card svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  /* A soft shadow grounds each card (and a hairline edge from
+     the SVG frame); the shadow follows the rounded border box. */
+  box-shadow: 0 12px 24px var(--deck-shadow);
+}
+
+/* Fanned rest (rotations -5° to +13°, each card peeking at a
+   different edge) and the 2×2 spread (near-upright, shifted
+   left into the space the text vacates, so the spread stays
+   inside the viewport at 1024px). */
+.deck-card--a {
+  --ox: -20px;
+  --oy: -16px;
+  --rr: -5deg;
+  --sx: -280px;
+  --sy: 20px;
+  --sr: -2deg;
+  --ss: 1.08;
+  z-index: 1;
+}
+.deck-card--b {
+  --ox: 20px;
+  --oy: -18px;
+  --rr: -1deg;
+  --sx: 70px;
+  --sy: 20px;
+  --sr: 1deg;
+  --ss: 1.08;
+  z-index: 2;
+}
+.deck-card--c {
+  --ox: -18px;
+  --oy: 16px;
+  --rr: 7deg;
+  --sx: -280px;
+  --sy: 250px;
+  --sr: 2deg;
+  --ss: 1.08;
+  z-index: 3;
+}
+.deck-card--d {
+  --ox: 18px;
+  --oy: 18px;
+  --rr: 13deg;
+  --sx: 70px;
+  --sy: 250px;
+  --sr: -1deg;
+  --ss: 1.08;
+  z-index: 4;
+}
+
+/* Deck entrance: each card settles from .98 scale and 12px
+   down, staggered per card (the inner div carries the entrance
+   so it never fights the card's scroll transform). */
+@keyframes deck-enter {
+  from {
+    opacity: 0;
+    transform: translateY(12px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.deck-card-inner {
+  animation: deck-enter var(--dur-reveal) var(--ease) backwards;
+  animation-delay: var(--entrance-delay, 0ms);
+}
+
+/* Tablet (768–1023px): the hero stacks, so the deck is full
+   width; the spread stays a 2×2 with smaller offsets. */
+@media (max-width: 1023px) {
+  .hero-deck {
+    height: 300px;
+  }
+  .deck-card {
+    width: 280px;
+  }
+  .deck-card--a {
+    --ox: -14px;
+    --oy: -12px;
+    --sx: -160px;
+    --sy: 16px;
+    --ss: 1.1;
+  }
+  .deck-card--b {
+    --ox: 14px;
+    --oy: -14px;
+    --sx: 160px;
+    --sy: 16px;
+    --ss: 1.1;
+  }
+  .deck-card--c {
+    --ox: -12px;
+    --oy: 12px;
+    --sx: -160px;
+    --sy: 230px;
+    --ss: 1.1;
+  }
+  .deck-card--d {
+    --ox: 12px;
+    --oy: 14px;
+    --sx: 160px;
+    --sy: 230px;
+    --ss: 1.1;
+  }
+}
+
+/* Phones: the deck is a compact fanned stack below the copy;
+   on scroll it fans downward in a vertical stack (a 2×2 would
+   not fit a 343px column), overlapping into the Work section
+   and scrolling away above the grid. */
+@media (max-width: 767px) {
+  .hero-deck {
+    height: 180px;
+  }
+  .deck-card {
+    width: 220px;
+  }
+  .deck-card--a {
+    --ox: -12px;
+    --oy: -10px;
+    --sx: 0px;
+    --sy: -10px;
+    --ss: 1.05;
+  }
+  .deck-card--b {
+    --ox: 12px;
+    --oy: -12px;
+    --sx: 0px;
+    --sy: 140px;
+    --ss: 1.05;
+  }
+  .deck-card--c {
+    --ox: -10px;
+    --oy: 10px;
+    --sx: 0px;
+    --sy: 290px;
+    --ss: 1.05;
+  }
+  .deck-card--d {
+    --ox: 10px;
+    --oy: 12px;
+    --sx: 0px;
+    --sy: 440px;
+    --ss: 1.05;
+  }
 }
 
 /* ---- Buttons and links: plain verbs ---- */
@@ -946,8 +1129,10 @@ footer[id] {
   opacity: 0.6;
 }
 
-/* ---- Hero entrance: staggered 12px rise. The h1 itself never
-   animates, so the LCP headline is visible on first paint. ---- */
+/* ---- Hero entrance: staggered 12px rise. The h1 rises
+   translate-only (rise-in-soft, no opacity change), so the LCP
+   headline is visible on first paint and still rises with the
+   other lines. ---- */
 @keyframes rise-in {
   from {
     opacity: 0;
@@ -959,17 +1144,31 @@ footer[id] {
   }
 }
 
+@keyframes rise-in-soft {
+  from {
+    transform: translateY(12px);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 [data-entrance] {
   /* Fill mode `backwards`, not `both`: `both` would keep the
-   * animation's final keyframe (opacity 1, translateY 0)
-   * applied forever, which would override the --hero-progress
-   * transform/opacity rules on the hero lines after the
-   * entrance completes. `backwards` applies the `from` state
-   * during the delay, then releases the element to its
-   * stylesheet values — which at rest are identical (opacity 1,
-   * translateY 0) — so the entrance looks the same and the
-   * scroll rules can take over. */
+   * animation's final keyframe applied forever. `backwards`
+   * applies the `from` state during the delay, then releases
+   * the element to its stylesheet values — which at rest are
+   * identical (opacity 1, translateY 0) — so the entrance
+   * looks the same and the element returns to plain CSS. */
   animation: rise-in var(--dur-reveal) var(--ease) backwards;
+  animation-delay: var(--entrance-delay, 0ms);
+}
+
+/* The h1's rise: opacity stays 1 throughout, so the LCP
+   headline paints on first paint. Duration 500ms so the rise
+   reads as deliberate rather than a jump. */
+[data-entrance-soft] {
+  animation: rise-in-soft 500ms var(--ease) backwards;
   animation-delay: var(--entrance-delay, 0ms);
 }
 
@@ -1167,8 +1366,36 @@ footer[id] {
     margin-top: var(--space-3);
   }
 
+  /* 32px, not 48px: the deck's spread overlaps into the Work
+     section as it fans out, so the gap above the heading stays
+     tight and the first card still peeks above the fold. */
   #work {
-    padding-top: var(--space-6);
+    padding-top: var(--space-4);
+  }
+}
+
+/* Phones: the hero gains a 180px deck below the copy, so the
+   copy margins tighten to give some of that height back and
+   keep the first flagship card near the fold. */
+@media (max-width: 767px) {
+  .hero {
+    gap: var(--space-2);
+  }
+
+  .hero-claim {
+    margin-top: var(--space-2);
+  }
+
+  .hero-pill {
+    margin-top: var(--space-2);
+  }
+
+  .hero-status {
+    margin-top: var(--space-1);
+  }
+
+  .hero-actions {
+    margin-top: var(--space-3);
   }
 }
 
@@ -2530,7 +2757,9 @@ footer[id] {
 
 /* ---- Reduced motion: final states, no sweep, no pulse, no flow ---- */
 @media (prefers-reduced-motion: reduce) {
-  [data-entrance] {
+  [data-entrance],
+  [data-entrance-soft],
+  .deck-card-inner {
     animation: none;
   }
 
@@ -2540,17 +2769,13 @@ footer[id] {
     transform: none;
   }
 
-  /* The hero scroll transformation is transform-only, so it
-     is switched off here too. */
-  .hero,
-  .hero-name,
-  .hero-claim,
-  .hero-ask,
-  .hero-pill,
-  .hero-status,
-  .hero-actions {
+  /* The deck scroll effect is transform-only, so it is
+     switched off here too: the deck sits at its rest fanned
+     state and does not move on scroll. The hero text never
+     moves on scroll, so nothing else needs overriding. */
+  .hero-deck,
+  .deck-card {
     transform: none;
-    opacity: 1;
   }
 
   .reveal.is-visible {

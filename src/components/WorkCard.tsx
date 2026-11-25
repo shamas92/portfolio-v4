@@ -1,9 +1,11 @@
 "use client";
 
 import Link from "next/link";
+import type { CSSProperties } from "react";
 import type { Project } from "@/content";
 import { useContent } from "@/i18n/LocaleProvider";
 import { ProjectPhoto } from "./ProjectPhoto";
+import { useReveal } from "./Reveal";
 
 /** One Work card: the project's photo leads, edge to edge, with
  *  the reference's overlay labels on it — category pill
@@ -42,15 +44,32 @@ import { ProjectPhoto } from "./ProjectPhoto";
 export function WorkCard({
   project,
   dimmed,
+  index,
 }: {
   project: Project;
   dimmed: boolean;
+  index: number;
 }) {
   const content = useContent();
   const ui = content.ui.work;
+  /* Per-card scroll reveal, staggered by index (60ms steps).
+     The class is "work-card-reveal": its hidden state is
+     scoped below the 1024px docking breakpoint, so on desktop
+     the deck engine owns the card's opacity and this is inert.
+     The delay rides on --reveal-delay so it touches only the
+     reveal transition, never the theme cross-fade. */
+  const { ref, className: revealClass } = useReveal<HTMLElement>(
+    0.2,
+    "work-card-reveal",
+  );
 
   return (
-    <article data-slug={project.slug} className="work-card">
+    <article
+      data-slug={project.slug}
+      ref={ref}
+      className={`work-card ${revealClass}`}
+      style={{ "--reveal-delay": `${index * 60}ms` } as CSSProperties}
+    >
       <div className={`work-card-inner${dimmed ? " work-dim" : ""}`}>
         <Link href={`/work/${project.slug}`} className="work-visual">
           <span className="work-visual-asset" aria-hidden="true">
@@ -70,7 +89,7 @@ export function WorkCard({
           </span>
           <span className="work-category">{project.category}</span>
           <span className="work-visual-foot">
-            <span className="work-visual-title">{project.title}</span>
+            <h3 className="work-visual-title">{project.title}</h3>
             <span className="work-view">
               {ui.viewCaseStudy}{" "}
               <span className="work-view-arrow" aria-hidden="true">

@@ -455,7 +455,7 @@ export const deContent: SiteContent = {
       downloadCv: "Lebenslauf herunterladen",
     },
     work: {
-      heading: "Projekte",
+      heading: "Neueste Projekte",
       intro: "Sechs Systeme, jedes mit Zusammenfassung und Nachweis.",
       all: "Alle",
       showingAll: "Alle {total} Projekte werden angezeigt.",
@@ -465,6 +465,7 @@ export const deContent: SiteContent = {
       filterClear: "Filter zurücksetzen",
       proof: "Nachweis",
       viewCaseStudy: "Fallstudie ansehen",
+      viewMore: "Mehr Projekte ansehen",
     },
     background: {
       heading: "Werdegang",

@@ -571,6 +571,7 @@ export type UiStrings = {
     filterClear: string;
     proof: string;
     viewCaseStudy: string;
+    viewMore: string;
   };
   background: {
     heading: string;
@@ -721,7 +722,7 @@ export const ui: UiStrings = {
     downloadCv: "Download CV",
   },
   work: {
-    heading: "Work",
+    heading: "Latest Projects",
     intro: "Six systems, each with its summary and its proof.",
     all: "All",
     showingAll: "Showing all {total} projects.",
@@ -731,6 +732,7 @@ export const ui: UiStrings = {
     filterClear: "Clear filter",
     proof: "Proof",
     viewCaseStudy: "View case study",
+    viewMore: "View More Projects",
   },
   background: {
     heading: "Background",

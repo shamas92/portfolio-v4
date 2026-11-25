@@ -1412,6 +1412,32 @@ footer[id] {
   color: var(--ink-muted);
 }
 
+/* "View More Projects": the section's closing action, after
+   the filter note. A text link in the site's link colour
+   (accent-ink, underlined) with the arrow that nudges on
+   hover, like the "View case study" arrow. 44px tap target. */
+.work-more {
+  margin-top: var(--space-4);
+}
+
+.work-more-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-weight: 600;
+}
+
+.work-more-arrow {
+  transition: transform var(--dur-med) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-more-link:hover .work-more-arrow {
+    transform: translate(2px, -2px);
+  }
+}
+
 /* Non-matching cards dim (opacity only); they stay visible and
    reachable, so the filter never hides a project. */
 .work-dim {
@@ -1527,6 +1553,30 @@ footer[id] {
      declared here would be dead. The card's transition lives in
      the theme cross-fade block. */
   opacity: var(--grid-reveal, 1);
+}
+
+/* Per-card scroll reveal, below the 1024px docking breakpoint
+   only. On desktop the deck engine owns the cards' opacity
+   via --grid-reveal, so this class is inert there and cannot
+   fight the docking or double the animation. Below 1024px
+   there is no docking, so this is the cards' entrance: a
+   16px rise plus a fade, staggered per card by
+   --reveal-delay (60ms steps, set inline by WorkCard).
+   The hidden state applies only when scripting is enabled,
+   so no-JS readers see the grid as-is. */
+@media (scripting: enabled) and (max-width: 1023px) {
+  .work-card-reveal {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+
+  .work-card-reveal.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+    transition:
+      opacity var(--dur-reveal) var(--ease) var(--reveal-delay, 0ms),
+      transform var(--dur-reveal) var(--ease) var(--reveal-delay, 0ms);
+  }
 }
 
 /* The hover lift and the filter dim live on the inner wrapper,
@@ -1733,6 +1783,9 @@ footer[id] {
 .work-visual-title {
   flex: 1;
   min-width: 0;
+  /* The title is an h3 now (semantic heading); its default
+     margins are reset so the overlay position is unchanged. */
+  margin: 0;
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-title-md);
@@ -2840,6 +2893,21 @@ footer[id] {
   .reveal.is-visible {
     opacity: 1;
     transform: none;
+  }
+
+  .work-card-reveal,
+  .work-card-reveal.is-visible {
+    opacity: 1;
+    transform: none;
+  }
+
+  /* The hover image scale is a motion effect too: under
+     reduced motion the photo must not move on hover, so the
+     scale (and the image's own transform transition) is
+     switched off here. */
+  .work-card:hover .work-visual-asset img {
+    transform: none;
+    transition: none;
   }
 
   /* The deck scroll effect is transform-only, so it is

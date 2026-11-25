@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { format, useContent } from "@/i18n/LocaleProvider";
 import type { Project } from "@/content";
+import { Reveal } from "./Reveal";
 import { WorkCard } from "./WorkCard";
 
 /** Pills, in the order the brief names them, then the remaining
@@ -100,11 +101,12 @@ export function WorkSection() {
   return (
     <>
       <div className="work-grid">
-        {projects.map((project) => (
+        {projects.map((project, index) => (
           <WorkCard
             key={project.slug}
             project={project}
             dimmed={!matches(project, active)}
+            index={index}
           />
         ))}
       </div>
@@ -158,6 +160,21 @@ export function WorkSection() {
       <p className="filter-note" aria-live="polite">
         {note}
       </p>
+      <Reveal>
+        <p className="work-more">
+          <a
+            href="https://github.com/shamas92"
+            target="_blank"
+            rel="noopener noreferrer"
+            className="work-more-link"
+          >
+            {ui.viewMore}
+            <span className="work-more-arrow" aria-hidden="true">
+              ↗
+            </span>
+          </a>
+        </p>
+      </Reveal>
     </>
   );
 }

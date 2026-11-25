@@ -13,7 +13,10 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
  *  the 0.2 default fires once ~100px shows. A taller target
  *  passes a lower threshold, so the work is visible on arrival
  *  instead of blank. */
-export function useReveal<T extends HTMLElement>(threshold = 0.2) {
+export function useReveal<T extends HTMLElement>(
+  threshold = 0.2,
+  baseClass = "reveal",
+) {
   const ref = useRef<T>(null);
   const [visible, setVisible] = useState(false);
 
@@ -37,7 +40,7 @@ export function useReveal<T extends HTMLElement>(threshold = 0.2) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  return { ref, className: `reveal${visible ? " is-visible" : ""}` };
+  return { ref, className: `${baseClass}${visible ? " is-visible" : ""}` };
 }
 
 export function Reveal({

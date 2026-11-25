@@ -765,8 +765,17 @@ footer[id] {
 
 @media (min-width: 1024px) {
   .hero {
-    grid-template-columns: minmax(0, 5fr) minmax(0, 6fr);
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     gap: var(--space-6);
+  }
+
+  /* The copy column is half the measure now, so the name
+     scales with the viewport (4.5vw) instead of the full
+     display clamp — it stays on one line from 1024px up
+     (at 1024px it is 46px in a 456px column; at 1440px it
+     is the full 56px in a 536px column). */
+  .hero-name {
+    font-size: clamp(2.5rem, 4.5vw, 3.5rem);
   }
 }
 
@@ -942,7 +951,7 @@ footer[id] {
   --ox: -20px;
   --oy: -16px;
   --rr: -5deg;
-  --sx: -280px;
+  --sx: -300px;
   --sy: 20px;
   --sr: -2deg;
   --ss: 1.08;
@@ -952,7 +961,7 @@ footer[id] {
   --ox: 20px;
   --oy: -18px;
   --rr: -1deg;
-  --sx: 70px;
+  --sx: 50px;
   --sy: 20px;
   --sr: 1deg;
   --ss: 1.08;
@@ -962,7 +971,7 @@ footer[id] {
   --ox: -18px;
   --oy: 16px;
   --rr: 7deg;
-  --sx: -280px;
+  --sx: -300px;
   --sy: 250px;
   --sr: 2deg;
   --ss: 1.08;
@@ -972,7 +981,7 @@ footer[id] {
   --ox: 18px;
   --oy: 18px;
   --rr: 13deg;
-  --sx: 70px;
+  --sx: 50px;
   --sy: 250px;
   --sr: -1deg;
   --ss: 1.08;
@@ -1040,13 +1049,15 @@ footer[id] {
 /* Phones: the deck is a compact fanned stack below the copy;
    on scroll it fans downward in a vertical stack (a 2×2 would
    not fit a 343px column), overlapping into the Work section
-   and scrolling away above the grid. */
+   and scrolling away above the grid. The cards are 200px wide
+   (not 220px) so the fanned stack's bounding box fits a 170px
+   deck without crowding the copy above it. */
 @media (max-width: 767px) {
   .hero-deck {
-    height: 180px;
+    height: 170px;
   }
   .deck-card {
-    width: 220px;
+    width: 200px;
   }
   .deck-card--a {
     --ox: -12px;
@@ -1366,20 +1377,22 @@ footer[id] {
     margin-top: var(--space-3);
   }
 
-  /* 32px, not 48px: the deck's spread overlaps into the Work
+  /* 24px, not 48px: the deck's spread overlaps into the Work
      section as it fans out, so the gap above the heading stays
-     tight and the first card still peeks above the fold. */
+     tight and the first card still peeks above the fold — in
+     German too, where the copy runs longer. */
   #work {
-    padding-top: var(--space-4);
+    padding-top: var(--space-3);
   }
 }
 
-/* Phones: the hero gains a 180px deck below the copy, so the
+/* Phones: the hero gains a 170px deck below the copy, so the
    copy margins tighten to give some of that height back and
    keep the first flagship card near the fold. */
 @media (max-width: 767px) {
   .hero {
     gap: var(--space-2);
+    padding-block: var(--space-3) var(--space-2);
   }
 
   .hero-claim {
@@ -2771,10 +2784,13 @@ footer[id] {
 
   /* The deck scroll effect is transform-only, so it is
      switched off here too: the deck sits at its rest fanned
-     state and does not move on scroll. The hero text never
-     moves on scroll, so nothing else needs overriding. */
-  .hero-deck,
-  .deck-card {
+     state and does not move on scroll. Only the deck's lag
+     transform is removed — the cards keep their rest fan (the
+     JS never sets --deck-progress under reduced motion, so the
+     interpolation stays at 0 and the cards sit fanned, not
+     piled). The hero text never moves on scroll, so nothing
+     else needs overriding. */
+  .hero-deck {
     transform: none;
   }
 

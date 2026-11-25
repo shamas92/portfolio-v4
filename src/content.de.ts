@@ -571,6 +571,7 @@ export const deContent: SiteContent = {
           "Mockup der Sprachanalyse — schematische Balken, keine Messwerte.",
       },
     },
+    heroDeck: { placeholder: "Platzhalter" },
     meta: {
       titleSuffix: "Softwareentwickler, Dresden",
       description:

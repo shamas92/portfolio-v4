@@ -657,6 +657,10 @@ export type UiStrings = {
       caption: string;
     };
   };
+  /** The hero deck's dummy mockups: the only localised word is the
+   *  placeholder tag; the four type names (Dashboard, App, Data,
+   *  Mobile) are the same in both locales. */
+  heroDeck: { placeholder: string };
   meta: { titleSuffix: string; description: string };
 };
 
@@ -816,6 +820,7 @@ export const ui: UiStrings = {
       caption: "Speech-analysis mockup — schematic bars, no measured values.",
     },
   },
+  heroDeck: { placeholder: "Placeholder" },
   meta: {
     titleSuffix: "Software Engineer, Dresden",
     description:

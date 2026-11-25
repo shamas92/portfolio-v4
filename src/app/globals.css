@@ -1398,12 +1398,25 @@ footer[id] {
     margin-top: var(--space-3);
   }
 
-  /* 24px, not 48px: the deck's spread overlaps into the Work
-     section as it fans out, so the gap above the heading stays
-     tight and the first card still peeks above the fold — in
-     German too, where the copy runs longer. */
+  /* 124px, not 24px: the first row of the grid is the deck's
+     destination and sits at opacity 0 until the deck docks, so
+     at rest the space below the Work intro is row 1's empty
+     slot — a blank band that read as a hole (269px of it in the
+     first viewport at 1440x900). Pushing the whole Work section
+     down 100px moves that empty slot down with it, so only
+     169px of it shows at rest; the gap this opens above the
+     heading is section spacing at a section boundary (the
+     hairline rule marks it), where a generous gap reads as
+     intentional, not missing content. The fold moves with it
+     (first card top 631px to 731px) — the same 100px, because
+     the band IS the space above the first card. The docking
+     offset is measured at runtime from the real rects
+     (page.tsx), so the deck still lands exactly on row 1; the
+     spread and reveal formulas are unchanged and scale to the
+     longer dock. Desktop only: the phone grid has no docking
+     and no band (the first card peeks by 24px there). */
   #work {
-    padding-top: var(--space-3);
+    padding-top: 124px;
   }
 }
 

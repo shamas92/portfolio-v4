@@ -12,6 +12,9 @@ export type Profile = {
   location: string;
   address: string;
   claim: string;
+  /** The word or phrase the hero headline highlights in lime.
+   *  Must occur verbatim inside claim. */
+  claimHighlight: string;
   statusLine: string;
   email: string;
   github: string;
@@ -25,6 +28,7 @@ export const profile: Profile = {
   location: "Dresden, Germany",
   address: "Fritz-Löffler-Straße 12, 01069 Dresden",
   claim: "I build data & ML systems.",
+  claimHighlight: "data & ML",
   statusLine: "MSc Computer Science, TU Dresden",
   email: "shamasrehman249@gmail.com",
   github: "https://github.com/shamas92",
@@ -58,6 +62,10 @@ export type Project = {
   rowOutcome: string;
   /** One proof statement for the Work row. */
   rowProof: string;
+  /** Verified stats for the track card's stats row. Only
+   *  LeaseLens and Sales ETL have one; the rest omit it. The
+   *  values are the project's own verified figures. */
+  stats?: { value: string; label: string }[];
   stack: string[];
   /** What he built on this project — one or two sentences, used on
    *  the case page (Contribution). States the work, never the team
@@ -124,6 +132,11 @@ export const projects: Project[] = [
       "A tenant evidence workspace that checks deposit claims against the lease and the law.",
     rowProof:
       "86.1% registered IoU on the v7 demo pairing, measured live twice identically.",
+    stats: [
+      { value: "€950.00", label: "deposit" },
+      { value: "€535.41", label: "legal cap" },
+      { value: "€414.59", label: "excess" },
+    ],
     stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
     contribution:
       "Built the deterministic validator, the five-jurisdiction deposit-cap registry, and the SAM 3.1 photo-evidence flow on a Next.js/TypeScript frontend and a FastAPI/Python backend.",
@@ -225,6 +238,11 @@ export const projects: Project[] = [
     rowOutcome:
       "Sales data from several sources, loaded into one trustworthy shape.",
     rowProof: "One DAG, three tasks, four tables.",
+    stats: [
+      { value: "1", label: "DAG" },
+      { value: "3", label: "tasks" },
+      { value: "4", label: "tables" },
+    ],
     stack: [
       "Apache Airflow",
       "Docker Compose",
@@ -559,16 +577,16 @@ export type UiStrings = {
   };
   theme: { toLight: string; toDark: string };
   language: { label: string };
-  hero: { pill: string; ask: string; emailMe: string; downloadCv: string };
+  hero: {
+    pill: string;
+    ask: string;
+    emailMe: string;
+    downloadCv: string;
+    seeWorkFirst: string;
+  };
   work: {
     heading: string;
     intro: string;
-    all: string;
-    showingAll: string;
-    showingSome: string;
-    filterLabel: string;
-    filterBy: string;
-    filterClear: string;
     proof: string;
     viewCaseStudy: string;
     viewMore: string;
@@ -720,16 +738,11 @@ export const ui: UiStrings = {
     ask: "Looking for a working-student role in full-stack software and data engineering.",
     emailMe: "Email me",
     downloadCv: "Download CV",
+    seeWorkFirst: "Or see the work first",
   },
   work: {
     heading: "Latest Projects",
     intro: "Six systems, each with its summary and its proof.",
-    all: "All",
-    showingAll: "Showing all {total} projects.",
-    showingSome: "{n} of {total} projects use {tag}.",
-    filterLabel: "Filter projects by stack",
-    filterBy: "Filter by technology",
-    filterClear: "Clear filter",
     proof: "Proof",
     viewCaseStudy: "View case study",
     viewMore: "View More Projects",

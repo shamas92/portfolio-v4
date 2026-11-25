@@ -1,20 +1,20 @@
 "use client";
 
-import type { CSSProperties } from "react";
-import { useLayoutEffect, useRef } from "react";
+import type { CSSProperties, ReactNode } from "react";
+import { useLayoutEffect, useRef, useState } from "react";
 import { useContent, useLocale } from "@/i18n/LocaleProvider";
 import { Reveal } from "@/components/Reveal";
-import { HeroDeck } from "@/components/HeroDeck";
+import { HeroShowcase } from "@/components/HeroShowcase";
 import { WorkSection } from "@/components/WorkSection";
 import { Background } from "@/components/Background";
 import { SkillsSection } from "@/components/SkillsSection";
 import { CertificatesSection } from "@/components/CertificatesSection";
 
-/** Entrance delays: the h1 rises translate-only (no opacity
- *  fade, so the LCP headline paints on first paint) and the
- *  supporting lines rise in 60ms steps after it; the deck cards
- *  settle from 240ms, 80ms apart, so the whole entrance lands
- *  in about a second. */
+/** Entrance delays: the profile row and the h1 rise first (the
+ *  h1 translate-only, no opacity fade, so the LCP headline
+ *  paints on first paint), the supporting lines rise in 60ms
+ *  steps after it, and the deck cards settle from 240ms, 80ms
+ *  apart, so the whole entrance lands in about a second. */
 const delay = (ms: number) =>
   ({ "--entrance-delay": `${ms}ms` }) as CSSProperties;
 
@@ -28,71 +28,106 @@ const smootherstep = (p: number) => {
   return t * t * t * (t * (t * 6 - 15) + 10);
 };
 
-/** Home: hero (role, focus, location, availability, one primary
- *  action) in a two-column split with the fanned deck of all six
- *  projects' photos on the right, Work (all six projects in one
- *  3×2 image-led grid), Background (with the first-person About
- *  as its lead), Skills, Certificates, Contact (the footer). The
- *  work is the first thing after the hero; the filter pills sit
- *  below the grid, not above it, so the first project is visible
- *  in the first viewport. */
+/** Home: hero (profile row, headline, ask, two actions, "see the
+ *  work first" link, and the deck showcase with its tabs and
+ *  caption) in a two-column split, Work (all six projects in one
+ *  horizontal scroll-driven track), Background (with the
+ *  first-person About as its lead), Skills, Certificates,
+ *  Contact (the footer). The work is the first thing after the
+ *  hero; the "View More Projects" link sits after the track, so
+ *  the first project is visible in the first viewport. */
 export default function Home() {
   const content = useContent();
   const { locale } = useLocale();
   const ui = content.ui;
   const pageRef = useRef<HTMLDivElement>(null);
+  /* The active project: the deck's front card, the caption and
+     the active tab all follow it. Default LeaseLens, the first
+     project — the reference's front card is its first project
+     too. */
+  const [activeSlug, setActiveSlug] = useState("leaselens");
   /* The docking geometry, measured from the real layout (see
      measure below). Recomputed on mount, resize, font load and
      locale change, so it holds across widths and languages. */
   const dockRef = useRef(0);
   const dockOkRef = useRef(false);
   const desktopRef = useRef(false);
+  /* The track's scroll range, for --track-x: the track section's
+     document top and (height − viewport height). */
+  const trackTopRef = useRef(0);
+  const trackRangeRef = useRef(0);
 
-  /* Hero deck scroll — the deck becomes the grid, like the
+  /* The headline, with the claim's highlight phrase wrapped in
+     the lime marker span. The highlight phrase comes from
+     content (claimHighlight, verbatim inside claim); if it is
+     ever absent, the claim renders plain. */
+  const renderHeadline = (): ReactNode => {
+    const claim = content.profile.claim;
+    const hl = content.profile.claimHighlight;
+    const i = claim.indexOf(hl);
+    if (i < 0) return claim;
+    return (
+      <>
+        {claim.slice(0, i)}
+        <span className="hero-highlight">{hl}</span>
+        {claim.slice(i + hl.length)}
+      </>
+    );
+  };
+
+  /* Hero deck scroll — the deck becomes the track, like the
    *  reference. The scroll variables live on the .page element
-   *  (not the hero), so both the deck and the Work grid read
+   *  (not the hero), so both the deck and the Work track read
    *  them: --deck-progress (0→1, smootherstep-eased), --deck-x
    *  (the horizontal spread, weighted late on desktop so the
    *  cards stay fanned while the hero text is still visible),
-   *  --deck-lag (the deck's parallax), --grid-reveal (the grid,
-   *  0→1 as the deck docks) and --deck-fade (the deck, 1→0 over
-   *  the same range).
+   *  --deck-lag (the deck's parallax), --track-reveal (the
+   *  track, 0→1 as the deck docks), --deck-fade (the deck, 1→0
+   *  over the same range) and --track-x (the track's horizontal
+   *  progress, 0→1 across the tall track section).
    *
    *  Desktop (1024px and up): the deck pins in the viewport —
    *  the lag equals the scroll distance, capped at the docking
-   *  offset — while the grid scrolls up to meet it. The docking
-   *  offset is the scroll at which the first row's visuals reach
-   *  the deck's pinned position; the per-card final offsets and
-   *  scale are measured from the grid's real rects, so each deck
-   *  card lands exactly over its own grid card's visual and the
-   *  cross-fade is seamless. Row 2's cards travel down as well:
-   *  their --sy is the measured distance from the pinned deck
-   *  centre to their own visual's centre. The effect reverses
-   *  on scroll-up. Below 1024px there is no docking: the hero
+   *  offset — while the track scrolls up to meet it. The docking
+   *  offset is the scroll at which the track section becomes
+   *  sticky (its top reaches the viewport top): at that scroll
+   *  the track has not translated yet, so the photos sit at
+   *  their rest X and the per-card final offsets and scale,
+   *  measured from the track photos' real rects, land each deck
+   *  card exactly over its own track card's photo and the
+   *  cross-fade is seamless. The photos are vertically centred
+   *  in the sticky 100vh viewport — below the deck's pinned
+   *  rest centre — so the deck glides down to the viewport
+   *  centre as it docks (--sy, the same for all six cards).
+   *  The track then translates left as the user scrolls through
+   *  the tall track section (sticky viewport), revealing the six
+   *  wide cards one by one. The effect reverses on scroll-up. Below 1024px
+   *  there is no docking and no horizontal track: the hero
    *  stacks, the deck stays a compact six-card fan and scrolls
    *  away (no pin, no parallax — it moves 1:1 with the page,
-   *  so it never drifts over the Work heading), and the grid
-   *  shows fully — a six-card fan cannot dock onto a
-   *  one-column grid in a compact scroll range.
+   *  so it never drifts over the Work heading), and the track
+   *  shows as a vertical stack.
    *
-   *  Smoothness: the scroll position sets a target, and the
-   *  displayed progress is damped toward it (0.22 per frame,
+   *  Smoothness: the deck's scroll position sets a target, and
+   *  the displayed progress is damped toward it (0.22 per frame,
    *  ~250ms to settle), so the deck glides instead of stepping
    *  with the wheel. The pin (--deck-lag) is the one value
    *  written straight from the scroll, so the deck never drifts
    *  from its pinned spot after the scroll stops; the spread,
    *  the rotation, the scale and the cross-fade settle toward
    *  it. The loop runs only while the deck is settling and
-   *  stops once it lands, so an idle page costs nothing.
+   *  stops once it lands, so an idle page costs nothing. The
+   *  track's --track-x is written straight from the scroll (no
+   *  damping): the track follows the wheel, like the reference.
    *
    *  A passive rAF scroll listener, skipped under reduced
    *  motion and without JavaScript (the variables keep their
-   *  CSS defaults: deck at its rest fan, grid fully visible).
-   *  useLayoutEffect so the first update lands before paint —
-   *  the grid must not flash visible before the listener hides
-   *  it. The hero text itself has no scroll transform: it
-   *  scrolls up normally and stays fully opaque until it leaves
-   *  the viewport, like the reference. */
+   *  CSS defaults: deck at its rest fan, track fully visible
+   *  as a stack). useLayoutEffect so the first update lands
+   *  before paint — the track must not flash visible before
+   *  the listener hides it. The hero text itself has no scroll
+   *  transform: it scrolls up normally and stays fully opaque
+   *  until it leaves the viewport, like the reference. */
   useLayoutEffect(() => {
     const page = pageRef.current;
     if (!page) return;
@@ -124,16 +159,14 @@ export default function Home() {
     const writeReveal = (p: number) => {
       if (desktopRef.current && dockOkRef.current) {
         const reveal = smootherstep((p - 0.8) / 0.2);
-        page.style.setProperty("--grid-reveal", reveal.toFixed(3));
+        page.style.setProperty("--track-reveal", reveal.toFixed(3));
         page.style.setProperty("--deck-fade", (1 - reveal).toFixed(3));
       } else {
         /* No docking — below 1024px, or before the dock is
-           measured: the grid is fully visible and the compact
+           measured: the track is fully visible and the compact
            fan stays fully visible too. It scrolls away; it
-           does not fade out. The old fallback wrote fade 0
-           here, which hid the whole deck on phones and
-           tablets. */
-        page.style.setProperty("--grid-reveal", "1");
+           does not fade out. */
+        page.style.setProperty("--track-reveal", "1");
         page.style.setProperty("--deck-fade", "1");
       }
     };
@@ -173,15 +206,20 @@ export default function Home() {
       } else {
         targetP = 0;
         /* No pin below 1024px: the compact fan scrolls 1:1
-           with the page. A lag here (the earlier 0.5×, capped
-           at 160px) let the fan drift down over the Work
-           heading as the section scrolled up under it — the
-           photos covered the heading on phones. */
+           with the page. */
         lagY = 0;
       }
       page.style.setProperty("--deck-lag", `${lagY.toFixed(1)}px`);
       writeDeck(currentP, lagY);
       writeReveal(currentP);
+      /* The track's horizontal progress: 0 until the track
+         section arrives, 1 once it has scrolled through.
+         Written straight from the scroll, no damping. */
+      const trackProgress =
+        trackRangeRef.current > 0
+          ? clamp01((y - trackTopRef.current) / trackRangeRef.current)
+          : 0;
+      page.style.setProperty("--track-x", trackProgress.toFixed(3));
       if (Math.abs(targetP - currentP) >= SETTLE) kick();
     };
 
@@ -190,6 +228,10 @@ export default function Home() {
       const deckCards = Array.from(
         page.querySelectorAll<HTMLElement>(".deck-card[data-project]"),
       );
+      const track = page.querySelector<HTMLElement>(".track");
+      const trackViewport =
+        page.querySelector<HTMLElement>(".track-viewport");
+      const trackScroll = page.querySelector<HTMLElement>(".track-scroll");
       if (!desktopRef.current) {
         /* Mobile/tablet: the CSS media queries own the spread,
            so any desktop measurement left on the cards must go. */
@@ -203,54 +245,86 @@ export default function Home() {
         return false;
       }
       const deck = page.querySelector<HTMLElement>(".hero-deck");
-      const gridVisuals = Array.from(
-        page.querySelectorAll<HTMLElement>(".work-card .work-visual"),
+      const trackPhotos = Array.from(
+        page.querySelectorAll<HTMLElement>(".track-card .track-photo"),
       );
-      if (!deck || deckCards.length !== 6 || gridVisuals.length !== 6) {
+      if (
+        !deck ||
+        deckCards.length !== 6 ||
+        trackPhotos.length !== 6 ||
+        !track ||
+        !trackViewport ||
+        !trackScroll
+      ) {
         dockOkRef.current = false;
         return false;
       }
+      /* Reset the track translation so the photos are at their
+         rest positions for the measurement. */
+      page.style.setProperty("--track-x", "0");
+      /* The track's max translation: content width minus the
+         viewport width. Layout-based, so it is safe to measure
+         at any scroll position. */
+      const max = Math.max(
+        0,
+        track.scrollWidth - trackViewport.clientWidth,
+      );
+      track.style.setProperty("--track-max", `${max}px`);
+      /* Cache the track's scroll range for sync(). The section
+         itself is in normal flow (only its viewport is sticky),
+         so its document top is stable. */
+      const y = window.scrollY;
+      const trackRect = trackScroll.getBoundingClientRect();
+      const trackTop = trackRect.top + y;
+      const trackRange = Math.max(
+        1,
+        trackScroll.offsetHeight - window.innerHeight,
+      );
+      trackTopRef.current = trackTop;
+      trackRangeRef.current = trackRange;
       /* Force the deck to rest so the rects are the rest rects.
          The caller re-syncs before the next paint, so the deck
          never visibly jumps. */
       page.style.setProperty("--deck-progress", "0");
       page.style.setProperty("--deck-x", "0");
       page.style.setProperty("--deck-lag", "0px");
-      const y = window.scrollY;
       const deckRect = deck.getBoundingClientRect();
       const deckCx = deckRect.left + deckRect.width / 2;
       const deckCy = y + deckRect.top + deckRect.height / 2;
-      const first = gridVisuals[0]!.getBoundingClientRect();
-      const dock = first.top + y + first.height / 2 - deckCy;
+      /* The dock completes exactly when the track section
+         becomes sticky (its top reaches the viewport top): at
+         that scroll the track has not translated yet
+         (--track-x is 0), so the photos sit at their rest X
+         and the --sx measured below is exact, and the reveal
+         completes just as the track starts moving left.
+         The photos are vertically centred in the sticky
+         100vh viewport, so their centre is the viewport
+         centre — below the deck's pinned rest centre. The
+         deck therefore glides down to the viewport centre as
+         it docks: --sy is that vertical distance, the same
+         for all six cards (their photos share one row). */
+      const dock = trackTop;
       if (dock < 200) {
         dockOkRef.current = false;
         return false;
       }
       dockRef.current = dock;
+      const sy = window.innerHeight / 2 - deckCy;
       for (const card of deckCards) {
         const slug = card.dataset.project;
-        const visual = gridVisuals.find(
-          (v) => v.closest<HTMLElement>(".work-card")?.dataset.slug === slug,
+        const photo = trackPhotos.find(
+          (v) => v.closest<HTMLElement>(".track-card")?.dataset.slug === slug,
         );
-        if (!visual) {
+        if (!photo) {
           dockOkRef.current = false;
           return false;
         }
-        const r = visual.getBoundingClientRect();
+        const r = photo.getBoundingClientRect();
         card.style.setProperty(
           "--sx",
           `${(r.left + r.width / 2 - deckCx).toFixed(1)}px`,
         );
-        /* Row 1 lands through the lag (the pinned deck), so its
-           final y offset is 0; row 2's cards travel down to the
-           second row — the distance from the pinned deck centre
-           to their own visual's centre. Each card is measured
-           from its own visual, so differing body heights across
-           columns cannot throw a row off. */
-        card.style.setProperty(
-          "--sy",
-          `${(r.top + y + r.height / 2 - deckCy - dock).toFixed(1)}px`,
-        );
+        card.style.setProperty("--sy", `${sy.toFixed(1)}px`);
         card.style.setProperty("--sr", "0deg");
         card.style.setProperty("--ss", (r.width / card.offsetWidth).toFixed(3));
       }
@@ -269,9 +343,9 @@ export default function Home() {
     sync();
     window.addEventListener("scroll", onScroll, { passive: true });
     window.addEventListener("resize", onResize, { passive: true });
-    /* Fonts change the hero's height (the name is Newsreader),
-       which moves the docking offset — measure again once they
-       have loaded. */
+    /* Fonts change the hero's height (the headline is Inter
+       Tight now, not Newsreader), which moves the docking
+       offset — measure again once they have loaded. */
     if (document.fonts?.ready) {
       document.fonts.ready.then(() => {
         if (disposed) return;
@@ -286,43 +360,63 @@ export default function Home() {
       window.removeEventListener("resize", onResize);
     };
     /* Re-measure when the language changes: the German copy
-       wraps differently, so the hero and the grid move. */
+       wraps differently, so the hero and the track move. */
   }, [locale]);
 
   return (
     <div className="page" ref={pageRef}>
       {/* data-enter marks the hero as the page's one entrance
-          (taste-skill hero-enter): the h1 rises translate-only,
-          the lines rise in 60ms steps, the deck settles as one
-          block per card. */}
+          (taste-skill hero-enter): the profile row and the h1
+          rise first, the lines rise in 60ms steps, the deck
+          settles as one block per card. */}
       <header className="hero" data-enter>
         <div className="hero-copy">
-          <h1 className="hero-name" data-entrance-soft style={delay(0)}>
-            {content.profile.name}
-          </h1>
-          <p className="hero-claim" data-entrance style={delay(60)}>
-            {content.profile.claim}
+          <p className="hero-profile" data-entrance-soft style={delay(0)}>
+            <span className="hero-avatar" aria-hidden="true">
+              SR
+            </span>
+            <span className="hero-profile-text">
+              <span className="hero-profile-name">
+                {content.profile.name}
+              </span>
+              <span className="hero-profile-status">
+                <span className="status-dot" aria-hidden="true" />
+                {ui.hero.pill}
+              </span>
+            </span>
           </p>
+          <h1 className="hero-headline" data-entrance-soft style={delay(60)}>
+            {renderHeadline()}
+          </h1>
           <p className="hero-ask" data-entrance style={delay(120)}>
             {ui.hero.ask}
           </p>
-          <p className="hero-pill" data-entrance style={delay(180)}>
-            <span className="status-dot" aria-hidden="true" />
-            {ui.hero.pill}
-          </p>
-          <p className="hero-status" data-entrance style={delay(240)}>
-            {content.profile.statusLine}
-          </p>
-          <div className="hero-actions" data-entrance style={delay(300)}>
+          <div className="hero-actions" data-entrance style={delay(180)}>
             <a
-              className="btn btn-primary"
+              className="btn btn-primary hero-btn"
               href={`mailto:${content.profile.email}`}
             >
               {ui.hero.emailMe}
+              <span className="btn-arrow" aria-hidden="true">
+                →
+              </span>
+            </a>
+            <a
+              className="btn btn-secondary hero-btn"
+              href="/Shamas_Ur_Rehman_CV.pdf"
+              download="Shamas_Ur_Rehman_CV.pdf"
+            >
+              {ui.hero.downloadCv}
             </a>
           </div>
+          <p className="hero-see-work" data-entrance style={delay(240)}>
+            <a href="#work">
+              {ui.hero.seeWorkFirst}{" "}
+              <span aria-hidden="true">↓</span>
+            </a>
+          </p>
         </div>
-        <HeroDeck />
+        <HeroShowcase activeSlug={activeSlug} onSelect={setActiveSlug} />
       </header>
 
       <section

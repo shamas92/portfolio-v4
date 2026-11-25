@@ -25,6 +25,7 @@ export const deContent: SiteContent = {
     location: "Dresden, Deutschland",
     address: "Fritz-Löffler-Straße 12, 01069 Dresden",
     claim: "Ich baue Daten- & ML-Systeme.",
+    claimHighlight: "Daten- & ML-Systeme",
     statusLine: "MSc Informatik, TU Dresden",
     email: "shamasrehman249@gmail.com",
     github: "https://github.com/shamas92",
@@ -42,6 +43,11 @@ export const deContent: SiteContent = {
         "Ein Arbeitsbereich für Mieternachweise, der Kautionsforderungen mit Mietvertrag und Gesetz abgleicht.",
       rowProof:
         "86.1% registered IoU beim v7-Demo-Paar, zweimal live identisch gemessen.",
+      stats: [
+        { value: "€950.00", label: "Kaution" },
+        { value: "€535.41", label: "Obergrenze" },
+        { value: "€414.59", label: "Überschuss" },
+      ],
       stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
       contribution:
         "Ich habe den deterministischen Validator, das Register der Kautionsobergrenzen für fünf Rechtsordnungen und den Fotonachweis mit SAM 3.1 gebaut — auf einem Next.js/TypeScript-Frontend und einem FastAPI/Python-Backend.",
@@ -142,6 +148,11 @@ export const deContent: SiteContent = {
       rowOutcome:
         "Verkaufsdaten aus mehreren Quellen, geladen in eine einzige verlässliche Form.",
       rowProof: "Ein DAG, drei Tasks, vier Tabellen.",
+      stats: [
+        { value: "1", label: "DAG" },
+        { value: "3", label: "Tasks" },
+        { value: "4", label: "Tabellen" },
+      ],
       stack: [
         "Apache Airflow",
         "Docker Compose",
@@ -453,16 +464,13 @@ export const deContent: SiteContent = {
       ask: "Ich suche eine Werkstudentenstelle in Full-Stack- und Datenentwicklung.",
       emailMe: "E-Mail schreiben",
       downloadCv: "Lebenslauf herunterladen",
+      /* PROPOSAL, needs the user's confirmation: no verified
+         German string exists for this link. */
+      seeWorkFirst: "Oder zuerst die Projekte ansehen",
     },
     work: {
       heading: "Neueste Projekte",
       intro: "Sechs Systeme, jedes mit Zusammenfassung und Nachweis.",
-      all: "Alle",
-      showingAll: "Alle {total} Projekte werden angezeigt.",
-      showingSome: "{n} von {total} Projekten verwenden {tag}.",
-      filterLabel: "Projekte nach Stack filtern",
-      filterBy: "Nach Technologie filtern",
-      filterClear: "Filter zurücksetzen",
       proof: "Nachweis",
       viewCaseStudy: "Fallstudie ansehen",
       viewMore: "Mehr Projekte ansehen",

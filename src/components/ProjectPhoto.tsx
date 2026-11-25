@@ -16,13 +16,17 @@ const PHOTOS: Record<string, string> = {
   upliftu: "/projects/upliftu.jpg",
 };
 
-/** A project's photo, cropped to the card's 5:3 frame
+/** A project's photo, cropped to the card's frame
  *  (object-fit: cover — the files are 3:2, so the frame trims a
  *  little top and bottom, never the device). next/image serves a
- *  responsive size, and the deck and the grid use the same sizes
+ *  responsive size, and the deck and the track use the same sizes
  *  string, so the browser reuses one optimised file per width
- *  instead of fetching the same photo twice. Decorative inside
- *  its link or deck card (alt ""), never a screenshot claim. */
+ *  instead of fetching the same photo twice. The desktop slot is
+ *  640px, not 360px: the track photo displays at ~429x568, and a
+ *  360px slot served a 359x239 file that the checker measured
+ *  blown up 2.38x; 640px serves a 750w file that covers it.
+ *  Decorative inside its link or deck card (alt ""), never a
+ *  screenshot claim. */
 export function ProjectPhoto({
   slug,
   eager,
@@ -37,7 +41,7 @@ export function ProjectPhoto({
       src={src}
       alt=""
       fill
-      sizes="(max-width: 767px) 90vw, (max-width: 1023px) 45vw, 360px"
+      sizes="(max-width: 767px) 90vw, (max-width: 1023px) 45vw, 640px"
       loading={eager ? "eager" : "lazy"}
       style={{ objectFit: "cover" }}
     />

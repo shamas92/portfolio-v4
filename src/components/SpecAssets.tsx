@@ -1,5 +1,5 @@
 /**
- * Polished interface mockups for the three flagship cards (and the
+ * Polished interface mockups for the three deck projects' cards (and the
  * case-page Evidence sections). Inline SVG, theme-aware through CSS
  * custom properties in presentation attributes (the same pattern the
  * previous diagrams used), fixed aspect ratio via viewBox (400x240)
@@ -493,6 +493,425 @@ export function OratorPathAsset() {
           </g>
         );
       })}
+    </MockupWindow>
+  );
+}
+
+/** HITEC admin panel: module sidebar, content table, and the RAG
+ *  support chatbot answering from university documents. Shapes
+ *  only — no module names, no invented text; the one word in the
+ *  drawing is the verified "RAG" tag on the chatbot. */
+export function HitecAsset() {
+  const labels = useContent().ui.assets.hitec;
+  const rows = [82, 108, 134, 160];
+  return (
+    <MockupWindow
+      ariaLabel={labels.ariaLabel}
+      title={labels.title}
+      windowTitle={labels.window}
+      status={labels.status}
+    >
+      {/* module sidebar */}
+      <rect
+        x="16"
+        y="42"
+        width="68"
+        height="158"
+        rx="4"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      <circle
+        cx="50"
+        cy="58"
+        r="8"
+        fill="var(--accent-wash)"
+        stroke="var(--rule)"
+      />
+      {[78, 96, 114, 132, 150].map((y, i) => (
+        <rect
+          key={y}
+          x="26"
+          y={y}
+          width="48"
+          height="6"
+          rx="3"
+          fill={i === 0 ? "var(--accent)" : "var(--rule)"}
+          opacity={i === 0 ? 1 : 0.6}
+        />
+      ))}
+      <circle cx="50" cy="186" r="5" fill="var(--rule)" />
+      {/* content table */}
+      <rect
+        x="92"
+        y="42"
+        width="292"
+        height="86"
+        rx="4"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      <rect x="104" y="52" width="60" height="7" rx="3.5" fill="var(--ink)" />
+      <rect
+        x="316"
+        y="50"
+        width="56"
+        height="12"
+        rx="6"
+        fill="none"
+        stroke="var(--rule)"
+      />
+      {rows.map((y, i) => (
+        <g key={y}>
+          <rect
+            x="104"
+            y={y}
+            width="120"
+            height="6"
+            rx="3"
+            fill="var(--ink)"
+            opacity="0.85"
+          />
+          <rect
+            x="104"
+            y={y + 10}
+            width="80"
+            height="5"
+            rx="2.5"
+            fill="var(--ink-muted)"
+            opacity="0.5"
+          />
+          <rect
+            x="316"
+            y={y + 2}
+            width="56"
+            height="12"
+            rx="6"
+            fill={i === 1 ? "var(--accent-wash)" : "none"}
+            stroke={i === 1 ? "none" : "var(--rule)"}
+          />
+        </g>
+      ))}
+      {/* RAG support chatbot */}
+      <rect
+        x="92"
+        y="136"
+        width="292"
+        height="64"
+        rx="4"
+        fill="var(--accent-wash)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="104"
+        y="146"
+        width="34"
+        height="14"
+        rx="7"
+        fill="var(--accent)"
+      />
+      <text
+        x="121"
+        y="156"
+        fontFamily={mono}
+        fontSize="8"
+        fontWeight="600"
+        textAnchor="middle"
+        fill="var(--bg)"
+      >
+        RAG
+      </text>
+      <rect
+        x="146"
+        y="148"
+        width="140"
+        height="7"
+        rx="3.5"
+        fill="var(--ink)"
+        opacity="0.85"
+      />
+      <rect
+        x="146"
+        y="160"
+        width="100"
+        height="6"
+        rx="3"
+        fill="var(--ink-muted)"
+        opacity="0.55"
+      />
+      <rect
+        x="104"
+        y="176"
+        width="216"
+        height="14"
+        rx="7"
+        fill="var(--surface)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="328"
+        y="176"
+        width="44"
+        height="14"
+        rx="7"
+        fill="var(--accent)"
+      />
+    </MockupWindow>
+  );
+}
+
+/** Quality CRM defect list: one relational record per defect —
+ *  checkbox, title and owner bars, a status pill. The pills are
+ *  shapes, not words: no invented statuses. */
+export function QualityAsset() {
+  const labels = useContent().ui.assets.quality;
+  const rows: { y: number; bar: number; accentPill: boolean }[] = [
+    { y: 84, bar: 110, accentPill: true },
+    { y: 114, bar: 140, accentPill: false },
+    { y: 144, bar: 90, accentPill: false },
+    { y: 174, bar: 120, accentPill: false },
+  ];
+  return (
+    <MockupWindow
+      ariaLabel={labels.ariaLabel}
+      title={labels.title}
+      windowTitle={labels.window}
+      status={labels.status}
+    >
+      {/* toolbar: search shape and two filter pills */}
+      <rect
+        x="16"
+        y="42"
+        width="180"
+        height="22"
+        rx="11"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="28"
+        y="50"
+        width="80"
+        height="6"
+        rx="3"
+        fill="var(--ink-muted)"
+        opacity="0.55"
+      />
+      <rect
+        x="212"
+        y="42"
+        width="72"
+        height="22"
+        rx="11"
+        fill="var(--accent-wash)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="300"
+        y="42"
+        width="84"
+        height="22"
+        rx="11"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      {/* defect rows */}
+      {rows.map((r, i) => (
+        <g key={r.y}>
+          <rect
+            x="20"
+            y={r.y + 4}
+            width="12"
+            height="12"
+            rx="2"
+            stroke="var(--rule)"
+            fill={i === 0 ? "var(--accent)" : "none"}
+          />
+          <rect
+            x="42"
+            y={r.y + 6}
+            width={r.bar}
+            height="7"
+            rx="3.5"
+            fill="var(--ink)"
+            opacity="0.85"
+          />
+          <rect
+            x="42"
+            y={r.y + 17}
+            width="70"
+            height="5"
+            rx="2.5"
+            fill="var(--ink-muted)"
+            opacity="0.5"
+          />
+          <rect
+            x="288"
+            y={r.y + 3}
+            width="44"
+            height="14"
+            rx="7"
+            fill={r.accentPill ? "var(--accent)" : "none"}
+            stroke={r.accentPill ? "none" : "var(--rule)"}
+          />
+          <circle
+            cx="356"
+            cy={r.y + 10}
+            r="9"
+            fill={i === 1 ? "var(--accent-wash)" : "var(--bg)"}
+            stroke="var(--rule)"
+          />
+        </g>
+      ))}
+    </MockupWindow>
+  );
+}
+
+/** UpliftU student support: the structured form on the left, the
+ *  conversation on the right. Bubbles hold line bars, not words:
+ *  no invented dialogue. */
+export function UpliftAsset() {
+  const labels = useContent().ui.assets.upliftu;
+  return (
+    <MockupWindow
+      ariaLabel={labels.ariaLabel}
+      title={labels.title}
+      windowTitle={labels.window}
+      status={labels.status}
+    >
+      {/* structured form */}
+      <rect
+        x="16"
+        y="42"
+        width="132"
+        height="158"
+        rx="4"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      {[56, 92, 128].map((y, i) => (
+        <g key={y}>
+          <rect
+            x="28"
+            y={y}
+            width="48"
+            height="6"
+            rx="3"
+            fill="var(--ink-muted)"
+            opacity="0.6"
+          />
+          <rect
+            x="28"
+            y={y + 12}
+            width="108"
+            height="16"
+            rx="4"
+            fill={i === 0 ? "var(--accent-wash)" : "var(--surface)"}
+            stroke="var(--rule)"
+          />
+        </g>
+      ))}
+      <rect
+        x="28"
+        y="168"
+        width="108"
+        height="20"
+        rx="10"
+        fill="var(--accent)"
+      />
+      {/* conversation */}
+      <rect
+        x="164"
+        y="56"
+        width="180"
+        height="34"
+        rx="8"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="176"
+        y="66"
+        width="120"
+        height="6"
+        rx="3"
+        fill="var(--ink)"
+        opacity="0.85"
+      />
+      <rect
+        x="176"
+        y="78"
+        width="84"
+        height="5"
+        rx="2.5"
+        fill="var(--ink-muted)"
+        opacity="0.5"
+      />
+      <rect
+        x="204"
+        y="102"
+        width="180"
+        height="34"
+        rx="8"
+        fill="var(--accent-wash)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="216"
+        y="112"
+        width="132"
+        height="6"
+        rx="3"
+        fill="var(--ink)"
+        opacity="0.85"
+      />
+      <rect
+        x="216"
+        y="124"
+        width="96"
+        height="5"
+        rx="2.5"
+        fill="var(--ink-muted)"
+        opacity="0.5"
+      />
+      <rect
+        x="164"
+        y="148"
+        width="180"
+        height="34"
+        rx="8"
+        fill="var(--bg)"
+        stroke="var(--rule)"
+      />
+      <rect
+        x="176"
+        y="158"
+        width="108"
+        height="6"
+        rx="3"
+        fill="var(--ink)"
+        opacity="0.85"
+      />
+      <rect
+        x="176"
+        y="170"
+        width="72"
+        height="5"
+        rx="2.5"
+        fill="var(--ink-muted)"
+        opacity="0.5"
+      />
+      {/* input line */}
+      <rect
+        x="164"
+        y="190"
+        width="220"
+        height="16"
+        rx="8"
+        fill="var(--surface)"
+        stroke="var(--rule)"
+      />
+      <circle cx="372" cy="198" r="4" fill="var(--accent)" />
     </MockupWindow>
   );
 }

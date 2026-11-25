@@ -27,14 +27,16 @@ import { useContent } from "@/i18n/LocaleProvider";
 import type { Project } from "@/content";
 import { HeroDeck } from "./HeroDeck";
 
-/** Shortened tab labels for the three long titles. */
-const TAB_LABELS: Record<string, string> = {
+/** Shortened tab labels for the three long titles. Exported so
+ *  the Skills section can resolve the same short labels back
+ *  to case-page slugs. */
+export const TAB_LABELS: Record<string, string> = {
   "sales-etl-pipeline": "Sales ETL",
   "hitec-cms": "HITEC",
   "quality-crm": "Quality CRM",
 };
 
-const tabLabel = (project: Project): string =>
+export const tabLabel = (project: Project): string =>
   TAB_LABELS[project.slug] ?? project.title;
 
 export function HeroShowcase({

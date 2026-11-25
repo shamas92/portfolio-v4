@@ -7,12 +7,13 @@ import { useContent } from "@/i18n/LocaleProvider";
  *  by the topographic reference. The contour lines are a
  *  decorative motif — abstract wavy rings generated here, never
  *  presented as real Dresden topography (no elevations, peaks or
- *  coordinates are shown; the note under the panel says so).
- *  The facts are the verified ones: Dresden, Germany and the
- *  street address, plus a live Dresden clock (Europe/Berlin).
+ *  coordinates are shown). The facts are the verified ones:
+ *  Dresden, Germany, plus a live Dresden clock (Europe/Berlin).
  *  The clock renders only after mount so the server and client
  *  HTML match; the time span reserves its width so the panel
- *  does not shift when the clock appears. */
+ *  does not shift when the clock appears. No street address is
+ *  shown here: the public site names the city only, and the full
+ *  address stays in the CV PDF. */
 
 function contourPath(
   cx: number,
@@ -83,7 +84,6 @@ export function LocationPanel() {
       <div className="location-body">
         <p className="location-eyebrow">{loc.eyebrow}</p>
         <p className="location-place">{content.profile.location}</p>
-        <p className="location-address">{content.profile.address}</p>
         <p className="location-clock">
           {loc.nowIn} ·{" "}
           <time
@@ -93,7 +93,6 @@ export function LocationPanel() {
             {now ? dresdenTime.format(now) : ""}
           </time>
         </p>
-        <p className="location-note">{loc.decorativeNote}</p>
       </div>
     </div>
   );

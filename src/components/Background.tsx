@@ -7,10 +7,10 @@ import { LocationPanel } from "./LocationPanel";
  *  (two-column desktop grid), with spoken languages in a metadata
  *  strip underneath and the Dresden location panel after it. The
  *  first-person About lead lives in the section header in
- *  page.tsx, so it animates with the heading. Certificates live
- *  in their own section now (see CertificatesSection), not in
- *  this strip. Every fact is rendered from the locale content
- *  verbatim. */
+ *  page.tsx, so it animates with the heading. The certificates
+ *  are one line under Education, not a section of their own:
+ *  a supporting signal, not a project. Every fact is rendered
+ *  from the locale content verbatim. */
 export function Background() {
   const content = useContent();
   const background = content.background;
@@ -51,6 +51,9 @@ export function Background() {
               </li>
             ))}
           </ol>
+          <p className="bg-certificates" id="certificates-line">
+            {background.certifications}
+          </p>
         </div>
       </div>
 

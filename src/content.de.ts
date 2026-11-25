@@ -21,39 +21,40 @@ import type { SiteContent } from "./content";
 export const deContent: SiteContent = {
   profile: {
     name: "Shamas Ur Rehman",
-    role: "Softwareentwickler",
+    role: "Data- & ML-Engineer",
     location: "Dresden, Deutschland",
-    address: "Fritz-Löffler-Straße 12, 01069 Dresden",
-    claim: "Ich baue Daten- & ML-Systeme.",
-    claimHighlight: "Daten- & ML-Systeme",
+    address: "Dresden, Deutschland",
+    claim: "Ich baue Datenpipelines und ML-Systeme.",
+    claimHighlight: "Datenpipelines",
     statusLine: "MSc Informatik, TU Dresden",
     email: "shamasrehman249@gmail.com",
     github: "https://github.com/shamas92",
     linkedin: "https://linkedin.com/in/shamasrehman",
-    workEligibility: "Werkstudent, 20 Stunden pro Woche möglich.",
+    workEligibility: "Werkstudent, 20 Stunden pro Woche.",
   },
 
   projects: [
     {
       slug: "leaselens",
       title: "LeaseLens",
+      tier: "full",
       year: 2026,
       category: "Hackathon",
       rowOutcome:
         "Ein Arbeitsbereich für Mieternachweise, der Kautionsforderungen mit Mietvertrag und Gesetz abgleicht.",
       rowProof:
-        "86.1% registered IoU beim v7-Demo-Paar, zweimal live identisch gemessen.",
+        "Kaution €950.00 gegenüber Obergrenze €535.41: Überschuss von €414.59 in einem echten Mietvertrag festgestellt.",
       stats: [
-        { value: "€950.00", label: "Kaution" },
-        { value: "€535.41", label: "Obergrenze" },
-        { value: "€414.59", label: "Überschuss" },
+        { value: "86.1%", label: "registered IoU, v7-Demo" },
+        { value: "197", label: "Tests, 132 Backend · 65 Frontend" },
+        { value: "5", label: "Rechtsordnungen im Register" },
       ],
       stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
       contribution:
         "Ich habe den deterministischen Validator, das Register der Kautionsobergrenzen für fünf Rechtsordnungen und den Fotonachweis mit SAM 3.1 gebaut — auf einem Next.js/TypeScript-Frontend und einem FastAPI/Python-Backend.",
       decision:
         "Das Modell markiert Stellen; der Validator entscheidet. Die Kautionsberechnung läuft in Python, nie im Modell, sodass eine Zahl, die das Modell erfindet, nicht ins Ergebnis gelangen kann — auf Kosten eines zweiten, deterministischen Durchlaufs über jedes markierte Zitat.",
-      role: "Hackathon-Beitrag, Team Shamas #4919 (Indie Developer Track)",
+      role: "Hackathon · Team Shamas #4919",
       problem: [
         [
           "Wer in einem anderen Land mietet, unterschreibt einen Vertrag, zahlt eine Kaution und bekommt Monate später eine Forderung für Schäden oder Reinigung. Die Frage ist einfach: Stimmt die Forderung mit Mietvertrag und Gesetz überein? Um das zu beantworten, muss man ein langes Dokument in einer fremden Sprache lesen — und die Kautionsobergrenze ändert sich an jeder Grenze.",
@@ -143,15 +144,17 @@ export const deContent: SiteContent = {
     {
       slug: "sales-etl-pipeline",
       title: "Sales ETL Pipeline",
+      tier: "full",
       year: 2026,
       category: "Data Engineering",
       rowOutcome:
         "Verkaufsdaten aus mehreren Quellen, geladen in eine einzige verlässliche Form.",
-      rowProof: "Ein DAG, drei Tasks, vier Tabellen.",
+      rowProof:
+        "Ein erneuter Lauf dupliziert nichts; ein fehlgeschlagener Lauf löst eine E-Mail-Warnung aus.",
       stats: [
-        { value: "1", label: "DAG" },
-        { value: "3", label: "Tasks" },
-        { value: "4", label: "Tabellen" },
+        { value: "0", label: "Duplikate bei erneutem Lauf" },
+        { value: "4", label: "Tabellen, Star-Schema" },
+        { value: "3", label: "Tasks, Airflow-DAG" },
       ],
       stack: [
         "Apache Airflow",
@@ -197,17 +200,19 @@ export const deContent: SiteContent = {
     {
       slug: "oratorpath",
       title: "OratorPath",
+      tier: "full",
       year: 2025,
       category: "Abschlussarbeit & Paper",
       rowOutcome:
         "Gemessenes Feedback für Entwickler, die öffentlich sprechen.",
-      rowProof: "Peer-reviewte Publikation, 2025.",
+      rowProof:
+        "Veröffentlicht in *Spectrum of Engineering Sciences*, Bd. 3, Heft 7, S. 843–852 (2025).",
       stack: ["PyTorch", "Hugging Face", "NLP"],
       contribution:
         "Ich habe den Sprachanalyse-Coach (PyTorch, Hugging Face, NLP) als Abschlussprojekt gebaut und das veröffentlichte Paper mitverfasst.",
       decision:
         "Der Coach gibt gemessenes Feedback zurück — Tempo, Füllwörter, Klarheit — statt Eindrücke. Zahlen machen Fortschritt über Sitzungen hinweg vergleichbar; über den Vortrag selbst sagen sie nichts, das muss der Sprecher weiterhin selbst beurteilen.",
-      role: "Abschlussprojekt; Mitautor des veröffentlichten Papers",
+      role: "Abschlussarbeit · Mitautor, veröffentlichtes Paper",
       problem: [
         [
           "Feedback zum öffentlichen Sprechen war für Softwareentwickler anekdotisch, nicht gemessen.",
@@ -230,11 +235,16 @@ export const deContent: SiteContent = {
       },
       proofCallout:
         "Peer-reviewte Publikation, 2025: Spectrum of Engineering Sciences, Bd. 3, Heft 7, S. 843–852, ISSN 3007-3138.",
+      /* Paper-URL/DOI liegt nicht vor. Leer, bis der Nutzer sie
+         liefert — keine URL erfinden. */
+      paperUrl: "",
       links: [],
     },
     {
       slug: "hitec-cms",
       title: "HITEC University Webplattform & Admin-Panel",
+      shortTitle: "HITEC Webplattform & Admin-Panel",
+      tier: "compact",
       year: 2025,
       category: "Intern / Archiviert",
       rowOutcome:
@@ -246,7 +256,7 @@ export const deContent: SiteContent = {
         "Ich habe die datenbankgestützten Webmodule, das interne CMS-Admin-Panel und den RAG-Support-Chatbot im IT-Praktikum gebaut.",
       decision:
         "Der Chatbot antwortet aus Universitätsdokumenten (RAG) statt aus Allgemeinwissen, sodass seine Antworten in den eigenen Unterlagen der Hochschule verankert bleiben — auf Kosten dessen, dass er nur kennt, was in diesen Dokumenten steht.",
-      role: "Praktikant in der IT-Abteilung, HITEC University (Mai–Okt. 2025)",
+      role: "Praktikant in der IT-Abteilung, Mai–Okt. 2025",
       problem: [
         [
           "Die Webpräsenz der HITEC University brauchte datenbankgestützte Module und ein internes Admin-Panel für die Inhaltsverwaltung — dazu einen Support-Chatbot, der Fragen aus Universitätsdokumenten beantwortet.",
@@ -265,17 +275,18 @@ export const deContent: SiteContent = {
     {
       slug: "quality-crm",
       title: "Quality Management & Defect-Tracking CRM",
+      shortTitle: "Defect-Tracking CRM",
+      tier: "compact",
       year: 2024,
       category: "Fehlerverfolgung",
       rowOutcome:
         "Defekte und Qualitätsprobleme in einem Datensatz statt in informellen Notizen.",
-      rowProof: "Als akademisches Projekt veröffentlicht.",
       stack: ["Laravel", "MySQL", "PHP"],
       contribution:
         "Ich habe ein Laravel/MySQL-CRM gebaut, das Defekte und Qualitätsprobleme in einem relationalen Datensatz hält.",
       decision:
         "Ein relationaler Datensatz pro Defekt statt informeller Notizen: aufwendiger einzurichten als eine Tabelle, aber jedes Problem hat einen Ort, an dem es lebt.",
-      role: "Akademisches Projekt (2024)",
+      role: "Akademisches Projekt",
       problem: [
         [
           "Defekte und Qualitätsprobleme wurden informell erfasst, ohne einen einzigen Datensatz.",
@@ -289,17 +300,17 @@ export const deContent: SiteContent = {
     {
       slug: "upliftu",
       title: "UpliftU",
+      tier: "compact",
       year: 2024,
       category: "Studierenden-Support",
       rowOutcome:
         "Gesprächsbasierte Unterstützung für Studierende, in strukturierter Form.",
-      rowProof: "Als akademisches Projekt veröffentlicht.",
       stack: ["Python", "Hugging Face", "NLP"],
       contribution:
         "Ich habe gesprächsbasierte Studierendenbetreuung mit Hugging-Face-NLP in Python gebaut.",
       decision:
         "Strukturierte NLP-Unterstützung statt freiem Chat, sodass Gespräche einer Form folgen, statt zu driften.",
-      role: "Akademisches Projekt (2024)",
+      role: "Akademisches Projekt",
       problem: [
         [
           "Gesprächsbasierte Unterstützung für Studierende hatte keine strukturierte, messbare Form.",
@@ -347,89 +358,68 @@ export const deContent: SiteContent = {
       { language: "Deutsch", level: "A1/A2 (Kurs an der TU Dresden)" },
       { language: "Urdu", level: "Muttersprache" },
     ],
-    certifications: {
-      items: [
-        "Google Advanced Data Analytics",
-        "Google Data Analytics",
-        "Google IT Automation with Python",
-        "Google Project Management",
-      ],
-      period: "Nov. 2025 – Sep. 2026",
-    },
+    certifications:
+      "Google-Zertifikate (2025–2026): Advanced Data Analytics · Data Analytics · IT Automation with Python · Project Management.",
   },
 
-  skillGroups: [
-    {
-      title: "Languages",
-      skills: [
-        { name: "Python", projects: ["leaselens", "hitec-cms", "upliftu"] },
-        { name: "SQL", projects: ["sales-etl-pipeline"] },
-        { name: "C#", projects: ["hitec-cms"] },
-        { name: "TypeScript", projects: ["leaselens"] },
-        { name: "JavaScript" },
-        { name: "PHP", projects: ["quality-crm"] },
-      ],
-    },
-    {
-      title: "Data & BI",
-      skills: [
-        { name: "Pandas" },
-        { name: "NumPy" },
-        { name: "Matplotlib" },
-        { name: "scikit-learn" },
-        { name: "time-series analysis" },
-        { name: "anomaly detection" },
-        { name: "Tableau" },
-        { name: "Excel" },
-        { name: "Parquet", projects: ["sales-etl-pipeline"] },
-      ],
-    },
-    {
-      title: "Frameworks & AI",
-      skills: [
-        { name: "FastAPI", projects: ["leaselens"] },
-        { name: "ASP.NET MVC", projects: ["hitec-cms"] },
-        { name: "Next.js", projects: ["leaselens"] },
-        { name: "React", projects: ["leaselens"] },
-        { name: "PyTorch", projects: ["oratorpath"] },
-        { name: "Hugging Face", projects: ["oratorpath", "upliftu"] },
-        { name: "RAG", projects: ["hitec-cms"] },
-        { name: "NLP", projects: ["oratorpath", "upliftu"] },
-        { name: "SAM 3.1", projects: ["leaselens"] },
-        { name: "Laravel", projects: ["quality-crm"] },
-      ],
-    },
-    {
-      title: "Databases",
-      skills: [
-        { name: "SQL Server", projects: ["hitec-cms"] },
-        { name: "MySQL", projects: ["quality-crm"] },
-        { name: "PostgreSQL", projects: ["sales-etl-pipeline"] },
-      ],
-    },
-    {
-      title: "Tools",
-      skills: [
-        {
-          name: "Git",
-          projects: [
-            "leaselens",
-            "sales-etl-pipeline",
-            "oratorpath",
-            "hitec-cms",
-            "quality-crm",
-            "upliftu",
-          ],
-        },
-        { name: "Docker", projects: ["sales-etl-pipeline"] },
-        { name: "Docker Compose", projects: ["sales-etl-pipeline"] },
-        { name: "MinIO", projects: ["sales-etl-pipeline"] },
-        { name: "Apache Airflow", projects: ["sales-etl-pipeline"] },
-        { name: "Linux (Ubuntu)" },
-        { name: "REST APIs" },
-      ],
-    },
-  ],
+  skills: {
+    groups: [
+      {
+        title: "Programmiersprachen",
+        items: [
+          { name: "Python", usedIn: ["LeaseLens", "HITEC", "UpliftU"] },
+          { name: "SQL", usedIn: ["Sales ETL"] },
+          { name: "C#", usedIn: ["HITEC"] },
+          { name: "TypeScript", usedIn: ["LeaseLens"] },
+          { name: "PHP", usedIn: ["Quality CRM"] },
+        ],
+      },
+      {
+        title: "Frameworks & KI",
+        items: [
+          { name: "FastAPI", usedIn: ["LeaseLens"] },
+          { name: "ASP.NET MVC", usedIn: ["HITEC"] },
+          { name: "Next.js", usedIn: ["LeaseLens"] },
+          { name: "React", usedIn: ["LeaseLens"] },
+          { name: "PyTorch", usedIn: ["OratorPath"] },
+          { name: "Hugging Face", usedIn: ["OratorPath", "UpliftU"] },
+          { name: "SAM 3.1", usedIn: ["LeaseLens"] },
+        ],
+      },
+      {
+        title: "Datenbanken",
+        items: [
+          { name: "SQL Server", usedIn: ["HITEC"] },
+          { name: "MySQL", usedIn: ["Quality CRM"] },
+          { name: "PostgreSQL", usedIn: ["Sales ETL"] },
+        ],
+      },
+      {
+        title: "Werkzeuge",
+        items: [
+          {
+            name: "Git",
+            usedIn: [
+              "LeaseLens",
+              "Sales ETL",
+              "OratorPath",
+              "HITEC",
+              "Quality CRM",
+              "UpliftU",
+            ],
+          },
+          { name: "Docker", usedIn: ["Sales ETL"] },
+          { name: "Docker Compose", usedIn: ["Sales ETL"] },
+          { name: "MinIO", usedIn: ["Sales ETL"] },
+          { name: "Apache Airflow", usedIn: ["Sales ETL"] },
+          { name: "Parquet", usedIn: ["Sales ETL"] },
+          { name: "REST APIs", usedIn: ["LeaseLens"] },
+        ],
+      },
+    ],
+    coursework:
+      "Kursarbeit (Google-Zertifikate): Pandas · NumPy · Matplotlib · scikit-learn · Tableau · Excel",
+  },
 
   ui: {
     skipLink: "Zum Inhalt springen",
@@ -460,8 +450,8 @@ export const deContent: SiteContent = {
       label: "Sprache",
     },
     hero: {
-      pill: "Dresden · Werkstudent, 20 Std./Woche",
-      ask: "Ich suche eine Werkstudentenstelle in Full-Stack- und Datenentwicklung.",
+      pill: "Werkstudent, 20 Std./Woche",
+      ask: "Ich suche eine Werkstudentenstelle in Datenentwicklung oder ML.",
       emailMe: "E-Mail schreiben",
       downloadCv: "Lebenslauf herunterladen",
       /* PROPOSAL, needs the user's confirmation: no verified
@@ -470,10 +460,10 @@ export const deContent: SiteContent = {
     },
     work: {
       heading: "Neueste Projekte",
-      intro: "Sechs Systeme, jedes mit Zusammenfassung und Nachweis.",
+      intro: "Drei Projekte im Detail, drei weitere darunter.",
       proof: "Nachweis",
       viewCaseStudy: "Fallstudie ansehen",
-      viewMore: "Mehr Projekte ansehen",
+      viewMore: "Mehr auf GitHub",
     },
     background: {
       heading: "Werdegang",
@@ -483,25 +473,14 @@ export const deContent: SiteContent = {
       location: {
         eyebrow: "Standort",
         nowIn: "Jetzt in Dresden",
-        decorativeNote: "Konturlinien — Dekoration, keine Vermessungskarte.",
       },
-    },
-    certificates: {
-      heading: "Zertifikate",
-      intro: "Vier Google-Zertifikate.",
-      note: "Einzelne Abschlussdaten liegen nicht vor, daher werden keine angezeigt.",
     },
     skills: {
       heading: "Skills",
-      intro:
-        "Alle Fähigkeiten, gruppiert nach dem, was sie leisten. Jede nennt das Projekt, in dem sie eingesetzt wurde; die ohne Einsatz auf dieser Seite stehen separat, nicht gestrichen.",
       usedIn: "Eingesetzt in",
-      everyProject: "jedem Projekt",
-      noShippedUse: "Kein Einsatz auf dieser Seite",
     },
     footer: {
       heading: "Kontakt",
-      closing: "Jede Aussage auf dieser Seite hat ihren Nachweis.",
     },
     form: {
       heading: "Nachricht schreiben",
@@ -510,20 +489,21 @@ export const deContent: SiteContent = {
       emailLabel: "E-Mail",
       emailPlaceholder: "sie@beispiel.de",
       messageLabel: "Nachricht",
-      messagePlaceholder: "Worum geht es?",
-      submit: "Im E-Mail-Programm öffnen",
-      note: "Öffnet Ihr E-Mail-Programm mit der fertigen Nachricht — von dieser Seite wird nichts gesendet.",
+      messagePlaceholder: "Erzählen Sie mir von der Stelle und dem Team.",
+      submit: "Nachricht senden",
       nameRequired: "Bitte geben Sie Ihren Namen an.",
       emailRequired: "Bitte geben Sie Ihre E-Mail-Adresse an.",
       emailInvalid: "Diese E-Mail-Adresse sieht nicht korrekt aus.",
       messageRequired: "Bitte schreiben Sie eine Nachricht.",
-      statusOpening:
-        "Ihr E-Mail-Programm öffnet sich mit der fertigen Nachricht. Der Versand erfolgt in Ihrem E-Mail-Programm, nicht auf dieser Seite.",
+      statusSent: "Nachricht gesendet — ich antworte innerhalb von 2 Werktagen.",
+      statusFailed:
+        "Die Nachricht konnte nicht gesendet werden. Bitte schreiben Sie mir direkt.",
     },
     caseStudy: {
       allProjects: "Alle Projekte",
       problem: "Problem",
       contribution: "Beitrag",
+      myPart: "Mein Teil",
       decision: "Entscheidung",
       result: "Ergebnis",
       evidence: "Nachweise",
@@ -607,9 +587,9 @@ export const deContent: SiteContent = {
       },
     },
     meta: {
-      titleSuffix: "Softwareentwickler, Dresden",
+      titleSuffix: "Data- & ML-Engineer, Dresden",
       description:
-        "Persönliches Portfolio von Shamas Ur Rehman, MSc-Informatikstudent an der TU Dresden. Sechs veröffentlichte Systeme, jedes mit seinem Nachweis.",
+        "Shamas Ur Rehman, MSc-Informatikstudent an der TU Dresden. Datenpipelines und ML-Systeme: LeaseLens, eine Sales-ETL-Pipeline und vier weitere Projekte, jedes mit seinem Nachweis.",
     },
   },
 };

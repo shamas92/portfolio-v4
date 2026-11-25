@@ -30,10 +30,13 @@
      content on top (headline highlight, arrow circle). The
      same in both themes. */
   --lime: #bff73b;
-  /* Presence / status dot — emerald #10B981 in BOTH themes (the
-     polish brief fixes this value; it reads on the dark ground
-     too). A live-status colour, not the accent. */
-  --presence-light: #10b981;
+  /* Presence / status dot — emerald, a live-status colour, not
+     the accent. Light #059669 (3.58:1 on the paper ground, WCAG
+     1.4.11); dark #10B981 (it reads on the dark ground). */
+  --presence-light: #059669;
+  /* Form errors — red, so an error never reads as success
+     (green is the accent). Light #b91c1c, dark #f87171. */
+  --error-light: #b91c1c;
   /* Language toggle active segment — Tailwind neutral-100 /
      neutral-800. Deliberately low contrast so it never competes
      with the solid Download CV CTA. */
@@ -53,6 +56,7 @@
   --accent-wash-dark: #22330b;
   --accent-on-wash-dark: #bff73b;
   --presence-dark: #10b981;
+  --error-dark: #f87171;
   --lang-active-dark: #262626;
   --shadow-dark: 0 8px 24px rgb(0 0 0 / 0.45);
   --deck-shadow-dark: rgb(0 0 0 / 0.6);
@@ -71,6 +75,8 @@
   --accent-wash: var(--accent-wash-light);
   /* presence dot — emerald, a live-status colour, not the accent */
   --presence: var(--presence-light);
+  /* form errors — red, never the accent green */
+  --error: var(--error-light);
   --lang-active: var(--lang-active-light);
   --shadow: var(--shadow-light);
   --deck-shadow: var(--deck-shadow-light);
@@ -127,6 +133,7 @@ html[data-theme="dark"] {
   --focus: var(--accent-dark);
   --accent-wash: var(--accent-wash-dark);
   --presence: var(--presence-dark);
+  --error: var(--error-dark);
   --lang-active: var(--lang-active-dark);
   --shadow: var(--shadow-dark);
   --deck-shadow: var(--deck-shadow-dark);
@@ -235,7 +242,8 @@ a:hover {
 }
 
 section[id],
-footer[id] {
+footer[id],
+#main {
   scroll-margin-top: 96px;
 }
 
@@ -451,7 +459,7 @@ footer[id] {
   height: 28px;
   flex: none;
   border: 1px solid var(--ink);
-  border-radius: 8px;
+  border-radius: 50%;
   font-family: var(--font-mono);
   font-size: var(--text-mono-sm);
   font-weight: 500;
@@ -785,7 +793,7 @@ footer[id] {
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   align-items: center;
-  padding-block: var(--space-4) var(--space-2);
+  padding-block: var(--space-3) var(--space-2);
 }
 
 @media (min-width: 1024px) {
@@ -837,6 +845,12 @@ footer[id] {
   line-height: 1.3;
 }
 
+.hero-profile-degree {
+  font-size: var(--text-small);
+  line-height: 1.3;
+  color: var(--ink-muted);
+}
+
 .hero-profile-status {
   display: flex;
   align-items: center;
@@ -846,11 +860,20 @@ footer[id] {
   color: var(--ink-muted);
 }
 
+@media (max-width: 767px) {
+  .hero-profile-status {
+    font-size: 0.875rem;
+  }
+  .hero-profile-degree {
+    font-size: 0.875rem;
+  }
+}
+
 /* The headline: Inter Tight, huge and bold, tight tracking and
    line-height — the reference's grotesque. The name has left
    the h1 slot for the profile row above. */
 .hero-headline {
-  margin-top: var(--space-4);
+  margin-top: var(--space-3);
   font-family: var(--font-body);
   font-weight: 800;
   font-size: clamp(3rem, 6.5vw, 4.75rem);
@@ -930,9 +953,10 @@ footer[id] {
 }
 
 /* The hero buttons are fully rounded pills, ~58px high, like
-   the reference. The primary keeps its near-black ground; on
-   hover it stays near-black and only the arrow nudges — a lime
-   hover ground would swallow the lime arrow circle. */
+   the reference. The primary keeps its near-black ground in
+   both themes; on hover it darkens to black and the arrow
+   nudges — a lime hover ground would swallow the lime arrow
+   circle. */
 .hero-actions .btn {
   border-radius: 999px;
   min-height: 58px;
@@ -940,8 +964,13 @@ footer[id] {
   font-size: 1.0625rem;
 }
 
+.hero-actions .btn-primary {
+  background: #141413;
+  color: #FAF9F7;
+}
+
 .hero-actions .btn-primary:hover {
-  background: var(--ink);
+  background: #000000;
 }
 
 .btn-arrow {
@@ -1019,7 +1048,7 @@ footer[id] {
  *  compositor through the dock. */
 .hero-deck {
   position: relative;
-  height: 340px;
+  height: 300px;
   pointer-events: none;
   transform: translateY(var(--deck-lag, 0px));
   opacity: var(--deck-fade, 1);
@@ -1327,7 +1356,7 @@ footer[id] {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 20px;
+  gap: 4px 12px;
 }
 
 .hero-tab {
@@ -1337,7 +1366,7 @@ footer[id] {
   background: transparent;
   color: var(--ink-muted);
   font-family: var(--font-body);
-  font-size: var(--text-small);
+  font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
 }
@@ -1407,6 +1436,15 @@ footer[id] {
 .btn-secondary:hover {
   border-color: var(--accent);
   color: var(--accent-ink);
+}
+
+/* The footer Download CV is a plain .btn-secondary (not the
+   header's .copy-btn--pill), so it gets the pill shape here:
+   one shape for Download CV in header, hero and footer. The
+   case-study .btn-secondary links are not inside .site-footer,
+   so they keep the 8px radius. */
+.site-footer .btn-secondary {
+  border-radius: 999px;
 }
 
 .btn[disabled] {
@@ -1502,10 +1540,10 @@ footer[id] {
   max-width: 60ch;
 }
 
-/* ---- Work track: six wide cards, a horizontal scroll-driven row on desktop ---- */
+/* ---- Work track: three wide cards, a horizontal scroll-driven row on desktop ---- */
 /* On desktop (1024px and up, motion allowed, scripting enabled)
    the track scrolls horizontally as the user scrolls vertically:
-   the section is 320vh tall, its viewport is sticky, and the row
+   the section is 200vh tall, its viewport is sticky, and the row
    translates left by --track-x * --track-max. --track-x (0→1)
    and --track-max (content width minus viewport width) are
    written by the scroll listener in page.tsx. Everywhere else
@@ -1516,7 +1554,8 @@ footer[id] {
    record" strip is omitted (no equivalent verified stats
    exist). The filter is removed: it dimmed cards in a grid
    where all six were visible at once, which does not fit a
-   track. */
+   track. The three compact cards (HITEC, Quality CRM, UpliftU)
+   sit in a row below the track, not in it. */
 
 /* The stack (the default, and the fallback): photo on top,
    text below, every card fully visible. */
@@ -1800,7 +1839,7 @@ footer[id] {
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    height: 320vh;
+    height: 200vh;
   }
 
   .track-viewport {
@@ -1886,6 +1925,9 @@ footer[id] {
 }
 
 .skills-list li {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
   font-size: var(--text-small);
   line-height: 1.55;
   padding-block: var(--space-1);
@@ -1898,6 +1940,11 @@ footer[id] {
 
 .skills-used {
   color: var(--ink-muted);
+}
+
+.skills-used a {
+  line-height: 24px;
+  padding: 2px 0;
 }
 
 .skills-studied {
@@ -1996,7 +2043,7 @@ footer[id] {
   margin-top: var(--space-3);
   font-size: var(--text-body);
   line-height: 1.65;
-  max-width: 68ch;
+  max-width: 60ch;
 }
 
 .bg-grid {
@@ -2627,7 +2674,7 @@ footer[id] {
 }
 
 .copy-btn--pill {
-  border-radius: 8px;
+  border-radius: 999px;
   background: var(--ink);
   border-color: var(--ink);
   color: var(--bg);
@@ -2788,11 +2835,11 @@ footer[id] {
 }
 
 .form-field [aria-invalid="true"] {
-  border-color: var(--accent);
+  border-color: var(--error);
 }
 
 .form-error {
-  color: var(--accent-ink);
+  color: var(--error);
   font-size: var(--text-small);
 }
 
@@ -2811,6 +2858,12 @@ footer[id] {
   color: var(--ink);
   border-top: 1px solid var(--rule);
   padding-top: var(--space-1);
+}
+
+/* The failure status reads as an error, not a success. */
+.form-status--error {
+  color: var(--error);
+  border-top-color: var(--error);
 }
 
 .form-honeypot {
@@ -2863,12 +2916,20 @@ footer[id] {
     transform: none;
   }
 
+  .hero-deck--refan .deck-card {
+    transition: none;
+  }
+
   .reveal.is-visible {
     transition: none;
   }
 
   .status-dot::after,
   .etl-flow {
+    animation: none;
+  }
+
+  .copy-btn[data-copied="true"] {
     animation: none;
   }
 

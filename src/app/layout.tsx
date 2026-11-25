@@ -37,12 +37,12 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 const description =
-  "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Six shipped systems, each shown with its proof.";
+  "Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Data pipelines and ML systems: LeaseLens, a sales ETL pipeline, and four more projects, each with its evidence.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Shamas Ur Rehman — Software Engineer, Dresden",
+    default: "Shamas Ur Rehman — Data & ML Engineer, Dresden",
     template: "%s — Shamas Ur Rehman",
   },
   description,
@@ -51,20 +51,20 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     siteName: "Shamas Ur Rehman",
-    title: "Shamas Ur Rehman — Software Engineer, Dresden",
+    title: "Shamas Ur Rehman — Data & ML Engineer, Dresden",
     description,
     images: [
       {
         url: "/og.png",
         width: 1200,
         height: 630,
-        alt: "Shamas Ur Rehman — I build data & ML systems. Looking for a working-student role in data engineering, 20 hours a week, in Dresden.",
+        alt: "Shamas Ur Rehman — I build data pipelines and ML systems. Looking for a working-student role in data engineering or ML, 20 hours a week, in Dresden.",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shamas Ur Rehman — Software Engineer, Dresden",
+    title: "Shamas Ur Rehman — Data & ML Engineer, Dresden",
     description,
     images: ["/og.png"],
   },

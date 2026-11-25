@@ -24,11 +24,11 @@ export type Profile = {
 
 export const profile: Profile = {
   name: "Shamas Ur Rehman",
-  role: "Software Engineer",
+  role: "Data & ML Engineer",
   location: "Dresden, Germany",
-  address: "Fritz-Löffler-Straße 12, 01069 Dresden",
-  claim: "I build data & ML systems.",
-  claimHighlight: "data & ML",
+  address: "Dresden, Germany",
+  claim: "I build data pipelines and ML systems.",
+  claimHighlight: "data pipelines",
   statusLine: "MSc Computer Science, TU Dresden",
   email: "shamasrehman249@gmail.com",
   github: "https://github.com/shamas92",
@@ -52,6 +52,13 @@ export type Prose = Inline[][];
 export type Project = {
   slug: string;
   title: string;
+  /** Tier for the Work track: 'full' cards get the 860px track
+   *  card with stats/proof; 'compact' cards render in the compact
+   *  row below the track, with no photo, stats slot or proof line. */
+  tier: "full" | "compact";
+  /** Short title for the track card, when the case-page title is
+   *  too long for the card. The full title stays on the case page. */
+  shortTitle?: string;
   year: number;
   /** Short honest category for the Work grid's overlay pill,
    *  drawn from the project's own role: Hackathon, Data
@@ -60,8 +67,10 @@ export type Project = {
   category: string;
   /** One-sentence outcome for the Work row. */
   rowOutcome: string;
-  /** One proof statement for the Work row. */
-  rowProof: string;
+  /** One proof statement for the Work row. Omitted where there
+   *  is no actual proof — the "Proof" label appears only where
+   *  proof exists, never as a completion statement. */
+  rowProof?: string;
   /** Verified stats for the track card's stats row. Only
    *  LeaseLens and Sales ETL have one; the rest omit it. The
    *  values are the project's own verified figures. */
@@ -119,6 +128,9 @@ export type Project = {
   /** Badge shown on the tier-2 row, e.g. "Internal / Archived"
    *  for a project with no public site. */
   badge?: string;
+  /** Paper URL/DOI for a published paper, when one is on record.
+   *  Empty until the user supplies it — never invent a URL. */
+  paperUrl?: string;
   links: { label: string; href: string }[];
 };
 
@@ -126,23 +138,24 @@ export const projects: Project[] = [
   {
     slug: "leaselens",
     title: "LeaseLens",
+    tier: "full",
     year: 2026,
     category: "Hackathon",
     rowOutcome:
       "A tenant evidence workspace that checks deposit claims against the lease and the law.",
     rowProof:
-      "86.1% registered IoU on the v7 demo pairing, measured live twice identically.",
+      "Deposit €950.00 vs legal cap €535.41: excess €414.59 flagged on a real lease.",
     stats: [
-      { value: "€950.00", label: "deposit" },
-      { value: "€535.41", label: "legal cap" },
-      { value: "€414.59", label: "excess" },
+      { value: "86.1%", label: "registered IoU, v7 demo" },
+      { value: "197", label: "tests, 132 backend · 65 frontend" },
+      { value: "5", label: "jurisdictions in registry" },
     ],
     stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
     contribution:
       "Built the deterministic validator, the five-jurisdiction deposit-cap registry, and the SAM 3.1 photo-evidence flow on a Next.js/TypeScript frontend and a FastAPI/Python backend.",
     decision:
       "The model flags passages; the validator decides. Deposit math runs in Python, never in the model, so a number the model invents cannot reach the result — at the cost of a second, deterministic pass over every flagged quote.",
-    role: "Hackathon entry, Team Shamas #4919 (Indie Developer Track)",
+    role: "Hackathon · Team Shamas #4919",
     problem: [
       [
         "A tenant who rents in another country signs a lease, pays a deposit, and months later gets a claim for damage or cleaning. The question is simple: does the claim match the lease and the law? Answering it means reading a long document in a foreign language, and the deposit cap changes at every border.",
@@ -233,15 +246,16 @@ export const projects: Project[] = [
   {
     slug: "sales-etl-pipeline",
     title: "Sales ETL Pipeline",
+    tier: "full",
     year: 2026,
     category: "Data Engineering",
     rowOutcome:
       "Sales data from several sources, loaded into one trustworthy shape.",
-    rowProof: "One DAG, three tasks, four tables.",
+    rowProof: "A rerun duplicates nothing; a failed run alerts by email.",
     stats: [
-      { value: "1", label: "DAG" },
-      { value: "3", label: "tasks" },
-      { value: "4", label: "tables" },
+      { value: "0", label: "duplicates on rerun" },
+      { value: "4", label: "tables, star schema" },
+      { value: "3", label: "tasks, Airflow DAG" },
     ],
     stack: [
       "Apache Airflow",
@@ -287,16 +301,18 @@ export const projects: Project[] = [
   {
     slug: "oratorpath",
     title: "OratorPath",
+    tier: "full",
     year: 2025,
     category: "Thesis & Paper",
     rowOutcome: "Measured feedback for developers who speak in public.",
-    rowProof: "Peer-reviewed publication, 2025.",
+    rowProof:
+      "Published in *Spectrum of Engineering Sciences*, Vol. 3, Issue 7, pp. 843–852 (2025).",
     stack: ["PyTorch", "Hugging Face", "NLP"],
     contribution:
       "Built the speech-analysis coach (PyTorch, Hugging Face, NLP) as the final-year thesis project and co-authored the published paper.",
     decision:
       "The coach returns measured feedback — pace, filler words, clarity — instead of impressions. Numbers make progress comparable across sessions; they say nothing about delivery, which the speaker still has to judge.",
-    role: "Final-year thesis project; co-author of the published paper",
+    role: "Thesis · Co-author, published paper",
     problem: [
       [
         "Public-speaking feedback for software developers was anecdotal, not measured.",
@@ -319,11 +335,16 @@ export const projects: Project[] = [
     },
     proofCallout:
       "Peer-reviewed publication, 2025: Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, ISSN 3007-3138.",
+    /* Paper URL/DOI is not on record. Empty until the user
+       supplies it — do not invent one. */
+    paperUrl: "",
     links: [],
   },
   {
     slug: "hitec-cms",
     title: "HITEC University Web Platform & Admin Panel",
+    shortTitle: "HITEC Web Platform & Admin Panel",
+    tier: "compact",
     year: 2025,
     category: "Internal / Archived",
     rowOutcome:
@@ -335,7 +356,7 @@ export const projects: Project[] = [
       "Built the database-backed web modules, the internal CMS admin panel, and the RAG support chatbot during the IT Department internship.",
     decision:
       "The chatbot answers from university documents (RAG) instead of general knowledge, so its answers stay grounded in the institution's own material — at the cost of only knowing what is in those documents.",
-    role: "IT Department intern, HITEC University (May–Oct 2025)",
+    role: "IT Department intern, May–Oct 2025",
     problem: [
       [
         "HITEC University's web presence ran on modules that needed a database behind them, and the internal team needed an admin panel to manage content — plus a support chatbot that could answer questions from university documents.",
@@ -354,16 +375,17 @@ export const projects: Project[] = [
   {
     slug: "quality-crm",
     title: "Quality Management & Defect-Tracking CRM",
+    shortTitle: "Defect-Tracking CRM",
+    tier: "compact",
     year: 2024,
     category: "Defect Tracking",
     rowOutcome: "Defects and quality issues in one record, not informal notes.",
-    rowProof: "Shipped as an academic project.",
     stack: ["Laravel", "MySQL", "PHP"],
     contribution:
       "Built a Laravel/MySQL CRM that keeps defects and quality issues in one relational record.",
     decision:
       "One relational record per defect instead of informal notes: heavier to set up than a spreadsheet, but every issue has one place to live.",
-    role: "Academic project (2024)",
+    role: "Academic project",
     problem: [
       [
         "Defects and quality issues were tracked informally, with no single record.",
@@ -377,16 +399,16 @@ export const projects: Project[] = [
   {
     slug: "upliftu",
     title: "UpliftU",
+    tier: "compact",
     year: 2024,
     category: "Student Support",
     rowOutcome: "Conversational support for students, in a structured form.",
-    rowProof: "Shipped as an academic project.",
     stack: ["Python", "Hugging Face", "NLP"],
     contribution:
       "Built conversational student support with Hugging Face NLP in Python.",
     decision:
       "Structured NLP support instead of free-form chat, so conversations follow a form instead of drifting.",
-    role: "Academic project (2024)",
+    role: "Academic project",
     problem: [
       ["Conversational support for students had no structured, measured form."],
     ],
@@ -417,7 +439,9 @@ export type BackgroundContent = {
   education: EducationEntry[];
   experience: ExperienceEntry[];
   languages: { language: string; level: string }[];
-  certifications: { items: string[]; period: string };
+  /** Certificates as one line under Education, not a section:
+   *  the certificate names and their shared period. */
+  certifications: string;
 };
 
 export const background: BackgroundContent = {
@@ -456,99 +480,79 @@ export const background: BackgroundContent = {
     { language: "German", level: "A1/A2 (TU Dresden course)" },
     { language: "Urdu", level: "Native" },
   ],
-  certifications: {
-    items: [
-      "Google Advanced Data Analytics",
-      "Google Data Analytics",
-      "Google IT Automation with Python",
-      "Google Project Management",
-    ],
-    period: "Nov 2025 – Sep 2026",
-  },
+  certifications:
+    "Google certificates (2025–2026): Advanced Data Analytics · Data Analytics · IT Automation with Python · Project Management.",
 };
 
-/** Each skill appears once. `projects` lists the slugs of the
- *  projects that used it — the Skills section renders them as
- *  "used in" links. A skill with no `projects` has no shipped use
- *  on this page and is shown under the "no shipped use" line
- *  instead of being dropped. */
-export type SkillGroup = {
-  title: string;
-  skills: { name: string; projects?: string[] }[];
+/** Skills as evidence tiers. Each skill appears once, with the
+ *  short project labels that used it — the Skills section renders
+ *  them as "used in" links. Every item here has a `usedIn`, so
+ *  there is no "no shipped use" list. Skills with no shipped use
+ *  on this page live in `coursework` instead: the Google
+ *  certificates name the evidence (coursework), not the absence. */
+export type Skills = {
+  groups: { title: string; items: { name: string; usedIn: string[] }[] }[];
+  coursework: string;
 };
 
-export const skillGroups: SkillGroup[] = [
-  {
-    title: "Languages",
-    skills: [
-      { name: "Python", projects: ["leaselens", "hitec-cms", "upliftu"] },
-      { name: "SQL", projects: ["sales-etl-pipeline"] },
-      { name: "C#", projects: ["hitec-cms"] },
-      { name: "TypeScript", projects: ["leaselens"] },
-      { name: "JavaScript" },
-      { name: "PHP", projects: ["quality-crm"] },
-    ],
-  },
-  {
-    title: "Data & BI",
-    skills: [
-      { name: "Pandas" },
-      { name: "NumPy" },
-      { name: "Matplotlib" },
-      { name: "scikit-learn" },
-      { name: "time-series analysis" },
-      { name: "anomaly detection" },
-      { name: "Tableau" },
-      { name: "Excel" },
-      { name: "Parquet", projects: ["sales-etl-pipeline"] },
-    ],
-  },
-  {
-    title: "Frameworks & AI",
-    skills: [
-      { name: "FastAPI", projects: ["leaselens"] },
-      { name: "ASP.NET MVC", projects: ["hitec-cms"] },
-      { name: "Next.js", projects: ["leaselens"] },
-      { name: "React", projects: ["leaselens"] },
-      { name: "PyTorch", projects: ["oratorpath"] },
-      { name: "Hugging Face", projects: ["oratorpath", "upliftu"] },
-      { name: "RAG", projects: ["hitec-cms"] },
-      { name: "NLP", projects: ["oratorpath", "upliftu"] },
-      { name: "SAM 3.1", projects: ["leaselens"] },
-      { name: "Laravel", projects: ["quality-crm"] },
-    ],
-  },
-  {
-    title: "Databases",
-    skills: [
-      { name: "SQL Server", projects: ["hitec-cms"] },
-      { name: "MySQL", projects: ["quality-crm"] },
-      { name: "PostgreSQL", projects: ["sales-etl-pipeline"] },
-    ],
-  },
-  {
-    title: "Tools",
-    skills: [
-      {
-        name: "Git",
-        projects: [
-          "leaselens",
-          "sales-etl-pipeline",
-          "oratorpath",
-          "hitec-cms",
-          "quality-crm",
-          "upliftu",
-        ],
-      },
-      { name: "Docker", projects: ["sales-etl-pipeline"] },
-      { name: "Docker Compose", projects: ["sales-etl-pipeline"] },
-      { name: "MinIO", projects: ["sales-etl-pipeline"] },
-      { name: "Apache Airflow", projects: ["sales-etl-pipeline"] },
-      { name: "Linux (Ubuntu)" },
-      { name: "REST APIs" },
-    ],
-  },
-];
+export const skills: Skills = {
+  groups: [
+    {
+      title: "Languages",
+      items: [
+        { name: "Python", usedIn: ["LeaseLens", "HITEC", "UpliftU"] },
+        { name: "SQL", usedIn: ["Sales ETL"] },
+        { name: "C#", usedIn: ["HITEC"] },
+        { name: "TypeScript", usedIn: ["LeaseLens"] },
+        { name: "PHP", usedIn: ["Quality CRM"] },
+      ],
+    },
+    {
+      title: "Frameworks & AI",
+      items: [
+        { name: "FastAPI", usedIn: ["LeaseLens"] },
+        { name: "ASP.NET MVC", usedIn: ["HITEC"] },
+        { name: "Next.js", usedIn: ["LeaseLens"] },
+        { name: "React", usedIn: ["LeaseLens"] },
+        { name: "PyTorch", usedIn: ["OratorPath"] },
+        { name: "Hugging Face", usedIn: ["OratorPath", "UpliftU"] },
+        { name: "SAM 3.1", usedIn: ["LeaseLens"] },
+      ],
+    },
+    {
+      title: "Databases",
+      items: [
+        { name: "SQL Server", usedIn: ["HITEC"] },
+        { name: "MySQL", usedIn: ["Quality CRM"] },
+        { name: "PostgreSQL", usedIn: ["Sales ETL"] },
+      ],
+    },
+    {
+      title: "Tools",
+      items: [
+        {
+          name: "Git",
+          usedIn: [
+            "LeaseLens",
+            "Sales ETL",
+            "OratorPath",
+            "HITEC",
+            "Quality CRM",
+            "UpliftU",
+          ],
+        },
+        { name: "Docker", usedIn: ["Sales ETL"] },
+        { name: "Docker Compose", usedIn: ["Sales ETL"] },
+        { name: "MinIO", usedIn: ["Sales ETL"] },
+        { name: "Apache Airflow", usedIn: ["Sales ETL"] },
+        { name: "Parquet", usedIn: ["Sales ETL"] },
+        { name: "REST APIs", usedIn: ["LeaseLens"] },
+      ],
+    },
+  ],
+  coursework:
+    "Coursework (Google certificates): Pandas · NumPy · Matplotlib · scikit-learn · Tableau · Excel",
+};
 
 /** Every user-visible UI string on the site, in one typed shape.
  *  English is the source of truth; the German locale (content.de.ts)
@@ -599,22 +603,13 @@ export type UiStrings = {
     location: {
       eyebrow: string;
       nowIn: string;
-      decorativeNote: string;
     };
-  };
-  certificates: {
-    heading: string;
-    intro: string;
-    note: string;
   };
   skills: {
     heading: string;
-    intro: string;
     usedIn: string;
-    everyProject: string;
-    noShippedUse: string;
   };
-  footer: { heading: string; closing: string };
+  footer: { heading: string };
   form: {
     heading: string;
     nameLabel: string;
@@ -624,17 +619,18 @@ export type UiStrings = {
     messageLabel: string;
     messagePlaceholder: string;
     submit: string;
-    note: string;
     nameRequired: string;
     emailRequired: string;
     emailInvalid: string;
     messageRequired: string;
-    statusOpening: string;
+    statusSent: string;
+    statusFailed: string;
   };
   caseStudy: {
     allProjects: string;
     problem: string;
     contribution: string;
+    myPart: string;
     decision: string;
     result: string;
     evidence: string;
@@ -709,7 +705,7 @@ export const ui: UiStrings = {
   skipLink: "Skip to content",
   navLabel: "Sections",
   nav: {
-    work: "Work",
+    work: "Projects",
     background: "Background",
     contact: "Contact",
   },
@@ -734,18 +730,18 @@ export const ui: UiStrings = {
     label: "Language",
   },
   hero: {
-    pill: "Dresden · Working-student eligible, 20h/wk",
-    ask: "Looking for a working-student role in full-stack software and data engineering.",
+    pill: "Working-student eligible, 20h/wk",
+    ask: "Looking for a working-student role in data engineering or ML.",
     emailMe: "Email me",
     downloadCv: "Download CV",
     seeWorkFirst: "Or see the work first",
   },
   work: {
-    heading: "Latest Projects",
-    intro: "Six systems, each with its summary and its proof.",
+    heading: "Latest projects",
+    intro: "Three projects in depth, three more below.",
     proof: "Proof",
     viewCaseStudy: "View case study",
-    viewMore: "View More Projects",
+    viewMore: "More on GitHub",
   },
   background: {
     heading: "Background",
@@ -755,25 +751,14 @@ export const ui: UiStrings = {
     location: {
       eyebrow: "Location",
       nowIn: "Now in Dresden",
-      decorativeNote: "Contour motif — decorative, not a survey map.",
     },
-  },
-  certificates: {
-    heading: "Certificates",
-    intro: "Four Google certificates.",
-    note: "Per-certificate completion dates are not on record, so none are shown.",
   },
   skills: {
     heading: "Skills",
-    intro:
-      "Every skill, grouped by what it does. Each one names the project that used it; the ones with no shipped use on this page are listed separately, not dropped.",
     usedIn: "Used in",
-    everyProject: "every project",
-    noShippedUse: "No shipped use on this page",
   },
   footer: {
     heading: "Contact",
-    closing: "Every claim on this page carries its evidence.",
   },
   form: {
     heading: "Send a message",
@@ -782,20 +767,20 @@ export const ui: UiStrings = {
     emailLabel: "Email",
     emailPlaceholder: "you@example.com",
     messageLabel: "Message",
-    messagePlaceholder: "What would you like to work on?",
-    submit: "Open in your email app",
-    note: "Opens your email app with the message ready to send — nothing is sent from this page.",
+    messagePlaceholder: "Tell me about the role and the team.",
+    submit: "Send message",
     nameRequired: "Please enter your name.",
     emailRequired: "Please enter your email address.",
     emailInvalid: "That email address does not look right.",
     messageRequired: "Please write a message.",
-    statusOpening:
-      "Opening your email app with the message ready to send. Sending happens in your email app, not on this page.",
+    statusSent: "Message sent — I'll reply within 2 working days.",
+    statusFailed: "The message could not be sent. Please email me directly.",
   },
   caseStudy: {
     allProjects: "All projects",
     problem: "Problem",
     contribution: "Contribution",
+    myPart: "My part",
     decision: "Decision",
     result: "Result",
     evidence: "Evidence",
@@ -878,9 +863,9 @@ export const ui: UiStrings = {
     },
   },
   meta: {
-    titleSuffix: "Software Engineer, Dresden",
+    titleSuffix: "Data & ML Engineer, Dresden",
     description:
-      "Personal portfolio of Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Six shipped systems, each shown with its proof.",
+      "Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Data pipelines and ML systems: LeaseLens, a sales ETL pipeline, and four more projects, each with its evidence.",
   },
 };
 
@@ -890,7 +875,7 @@ export type SiteContent = {
   profile: Profile;
   projects: Project[];
   background: BackgroundContent;
-  skillGroups: SkillGroup[];
+  skills: Skills;
   ui: UiStrings;
 };
 
@@ -899,6 +884,6 @@ export const enContent: SiteContent = {
   profile,
   projects,
   background,
-  skillGroups,
+  skills,
   ui,
 };

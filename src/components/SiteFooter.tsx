@@ -1,6 +1,7 @@
 "use client";
 
-import { useContent } from "@/i18n/LocaleProvider";
+import Link from "next/link";
+import { useContent, useLocale } from "@/i18n/LocaleProvider";
 import { CopyEmailButton } from "./CopyEmailButton";
 import { DownloadCvButton } from "./DownloadCvButton";
 import { ContactForm } from "./ContactForm";
@@ -13,11 +14,20 @@ import { Reveal } from "./Reveal";
  *  pixel field, denser toward the bottom, revealed on scroll
  *  (opacity/transform only). Decorative and hidden from
  *  assistive technology; the contact actions above it do the
- *  work. */
+ *  work. The eligibility line stays: a recruiter who scrolls
+ *  straight to Contact needs the 20 h/week constraint right
+ *  there. External links carry a visually-hidden new-tab note
+ *  for screen-reader users. Impressum and Datenschutzerklärung
+ *  are German legal terms and stay German in both locales. */
 export function SiteFooter() {
   const content = useContent();
+  const { locale } = useLocale();
   const profile = content.profile;
   const ui = content.ui.footer;
+  const newTabNote =
+    locale === "de"
+      ? " (öffnet in einem neuen Tab)"
+      : " (opens in a new tab)";
 
   return (
     <footer className="site-footer" id="contact">
@@ -29,17 +39,31 @@ export function SiteFooter() {
           </a>
           <p className="footer-location">{profile.location}</p>
           <div className="footer-links">
-            <a href={profile.github} target="_blank" rel="noreferrer">
+            <a
+              href={profile.github}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               GitHub
+              <span className="visually-hidden">{newTabNote}</span>
             </a>
-            <a href={profile.linkedin} target="_blank" rel="noreferrer">
+            <a
+              href={profile.linkedin}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
               LinkedIn
+              <span className="visually-hidden">{newTabNote}</span>
             </a>
             <CopyEmailButton />
-            <DownloadCvButton className="btn btn-secondary" />
+            <DownloadCvButton className="copy-btn copy-btn--pill" />
           </div>
-          <p className="footer-line">{ui.closing}</p>
           <p className="footer-eligibility">{profile.workEligibility}</p>
+          <p className="footer-legal">
+            <Link href="/impressum">Impressum</Link>
+            {" · "}
+            <Link href="/datenschutz">Datenschutzerklärung</Link>
+          </p>
         </div>
         <ContactForm />
       </div>

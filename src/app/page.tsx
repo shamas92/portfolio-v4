@@ -8,7 +8,6 @@ import { HeroShowcase } from "@/components/HeroShowcase";
 import { WorkSection } from "@/components/WorkSection";
 import { Background } from "@/components/Background";
 import { SkillsSection } from "@/components/SkillsSection";
-import { CertificatesSection } from "@/components/CertificatesSection";
 
 /** Entrance delays: the profile row and the h1 rise first (the
  *  h1 translate-only, no opacity fade, so the LCP headline
@@ -28,14 +27,14 @@ const smootherstep = (p: number) => {
   return t * t * t * (t * (t * 6 - 15) + 10);
 };
 
-/** Home: hero (profile row, headline, ask, two actions, "see the
+/** Home: hero (profile row, headline, ask, one action, "see the
  *  work first" link, and the deck showcase with its tabs and
- *  caption) in a two-column split, Work (all six projects in one
- *  horizontal scroll-driven track), Background (with the
- *  first-person About as its lead), Skills, Certificates,
- *  Contact (the footer). The work is the first thing after the
- *  hero; the "View More Projects" link sits after the track, so
- *  the first project is visible in the first viewport. */
+ *  caption) in a two-column split, Work (three full projects in
+ *  a horizontal scroll-driven track, three compact cards below
+ *  it), Background (with the first-person About as its lead),
+ *  Skills, Contact (the footer). The work is the first thing
+ *  after the hero; the "View More Projects" link sits after the
+ *  track, so the first project is visible in the first viewport. */
 export default function Home() {
   const content = useContent();
   const { locale } = useLocale();
@@ -100,8 +99,9 @@ export default function Home() {
    *  rest centre — so the deck glides down to the viewport
    *  centre as it docks (--sy, the same for all six cards).
    *  The track then translates left as the user scrolls through
-   *  the tall track section (sticky viewport), revealing the six
-   *  wide cards one by one. The effect reverses on scroll-up. Below 1024px
+   *  the tall track section (sticky viewport), revealing the
+   *  three wide cards one by one. The effect reverses on
+   *  scroll-up. Below 1024px
    *  there is no docking and no horizontal track: the hero
    *  stacks, the deck stays a compact six-card fan and scrolls
    *  away (no pin, no parallax — it moves 1:1 with the page,
@@ -156,11 +156,22 @@ export default function Home() {
       page.style.setProperty("--deck-lag", `${lag.toFixed(1)}px`);
     };
 
+    /* M3: the track cards are invisible while the reveal is 0,
+       so their links must not take focus — toggle `inert` on
+       the full track cards while the reveal is 0. The compact
+       cards below the track are always visible, so they are
+       never inert. */
     const writeReveal = (p: number) => {
+      const trackCards = page.querySelectorAll<HTMLElement>(
+        ".track .track-card",
+      );
       if (desktopRef.current && dockOkRef.current) {
-        const reveal = smootherstep((p - 0.8) / 0.2);
+        /* S23: the reveal starts at p = 0.7 (was 0.8), so the
+           card text is visible by the time the deck docks. */
+        const reveal = smootherstep((p - 0.7) / 0.3);
         page.style.setProperty("--track-reveal", reveal.toFixed(3));
         page.style.setProperty("--deck-fade", (1 - reveal).toFixed(3));
+        for (const card of trackCards) card.inert = reveal <= 0;
       } else {
         /* No docking — below 1024px, or before the dock is
            measured: the track is fully visible and the compact
@@ -168,6 +179,7 @@ export default function Home() {
            does not fade out. */
         page.style.setProperty("--track-reveal", "1");
         page.style.setProperty("--deck-fade", "1");
+        for (const card of trackCards) card.inert = false;
       }
     };
 
@@ -220,6 +232,19 @@ export default function Home() {
           ? clamp01((y - trackTopRef.current) / trackRangeRef.current)
           : 0;
       page.style.setProperty("--track-x", trackProgress.toFixed(3));
+      /* S4: the track counter ("2 / 3") — the current full card,
+         from the track's progress. */
+      const counter = page.querySelector<HTMLElement>(".track-counter");
+      if (counter) {
+        const total = page.querySelectorAll(".track-card").length;
+        if (total > 0) {
+          const index = Math.min(
+            total - 1,
+            Math.floor(trackProgress * total),
+          );
+          counter.textContent = `${index + 1} / ${total}`;
+        }
+      }
       if (Math.abs(targetP - currentP) >= SETTLE) kick();
     };
 
@@ -248,10 +273,16 @@ export default function Home() {
       const trackPhotos = Array.from(
         page.querySelectorAll<HTMLElement>(".track-card .track-photo"),
       );
+      /* Tiering (M7): only the full cards have a photo, so the
+         photo count must match the full-card count, not six. */
+      const trackCards = Array.from(
+        page.querySelectorAll<HTMLElement>(".track-card"),
+      );
       if (
         !deck ||
         deckCards.length !== 6 ||
-        trackPhotos.length !== 6 ||
+        trackCards.length === 0 ||
+        trackPhotos.length !== trackCards.length ||
         !track ||
         !trackViewport ||
         !trackScroll
@@ -259,6 +290,10 @@ export default function Home() {
         dockOkRef.current = false;
         return false;
       }
+      /* Tiering (M7): three full cards, so the track's scroll
+         range is 200vh, set on .track-scroll in globals.css
+         (desktop media query only); the range reads
+         offsetHeight, so it picks the 200vh up directly. */
       /* Reset the track translation so the photos are at their
          rest positions for the measurement. */
       page.style.setProperty("--track-x", "0");
@@ -316,8 +351,15 @@ export default function Home() {
           (v) => v.closest<HTMLElement>(".track-card")?.dataset.slug === slug,
         );
         if (!photo) {
-          dockOkRef.current = false;
-          return false;
+          /* No track photo: a compact-tier project. Fall back
+             to the CSS spread positions (remove the measured
+             offsets) so the card glides out and fades with the
+             deck instead of docking. */
+          card.style.removeProperty("--sx");
+          card.style.removeProperty("--sy");
+          card.style.removeProperty("--sr");
+          card.style.removeProperty("--ss");
+          continue;
         }
         const r = photo.getBoundingClientRect();
         card.style.setProperty(
@@ -363,6 +405,63 @@ export default function Home() {
        wraps differently, so the hero and the track move. */
   }, [locale]);
 
+  /* S4: a hero tab also scrolls the track to that project — the
+     full cards by their track position, the compact cards by
+     scrolling to the compact row below the track; on the
+     vertical stack (mobile / reduced motion / no docking) the
+     card itself is scrolled into view. */
+  const scrollTrackTo = (slug: string) => {
+    const project = content.projects.find((p) => p.slug === slug);
+    if (!project) return;
+    const reduced = window.matchMedia(
+      "(prefers-reduced-motion: reduce)",
+    ).matches;
+    const behavior: ScrollBehavior = reduced ? "auto" : "smooth";
+    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
+    if (isDesktop && dockOkRef.current && trackRangeRef.current > 0) {
+      if (project.tier === "full") {
+        const full = content.projects.filter((p) => p.tier === "full");
+        const index = full.findIndex((p) => p.slug === slug);
+        const progress =
+          full.length > 1 ? Math.max(0, index) / (full.length - 1) : 0;
+        window.scrollTo({
+          top: trackTopRef.current + progress * trackRangeRef.current,
+          behavior,
+        });
+      } else {
+        const row =
+          pageRef.current?.querySelector<HTMLElement>(".compact-row");
+        if (row) {
+          window.scrollTo({
+            top: Math.max(
+              0,
+              row.getBoundingClientRect().top + window.scrollY - 96,
+            ),
+            behavior,
+          });
+        }
+      }
+    } else {
+      const card = pageRef.current?.querySelector<HTMLElement>(
+        `[data-slug="${slug}"]`,
+      );
+      if (card) {
+        window.scrollTo({
+          top: Math.max(
+            0,
+            card.getBoundingClientRect().top + window.scrollY - 96,
+          ),
+          behavior,
+        });
+      }
+    }
+  };
+
+  const handleTabSelect = (slug: string) => {
+    setActiveSlug(slug);
+    scrollTrackTo(slug);
+  };
+
   return (
     <div className="page" ref={pageRef}>
       {/* data-enter marks the hero as the page's one entrance
@@ -378,6 +477,9 @@ export default function Home() {
             <span className="hero-profile-text">
               <span className="hero-profile-name">
                 {content.profile.name}
+              </span>
+              <span className="hero-profile-degree">
+                {content.profile.statusLine}
               </span>
               <span className="hero-profile-status">
                 <span className="status-dot" aria-hidden="true" />
@@ -401,13 +503,6 @@ export default function Home() {
                 →
               </span>
             </a>
-            <a
-              className="btn btn-secondary hero-btn"
-              href="/Shamas_Ur_Rehman_CV.pdf"
-              download="Shamas_Ur_Rehman_CV.pdf"
-            >
-              {ui.hero.downloadCv}
-            </a>
           </div>
           <p className="hero-see-work" data-entrance style={delay(240)}>
             <a href="#work">
@@ -416,7 +511,7 @@ export default function Home() {
             </a>
           </p>
         </div>
-        <HeroShowcase activeSlug={activeSlug} onSelect={setActiveSlug} />
+        <HeroShowcase activeSlug={activeSlug} onSelect={handleTabSelect} />
       </header>
 
       <section
@@ -463,24 +558,8 @@ export default function Home() {
           <h2 className="section-head" id="skills-head">
             {ui.skills.heading}
           </h2>
-          <p className="section-intro">{ui.skills.intro}</p>
         </Reveal>
         <SkillsSection />
-      </section>
-
-      <section
-        className="section"
-        id="certificates"
-        aria-labelledby="certificates-head"
-        tabIndex={-1}
-      >
-        <Reveal>
-          <h2 className="section-head" id="certificates-head">
-            {ui.certificates.heading}
-          </h2>
-          <p className="section-intro">{ui.certificates.intro}</p>
-        </Reveal>
-        <CertificatesSection />
       </section>
     </div>
   );

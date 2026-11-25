@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { Newsreader } from "next/font/google";
-import { useContent } from "@/i18n/LocaleProvider";
+import { useContent, useLocale } from "@/i18n/LocaleProvider";
 import { Annotated } from "./ProofNote";
 import { EtlAsset, LeaseLensAsset, OratorPathAsset } from "./SpecAssets";
 
@@ -33,23 +33,31 @@ const caseAssets: Record<
 };
 
 /** One case-study page: the same blocks for every project —
- *  Problem, Contribution, Decision, Result, Evidence, Stack,
- *  Links. Contribution and Decision are one or two sentences each
- *  (the same text as the work card); Result is the outcome
- *  prose. A block is omitted when the project has no verified
- *  content for it; projects with no verified figure have no
- *  Evidence block at all (user decision 2026-11-24). The Links
- *  block is omitted when the project has no links, so no bare
- *  heading ever renders. Sections stack plainly with anchor ids;
- *  the header nav covers site navigation (no rail).
+ *  Problem (with a one-line "My part" carrying the Contribution
+ *  text), Decision, Result, Evidence, Stack, Links. Decision is
+ *  one or two sentences (the same text as the work card);
+ *  Result is the outcome prose. The meta line carries the year
+ *  only; the stack lives in its own section. A block is omitted
+ *  when the project has no verified content for it; projects
+ *  with no verified figure have no Evidence block at all (user
+ *  decision 2026-11-24). The Links block is omitted when the
+ *  project has no links, so no bare heading ever renders.
+ *  Sections stack plainly with anchor ids; the header nav covers
+ *  site navigation (no rail). External links carry a
+ *  visually-hidden new-tab note for screen-reader users.
  *  The page looks the project up in the current locale's content
  *  by slug — the server page already validated the slug, so the
  *  lookup always succeeds. */
 export function CaseStudy({ slug }: { slug: string }) {
   const content = useContent();
+  const { locale } = useLocale();
   const ui = content.ui.caseStudy;
   const project = content.projects.find((p) => p.slug === slug)!;
   const caseAsset = caseAssets[slug];
+  const newTabNote =
+    locale === "de"
+      ? " (öffnet in einem neuen Tab)"
+      : " (opens in a new tab)";
   const hasEvidence = Boolean(
     project.figure ||
     project.evidence ||
@@ -66,9 +74,7 @@ export function CaseStudy({ slug }: { slug: string }) {
           {ui.allProjects}
         </Link>
         <h1 className="case-title">{project.title}</h1>
-        <p className="case-meta">
-          {project.year} — {project.stack.join(", ")}
-        </p>
+        <p className="case-meta">{project.year}</p>
         <p className="case-role">
           <span className="case-role-label">{ui.role}</span> — {project.role}
         </p>
@@ -86,17 +92,10 @@ export function CaseStudy({ slug }: { slug: string }) {
           prose={project.problem}
           idPrefix={`${project.slug}-problem`}
         />
-      </section>
-
-      <section
-        className="case-block"
-        id="contribution"
-        aria-labelledby="contribution-head"
-      >
-        <h2 className="case-block-head" id="contribution-head">
-          {ui.contribution}
-        </h2>
-        <p className="case-text">{project.contribution}</p>
+        <p className="case-my-part">
+          <span className="case-my-part-label">{ui.myPart}</span> —{" "}
+          {project.contribution}
+        </p>
       </section>
 
       <section
@@ -223,9 +222,10 @@ export function CaseStudy({ slug }: { slug: string }) {
                 className="btn btn-secondary"
                 href={l.href}
                 target="_blank"
-                rel="noreferrer"
+                rel="noopener noreferrer"
               >
                 {l.label}
+                <span className="visually-hidden">{newTabNote}</span>
               </a>
             ))}
           </div>

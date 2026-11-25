@@ -2,17 +2,19 @@
 
 import { useRef, useState } from "react";
 import { useContent } from "@/i18n/LocaleProvider";
-import { buildMailto, isEmail } from "@/lib/contact";
+import { isEmail } from "@/lib/contact";
+import { CopyEmailButton } from "./CopyEmailButton";
 
-/** Contact form. There is no delivery backend on this site (no
- *  API route, no form service), so the form never claims to
- *  send: on a valid submit it opens the visitor's email app
- *  with a prefilled message to the owner, and says so in the
- *  status line and in the note under the button. Direct email
- *  and the social links stay available beside the form. A
- *  honeypot field ("Company") catches bots; a filled honeypot
- *  silently discards the submit. Invalid fields get inline
- *  errors, aria-invalid, and focus on the first one. */
+/** Contact form. On a valid submit it POSTs the message as JSON
+ *  to /api/contact (a Next.js route handler that sends it via
+ *  Resend) and shows a success status; on failure it shows an
+ *  error status with a Copy email fallback, so the visitor is
+ *  never left without a way to reach the owner. Fields validate
+ *  on blur as well as on submit; invalid fields get inline
+ *  errors, aria-invalid, and focus on the first one. A honeypot
+ *  field ("Company") catches bots; a filled honeypot silently
+ *  discards the submit. The form sends nothing until the
+ *  visitor clicks Send. */
 export function ContactForm() {
   const content = useContent();
   const ui = content.ui.form;
@@ -24,37 +26,87 @@ export function ContactForm() {
     email?: string;
     message?: string;
   }>({});
-  const [status, setStatus] = useState("");
+  const [status, setStatus] = useState<"idle" | "sent" | "failed">("idle");
+  const [sending, setSending] = useState(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
   const honeypotRef = useRef<HTMLInputElement>(null);
 
-  function onSubmit(e: React.FormEvent) {
-    e.preventDefault();
-    /* Honeypot filled: a bot. Discard silently — no mailto,
-       no status change. */
-    if (honeypotRef.current?.value) return;
+  type Field = "name" | "email" | "message";
+
+  function fieldError(field: Field): string | undefined {
+    if (field === "name" && !name.trim()) return ui.nameRequired;
+    if (field === "email") {
+      if (!email.trim()) return ui.emailRequired;
+      if (!isEmail(email)) return ui.emailInvalid;
+    }
+    if (field === "message" && !message.trim()) return ui.messageRequired;
+    return undefined;
+  }
+
+  function validateAll() {
     const next: typeof errors = {};
-    if (!name.trim()) next.name = ui.nameRequired;
-    if (!email.trim()) next.email = ui.emailRequired;
-    else if (!isEmail(email)) next.email = ui.emailInvalid;
-    if (!message.trim()) next.message = ui.messageRequired;
+    const nameErr = fieldError("name");
+    const emailErr = fieldError("email");
+    const messageErr = fieldError("message");
+    if (nameErr) next.name = nameErr;
+    if (emailErr) next.email = emailErr;
+    if (messageErr) next.message = messageErr;
+    return next;
+  }
+
+  function validateField(field: Field) {
+    setErrors((prev) => {
+      const err = fieldError(field);
+      const next = { ...prev };
+      if (err) next[field] = err;
+      else delete next[field];
+      return next;
+    });
+  }
+
+  function focusFirstInvalid(next: typeof errors) {
+    if (next.name) nameRef.current?.focus();
+    else if (next.email) emailRef.current?.focus();
+    else messageRef.current?.focus();
+  }
+
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    /* Honeypot filled: a bot. Discard silently — no send, no
+       status change. */
+    if (honeypotRef.current?.value) return;
+    const next = validateAll();
     setErrors(next);
     if (Object.keys(next).length > 0) {
-      if (next.name) nameRef.current?.focus();
-      else if (next.email) emailRef.current?.focus();
-      else messageRef.current?.focus();
+      focusFirstInvalid(next);
       return;
     }
-    const href = buildMailto({
-      to: content.profile.email,
-      name,
-      email,
-      message,
-    });
-    setStatus(ui.statusOpening);
-    window.location.href = href;
+    setSending(true);
+    setStatus("idle");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, message }),
+      });
+      const data: unknown = await res.json().catch(() => null);
+      if (
+        res.ok &&
+        typeof data === "object" &&
+        data !== null &&
+        (data as { ok?: unknown }).ok === true
+      ) {
+        setStatus("sent");
+      } else {
+        setStatus("failed");
+      }
+    } catch {
+      setStatus("failed");
+    } finally {
+      setSending(false);
+    }
   }
 
   return (
@@ -77,6 +129,7 @@ export function ContactForm() {
           placeholder={ui.namePlaceholder}
           value={name}
           onChange={(e) => setName(e.target.value)}
+          onBlur={() => validateField("name")}
           aria-invalid={errors.name ? "true" : undefined}
           aria-describedby={errors.name ? "contact-name-error" : undefined}
         />
@@ -98,6 +151,7 @@ export function ContactForm() {
           placeholder={ui.emailPlaceholder}
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          onBlur={() => validateField("email")}
           aria-invalid={errors.email ? "true" : undefined}
           aria-describedby={errors.email ? "contact-email-error" : undefined}
         />
@@ -118,6 +172,7 @@ export function ContactForm() {
           placeholder={ui.messagePlaceholder}
           value={message}
           onChange={(e) => setMessage(e.target.value)}
+          onBlur={() => validateField("message")}
           aria-invalid={errors.message ? "true" : undefined}
           aria-describedby={
             errors.message ? "contact-message-error" : undefined
@@ -146,15 +201,24 @@ export function ContactForm() {
       </div>
 
       <div className="form-actions">
-        <button type="submit" className="btn btn-primary">
+        <button type="submit" className="btn btn-primary" disabled={sending}>
           {ui.submit}
         </button>
       </div>
-      <p className="form-note">{ui.note}</p>
-      {status && (
+      {status === "sent" && (
         <p className="form-status" role="status">
-          {status}
+          {ui.statusSent}
         </p>
+      )}
+      {status === "failed" && (
+        <>
+          <p className="form-status form-status--error" role="alert">
+            {ui.statusFailed}
+          </p>
+          <div className="form-fallback">
+            <CopyEmailButton />
+          </div>
+        </>
       )}
     </form>
   );

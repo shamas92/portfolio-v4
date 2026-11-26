@@ -375,10 +375,24 @@ export const deContent: SiteContent = {
   skills: {
     groups: [
       {
+        title: "Data Engineering",
+        items: [
+          { name: "Apache Airflow", usedIn: ["Sales ETL"] },
+          { name: "SQL", usedIn: ["Sales ETL"] },
+          { name: "PostgreSQL", usedIn: ["Sales ETL"] },
+          { name: "Parquet", usedIn: ["Sales ETL"] },
+          { name: "MinIO", usedIn: ["Sales ETL"] },
+          { name: "Docker", usedIn: ["LeaseLens", "Sales ETL"] },
+          { name: "Docker Compose", usedIn: ["Sales ETL"] },
+        ],
+      },
+      {
         title: "Programmiersprachen",
         items: [
-          { name: "Python", usedIn: ["LeaseLens", "HITEC", "UpliftU"] },
-          { name: "SQL", usedIn: ["Sales ETL"] },
+          {
+            name: "Python",
+            usedIn: ["LeaseLens", "Sales ETL", "OratorPath", "HITEC", "UpliftU"],
+          },
           { name: "C#", usedIn: ["HITEC"] },
           { name: "TypeScript", usedIn: ["LeaseLens"] },
           { name: "PHP", usedIn: ["Quality CRM"] },
@@ -401,7 +415,6 @@ export const deContent: SiteContent = {
         items: [
           { name: "SQL Server", usedIn: ["HITEC"] },
           { name: "MySQL", usedIn: ["Quality CRM"] },
-          { name: "PostgreSQL", usedIn: ["Sales ETL"] },
         ],
       },
       {
@@ -418,11 +431,6 @@ export const deContent: SiteContent = {
               "UpliftU",
             ],
           },
-          { name: "Docker", usedIn: ["Sales ETL"] },
-          { name: "Docker Compose", usedIn: ["Sales ETL"] },
-          { name: "MinIO", usedIn: ["Sales ETL"] },
-          { name: "Apache Airflow", usedIn: ["Sales ETL"] },
-          { name: "Parquet", usedIn: ["Sales ETL"] },
           { name: "REST APIs", usedIn: ["LeaseLens"] },
         ],
       },

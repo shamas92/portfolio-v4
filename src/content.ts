@@ -524,10 +524,24 @@ export type Skills = {
 export const skills: Skills = {
   groups: [
     {
+      title: "Data engineering",
+      items: [
+        { name: "Apache Airflow", usedIn: ["Sales ETL"] },
+        { name: "SQL", usedIn: ["Sales ETL"] },
+        { name: "PostgreSQL", usedIn: ["Sales ETL"] },
+        { name: "Parquet", usedIn: ["Sales ETL"] },
+        { name: "MinIO", usedIn: ["Sales ETL"] },
+        { name: "Docker", usedIn: ["LeaseLens", "Sales ETL"] },
+        { name: "Docker Compose", usedIn: ["Sales ETL"] },
+      ],
+    },
+    {
       title: "Languages",
       items: [
-        { name: "Python", usedIn: ["LeaseLens", "HITEC", "UpliftU"] },
-        { name: "SQL", usedIn: ["Sales ETL"] },
+        {
+          name: "Python",
+          usedIn: ["LeaseLens", "Sales ETL", "OratorPath", "HITEC", "UpliftU"],
+        },
         { name: "C#", usedIn: ["HITEC"] },
         { name: "TypeScript", usedIn: ["LeaseLens"] },
         { name: "PHP", usedIn: ["Quality CRM"] },
@@ -550,7 +564,6 @@ export const skills: Skills = {
       items: [
         { name: "SQL Server", usedIn: ["HITEC"] },
         { name: "MySQL", usedIn: ["Quality CRM"] },
-        { name: "PostgreSQL", usedIn: ["Sales ETL"] },
       ],
     },
     {
@@ -567,11 +580,6 @@ export const skills: Skills = {
             "UpliftU",
           ],
         },
-        { name: "Docker", usedIn: ["Sales ETL"] },
-        { name: "Docker Compose", usedIn: ["Sales ETL"] },
-        { name: "MinIO", usedIn: ["Sales ETL"] },
-        { name: "Apache Airflow", usedIn: ["Sales ETL"] },
-        { name: "Parquet", usedIn: ["Sales ETL"] },
         { name: "REST APIs", usedIn: ["LeaseLens"] },
       ],
     },

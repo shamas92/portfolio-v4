@@ -118,7 +118,7 @@
   --dur-reveal: 400ms;
 
   /* layout */
-  --measure: 1120px;
+  --measure: 1296px;
 }
 
 html[data-theme="dark"] {
@@ -786,16 +786,20 @@ footer[id],
   grid-template-columns: minmax(0, 1fr);
   gap: var(--space-3);
   align-items: center;
-  padding-block: var(--space-3) var(--space-2);
+  /* A generous gap under the fixed header: the hero's words
+     start well clear of the header bar. */
+  padding-block: var(--space-8) var(--space-2);
 }
 
 @media (min-width: 1024px) {
   /* The showcase wrapper is 581px wide (the reference's
      489px card + 92px of fan room), so the right column is
-     fixed at 581px and the copy column takes the rest. */
+     fixed at 581px and the copy column takes the rest. The
+     column gap is generous, so the words and the cards
+     breathe. */
   .hero {
     grid-template-columns: minmax(0, 1fr) 581px;
-    gap: var(--space-6);
+    gap: var(--space-8);
   }
 }
 
@@ -1918,11 +1922,12 @@ footer[id],
 
 /* Phones: the hero gains a 170px deck below the copy, so the
    copy margins tighten to give some of that height back and
-   keep the first track card near the fold. */
+   keep the first track card near the fold — but the top gap
+   under the header stays generous (48px, up from 24px). */
 @media (max-width: 767px) {
   .hero {
     gap: var(--space-2);
-    padding-block: var(--space-3) var(--space-2);
+    padding-block: var(--space-6) var(--space-2);
   }
 
   .hero-actions {

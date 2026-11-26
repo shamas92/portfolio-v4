@@ -1,11 +1,11 @@
 /**
- * One track card: wide (~860px), text on the left, the project's
- * photo large on the right — the reference's "Selected work"
- * card, adapted to the verified facts. The photo is the same
- * created visual as the deck and the (retired) grid, the same
- * file in light and dark mode.
+ * One track card: wide (1120px) and 640px tall, text on the
+ * right, the project's photo large on the left — the reference's
+ * "Selected work" card, adapted to the verified facts. The photo
+ * is the same created visual as the deck and the (retired) grid,
+ * the same file in light and dark mode.
  *
- * The text column, in order (24px between groups, 8px within):
+ * The text column, in order (16px between groups, 8px within):
  * - year + role (mono, muted) — the role is the verifiable
  *   participation fact from content.ts, never a claim about
  *   team size.
@@ -91,7 +91,10 @@ export function TrackCard({ project }: { project: Project }) {
 
   return (
     <article className="track-card" data-slug={project.slug}>
-      <div className="track-card-text" style={{ gap: "24px" }}>
+      {/* The gap between groups is 16px (globals.css) so the
+          content fits the 640px card height in both languages;
+          the links row pins to the bottom edge. */}
+      <div className="track-card-text">
         <div
           style={{ display: "flex", flexDirection: "column", gap: "8px" }}
         >

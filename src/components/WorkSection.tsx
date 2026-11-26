@@ -6,7 +6,7 @@
  * panel (strong heading + concise supporting line), so the
  * first card follows promptly with no blank lead-in. The track
  * moves left as the user scrolls vertically (desktop, 1024px
- * and up): a tall scroll range (.track-scroll, 190vh) holds a
+ * and up): a tall scroll range (.track-scroll, 220vh) holds a
  * sticky viewport, and the scroll listener in page.tsx drives
  * --track-x (0→1) across it. The deck stays in the hero and
  * does not dock onto the track; the track shows fully from the

@@ -1490,7 +1490,7 @@ footer[id],
 /* ---- Work track: four wide cards, a horizontal scroll-driven row on desktop ---- */
 /* On desktop (1024px and up, motion allowed, scripting enabled)
    the track scrolls horizontally as the user scrolls vertically:
-   the section is 190vh tall, its viewport is sticky, and the row
+   the section is 220vh tall, its viewport is sticky, and the row
    translates left by --track-x * --track-max. --track-x (0→1)
    and --track-max (content width minus viewport width) are
    written by the scroll listener in page.tsx. The track opens
@@ -1587,7 +1587,7 @@ footer[id],
   grid-template-columns: minmax(0, 1fr);
   background: var(--surface);
   border: 1px solid var(--rule);
-  border-radius: 8px;
+  border-radius: 28px;
   overflow: hidden;
   /* Positioned, so the title's stretched link (the whole card
      is clickable) has a containing block. */
@@ -1935,7 +1935,7 @@ footer[id],
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    height: 190vh;
+    height: 220vh;
   }
 
   .track-viewport {
@@ -1950,13 +1950,21 @@ footer[id],
   .track {
     flex-direction: row;
     gap: var(--space-4);
-    transform: translateX(calc(var(--track-x, 0) * var(--track-max, 0px) * -1));
+    /* translate3d keeps the track on the GPU (composited) so the
+       scroll-driven motion stays jank-free. */
+    transform: translate3d(calc(var(--track-x, 0) * var(--track-max, 0px) * -1), 0, 0);
     will-change: transform;
   }
 
   .track-card {
     flex: none;
-    width: min(860px, calc(100vw - 2 * var(--space-3)));
+    /* The reference's card: 1120 × 640, radius 28px. The width
+       caps at the viewport on narrower desktops. The fixed
+       height keeps the row at the reference's proportions; the
+       text column's tighter padding (below) fits the content
+       in both languages. */
+    width: min(1120px, calc(100vw - 2 * var(--space-3)));
+    height: 640px;
     /* Media left (~58%), copy right (~42%) — the reference's
        pairing. The DOM order stays text-first (better for
        screen readers); the visual order is swapped by `order`
@@ -1977,6 +1985,9 @@ footer[id],
 
   .track-card-text {
     order: 2;
+    /* Tighter padding on desktop so the content fits the 640px
+       card height in both languages. */
+    padding: var(--space-3);
   }
 
   /* The links row pins to the text column's bottom edge, like

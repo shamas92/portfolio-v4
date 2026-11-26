@@ -95,8 +95,8 @@ export default function DatenschutzPage() {
         </h2>
         <p className="case-text">
           Vercel Inc. und Resend, Inc. sind Unternehmen mit Sitz in den
-          USA. Die technischen Zugriffsdaten (siehe „Hosting") und die
-          Angaben aus dem Kontaktformular (siehe „Kontaktformular")
+          USA. Die technischen Zugriffsdaten (siehe „Hosting“) und die
+          Angaben aus dem Kontaktformular (siehe „Kontaktformular“)
           können daher in die USA übermittelt werden. Beide Unternehmen
           sind unter dem EU-U.S. Data Privacy Framework zertifiziert;
           die Übermittlung stützt sich auf den Angemessenheitsbeschluss

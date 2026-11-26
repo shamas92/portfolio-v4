@@ -42,9 +42,10 @@ const ALT: Record<string, string> = {
  *  fetches a file close to what it shows instead of the 1920w
  *  file a shared 640px slot served at DPR 2: the deck card is
  *  489px wide (200px on phones, 280px on tablets), the track
- *  photo about 429px on desktop and near full width in the
+ *  photo about 652px on desktop and near full width in the
  *  vertical stack. The sizes caps keep the DPR-2 pick at 1080w
- *  (deck and track), never 1920w. */
+ *  (deck) and 1920w (track, the native file for a 652px
+ *  display), never larger than the file itself. */
 export function ProjectPhoto({
   slug,
   variant = "track",
@@ -61,7 +62,7 @@ export function ProjectPhoto({
   const sizes =
     variant === "deck"
       ? "(max-width: 767px) 200px, (max-width: 1023px) 280px, 489px"
-      : "(max-width: 767px) 90vw, (max-width: 1023px) 90vw, 429px";
+      : "(max-width: 767px) 90vw, (max-width: 1023px) 90vw, 652px";
   return (
     <Image
       src={src}

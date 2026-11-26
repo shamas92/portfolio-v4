@@ -6,8 +6,9 @@
  * mode. The media is a 590 × 590 frame (inset 24px, its own
  * border and radius), with a smaller tilted detail — a tighter
  * crop of the SAME photo, never presented as a screenshot —
- * overlapping its lower edge and breaking out below the card,
- * like the reference.
+ * overlapping its lower edge and ending ~12px above the card
+ * bottom, like the reference (only its soft shadow crosses
+ * the card's bottom edge).
  *
  * The text column, in order (parish vertical rhythm):
  * - year + role (mono, uppercase, muted) — the role is the

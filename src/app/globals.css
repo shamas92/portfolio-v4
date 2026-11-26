@@ -1229,10 +1229,29 @@ footer[id],
 }
 
 .hero-caption {
-  /* The caption row keeps a 52px min-height so the exit/enter
-     never moves the layout. */
+  /* The caption row reserves the tallest caption's height so
+     the exit/enter never moves the layout: measured 2026-11-26
+     (all 4 projects × EN/DE, Playwright). The "View case study"
+     link wraps below the text, so the height is text + 8px gap
+     + 44px link: desktop 128.5px (HITEC, 3 lines), tablet
+     103px, phone 179.5px (HITEC, 5 lines at 320px). Values are
+     rounded up to whole pixels. Shorter captions show empty
+     space below the text — that is the point (reserved space);
+     the text stays top-aligned. */
   margin-top: var(--space-3);
-  min-height: 52px;
+  min-height: 180px;
+}
+
+@media (min-width: 768px) {
+  .hero-caption {
+    min-height: 103px;
+  }
+}
+
+@media (min-width: 1024px) {
+  .hero-caption {
+    min-height: 129px;
+  }
 }
 
 .hero-caption-inner {
@@ -1633,7 +1652,12 @@ footer[id],
 .track-card {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
-  background: var(--surface);
+  /* Transparent, like the reference: the card takes the page
+     background's exact colour in either colour mode, and is
+     distinguished only by its 1px border and rounded corners.
+     The --surface token is untouched (the header, buttons and
+     other components still use it). */
+  background: transparent;
   border: 1px solid var(--rule);
   border-radius: 28px;
   overflow: hidden;
@@ -2015,8 +2039,9 @@ footer[id],
        border, no shadow, 24px padding all round. The width
        caps at the viewport on narrower desktops. The fixed
        height keeps the row at the reference's proportions.
-       Overflow is visible (not hidden) so the tilted detail
-       can break out below the card, like the reference's. */
+       Overflow is visible (not hidden) so the tilted detail's
+       soft shadow can fall past the card's bottom edge, like
+       the reference's — the detail box itself stays inside. */
     width: min(1120px, calc(100vw - 2 * var(--space-3)));
     height: 640px;
     padding: var(--space-3);
@@ -2046,8 +2071,8 @@ footer[id],
   }
 
   /* Media on the left, copy on the right (the reference's
-     pairing). Overflow is visible so the tilted detail can
-     break out below the card. */
+     pairing). Overflow is visible so the tilted detail's soft
+     shadow can fall past the card's bottom edge. */
   .track-photo {
     order: 1;
     aspect-ratio: auto;
@@ -2072,15 +2097,17 @@ footer[id],
 
   /* The tilted detail: a tighter crop of the same photo,
      293 × 203, rotated ~3° clockwise, overlapping the main
-     photo's lower edge by ~155px and breaking out ~34px right
-     (bounding box) and ~36px below the card, like the
-     reference's. Light border, soft shadow, its own radius. */
+     photo's lower edge by ~203px and ending ~12px above the
+     card bottom (bbox bottom ≈628px), like the reference's.
+     What crosses the card bottom is only its soft drop
+     shadow — the box itself stays inside the card. Light
+     border, soft shadow, its own radius. */
   .track-photo-detail {
     display: block;
     position: absolute;
     width: 293px;
     height: 203px;
-    top: 440px;
+    top: 394px;
     right: -29px;
     transform: rotate(3deg);
     overflow: hidden;

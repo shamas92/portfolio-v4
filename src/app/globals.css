@@ -1557,10 +1557,12 @@ footer[id],
 /* ---- Work track: four wide cards, a horizontal scroll-driven row on desktop ---- */
 /* On desktop (1024px and up, motion allowed, scripting enabled)
    the track scrolls horizontally as the user scrolls vertically:
-   the section is ~555vh tall (exact height set by measure() in
-   page.tsx: --track-max + viewport height, so the vertical
-   range equals the horizontal travel — a direct 1:1 scroll,
-   like the reference), its viewport is sticky, and the row
+   the section is ~610vh tall (exact height set by measure() in
+   page.tsx: --track-max + a 60vh dwell + viewport height, so
+   the vertical range for the track itself equals the horizontal
+   travel — a direct 1:1 scroll, like the reference — and the
+   dwell after it keeps the lime end card fully visible before
+   the section unpins), its viewport is sticky, and the row
    translates left by --track-x * --track-max. --track-x (0→1)
    and --track-max (content width minus viewport width) are
    written by the scroll listener in page.tsx. The track opens
@@ -2023,13 +2025,21 @@ footer[id],
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    /* Fallback height (no JS): ~555vh approximates the 1:1
-       ratio at a 900px viewport (trackMax 4092px + 900px
-       viewport = 4992px ≈ 555vh). With JS, measure() in
-       page.tsx sets the exact height (trackMax + viewport
-       height) so the vertical range equals the horizontal
-       travel at any viewport. */
-    height: 555vh;
+    /* Fallback height (no JS): ~610vh approximates the 1:1
+       ratio plus the 60vh dwell at a 900px viewport (trackMax
+       4044px + 540px dwell + 900px viewport = 5484px ≈
+       610vh). With JS, measure() in page.tsx sets the exact
+       height (trackMax + dwell + viewport height) so the
+       vertical range equals the horizontal travel at any
+       viewport. */
+    height: 610vh;
+    /* The track starts at the page container's edge, like the
+       reference's — the negative horizontal margins cancel the
+       .page's 24px padding, so the row is the full 1296px
+       container width instead of sitting 24px inside it. The
+       first card lands ~24px further left, matching the
+       reference's position. */
+    margin-inline: calc(-1 * var(--space-3));
   }
 
   .track-viewport {

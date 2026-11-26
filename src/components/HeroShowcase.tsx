@@ -20,7 +20,10 @@
  *   keyboard-operable, 44px tap targets. Clicking one makes
  *   that project the deck's front card and updates the caption.
  *   The tabs only select — they never scroll the page or
- *   change the URL.
+ *   change the URL. Arrow keys move between tabs and select
+ *   (automatic activation, wrapping, Home/End jump to the
+ *   first/last tab); Tab moves focus between tabs and Enter
+ *   selects, as before.
  * - Auto-advance: the showcase steps to the next project every
  *   5 seconds, wrapping, like the reference. It pauses while
  *   the user hovers over the showcase or focuses a tab, and
@@ -40,7 +43,7 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useContent } from "@/i18n/LocaleProvider";
 import type { Project } from "@/content";
 import { HeroDeck } from "./HeroDeck";
@@ -87,12 +90,16 @@ export function HeroShowcase({
 }) {
   const content = useContent();
   /* The four showcase projects, in canonical order, regardless
-     of the content file's order. */
-  const ordered: Project[] = [];
-  for (const slug of SHOWCASE_SLUGS) {
-    const p = content.projects.find((p) => p.slug === slug);
-    if (p) ordered.push(p);
-  }
+     of the content file's order. Memoised so the arrow-key
+     handler's dependencies stay stable. */
+  const ordered: Project[] = useMemo(() => {
+    const list: Project[] = [];
+    for (const slug of SHOWCASE_SLUGS) {
+      const p = content.projects.find((p) => p.slug === slug);
+      if (p) list.push(p);
+    }
+    return list;
+  }, [content.projects]);
   const ui = content.ui.work;
   const active =
     ordered.find((p) => p.slug === activeSlug) ?? ordered[0]!;
@@ -257,6 +264,54 @@ export function HeroShowcase({
     };
   }, [activeSlug, paused, autoAdvance]);
 
+  /* ---- Arrow-key tab navigation (WAI-ARIA tabs pattern) ----
+   * ArrowRight/ArrowDown moves to the next tab, ArrowLeft/
+   * ArrowUp to the previous, wrapping at the ends; Home and
+   * End jump to the first and last tab. Moving also selects
+   * (automatic activation), so the card, caption and link
+   * follow the focus — the same selection a click makes, and
+   * it restarts the 5s auto-advance interval like any manual
+   * selection. Focus stays inside the tablist while arrowing,
+   * so auto-advance stays paused (see the onBlur guard).
+   * Tab still moves focus between tabs and Enter still
+   * selects, as before. */
+  const tabRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const onTablistKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      const keys = [
+        "ArrowRight",
+        "ArrowLeft",
+        "ArrowDown",
+        "ArrowUp",
+        "Home",
+        "End",
+      ];
+      if (!keys.includes(e.key)) return;
+      e.preventDefault();
+      const currentIdx = tabRefs.current.findIndex(
+        (el) => el === document.activeElement,
+      );
+      const base =
+        currentIdx >= 0
+          ? currentIdx
+          : ordered.findIndex((p) => p.slug === active.slug);
+      let next = base;
+      if (e.key === "ArrowRight" || e.key === "ArrowDown") {
+        next = (base + 1) % ordered.length;
+      } else if (e.key === "ArrowLeft" || e.key === "ArrowUp") {
+        next = (base - 1 + ordered.length) % ordered.length;
+      } else if (e.key === "Home") {
+        next = 0;
+      } else if (e.key === "End") {
+        next = ordered.length - 1;
+      }
+      const el = tabRefs.current[next];
+      if (el) el.focus();
+      onSelect(ordered[next].slug);
+    },
+    [active.slug, onSelect, ordered],
+  );
+
   return (
     <div
       className={`hero-showcase${autoAdvance ? " hero-showcase--auto" : ""}`}
@@ -297,6 +352,7 @@ export function HeroShowcase({
         aria-label={content.ui.hero.featuredProjects}
         data-entrance
         style={{ "--entrance-delay": "360ms" } as React.CSSProperties}
+        onKeyDown={onTablistKeyDown}
         onFocus={() => {
           pauseSources.current.focus = true;
           updatePaused();
@@ -309,7 +365,7 @@ export function HeroShowcase({
           updatePaused();
         }}
       >
-        {ordered.map((project) => {
+        {ordered.map((project, i) => {
           const isActive = project.slug === active.slug;
           return (
             <button
@@ -318,6 +374,9 @@ export function HeroShowcase({
               role="tab"
               className="hero-tab"
               aria-selected={isActive}
+              ref={(el) => {
+                tabRefs.current[i] = el;
+              }}
               onClick={() => onSelect(project.slug)}
             >
               {tabLabel(project)}

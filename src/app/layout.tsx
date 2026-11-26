@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import Script from "next/script";
 import { Inter_Tight, JetBrains_Mono, Newsreader } from "next/font/google";
 import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
@@ -93,10 +92,17 @@ const personJsonLd = {
   sameAs: [profile.github, profile.linkedin],
 };
 
-/* No-flash script: injected before hydration, so a stored dark
+/* No-flash script: a plain parser-blocking inline <script> in the
+ *  head (the standard next-themes approach), so a stored dark
  *  preference never flashes light and a stored German choice never
- *  flashes English in the document language. The html element
- *  carries suppressHydrationWarning because this script may change
+ *  flashes English in the document language. It must be a raw
+ *  <script>, not next/script beforeInteractive: in the App Router
+ *  beforeInteractive is loaded by the Next.js runtime and can run
+ *  after first paint, so the server-rendered data-theme="light"
+ *  painted first and the script flipped it to dark afterwards.
+ *  A raw script in the head runs before the body is parsed and
+ *  before first paint. The html element carries
+ *  suppressHydrationWarning because this script may change
  *  data-theme and data-locale/lang before React hydrates. */
 const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}var l=localStorage.getItem('locale');if(l==='de'||l==='en'){document.documentElement.setAttribute('data-locale',l);document.documentElement.setAttribute('lang',l);}}catch(e){}})();`;
 
@@ -114,9 +120,7 @@ export default function RootLayout({
       className={`${newsreader.variable} ${interTight.variable} ${jetbrainsMono.variable}`}
     >
       <head>
-        <Script id="theme" strategy="beforeInteractive">
-          {themeScript}
-        </Script>
+        <script dangerouslySetInnerHTML={{ __html: themeScript }} />
       </head>
       <body>
         <script

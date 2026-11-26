@@ -32,19 +32,15 @@
  * not the laptop photo: a data-engineering recruiter wants the
  * system, not the device. The deck keeps the laptop photo.
  *
- * The card's opacity is the docking moment's --track-reveal,
- * driven by the scroll listener in page.tsx (0 at rest, 1 once
- * the deck has docked). The default is 1, so the track shows
- * fully without JavaScript and under reduced motion. On mobile
- * and under reduced motion the track is a vertical stack, so
- * the reveal is inert there too. While the reveal is 0 the card
- * is `inert` (page.tsx), so its links never take focus while
- * invisible.
- *
- * Tier 2 — CompactCard, in the same file: title, one-liner,
- * stack chips and a case-study link. No photo, no stats slot,
- * no proof line. The meta line carries the credential (HITEC:
- * "IT Department intern, May–Oct 2025").
+ * The whole card is clickable: the title is a link with a
+ * stretched ::after covering the card (see globals.css), so a
+ * click on the photo, the summary or the title opens the case
+ * page. The repo and paper links sit above that overlay
+ * (position relative, z-index 1) so they stay clickable; the
+ * "View case study" pill is the same destination as the title,
+ * so it needs no special handling. The track shows fully from
+ * the start — the deck no longer docks onto it — so the cards
+ * are never inert and their links always take focus.
  */
 "use client";
 
@@ -55,8 +51,9 @@ import { ProjectPhoto } from "./ProjectPhoto";
 import { EtlAsset } from "./SpecAssets";
 
 /** The card title: the short title where content provides one
- *  (HITEC, Quality CRM), else the full title. */
-const cardTitle = (project: Project): string =>
+ *  (HITEC, Quality CRM), else the full title. Exported so the
+ *  Earlier work list uses the same titles. */
+export const cardTitle = (project: Project): string =>
   project.shortTitle ?? project.title;
 
 /** Render proof text, turning *...* markers into italics
@@ -101,7 +98,11 @@ export function TrackCard({ project }: { project: Project }) {
           <p className="track-meta">
             {project.year} · {project.role}
           </p>
-          <h3 className="track-title">{cardTitle(project)}</h3>
+          <h3 className="track-title">
+            <Link href={`/work/${project.slug}`} className="track-title-link">
+              {cardTitle(project)}
+            </Link>
+          </h3>
           <p className="track-summary">{project.rowOutcome}</p>
         </div>
         {project.stats && (
@@ -183,62 +184,6 @@ export function TrackCard({ project }: { project: Project }) {
         ) : (
           <ProjectPhoto slug={project.slug} />
         )}
-      </div>
-    </article>
-  );
-}
-
-/** Tier 2 — the compact card: title, one-liner, stack chips and
- *  a case-study link. No photo, no stats slot, no proof line.
- *  The meta line carries the credential (HITEC's role line is
- *  its internship fact). */
-export function CompactCard({ project }: { project: Project }) {
-  const content = useContent();
-  const ui = content.ui.work;
-  return (
-    <article
-      className="compact-card"
-      data-slug={project.slug}
-      style={{
-        background: "var(--surface)",
-        border: "1px solid var(--rule)",
-        borderRadius: "8px",
-        padding: "var(--space-4)",
-        display: "flex",
-        flexDirection: "column",
-        gap: "var(--space-2)",
-      }}
-    >
-      <p className="track-meta">
-        {project.year} · {project.role}
-      </p>
-      <h3 className="track-title" style={{ fontSize: "var(--text-title-md)" }}>
-        {cardTitle(project)}
-      </h3>
-      <p
-        className="track-summary"
-        style={{
-          fontSize: "var(--text-small)",
-          display: "-webkit-box",
-          WebkitLineClamp: 2,
-          WebkitBoxOrient: "vertical",
-          overflow: "hidden",
-        }}
-      >
-        {project.rowOutcome}
-      </p>
-      <ul className="track-stack">
-        {project.stack.slice(0, 5).map((tag) => (
-          <li key={tag}>{tag}</li>
-        ))}
-      </ul>
-      <div className="track-links" style={{ marginTop: 0 }}>
-        <Link href={`/work/${project.slug}`} className="track-case">
-          {ui.viewCaseStudy}{" "}
-          <span className="track-case-arrow" aria-hidden="true">
-            ↗
-          </span>
-        </Link>
       </div>
     </article>
   );

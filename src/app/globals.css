@@ -1477,8 +1477,9 @@ footer[id],
    record" strip is omitted (no equivalent verified stats
    exist). The filter is removed: it dimmed cards in a grid
    where all six were visible at once, which does not fit a
-   track. The three compact cards (HITEC, Quality CRM, UpliftU)
-   sit in a row below the track, not in it. */
+   track. The three earlier projects (HITEC, Quality CRM,
+   UpliftU) sit in a ruled "Earlier work" list below the track,
+   not in it. */
 
 /* The stack (the default, and the fallback): photo on top,
    text below, every card fully visible. */
@@ -1527,6 +1528,30 @@ footer[id],
   line-height: 1.2;
   letter-spacing: -0.025em;
   text-wrap: balance;
+}
+
+/* The whole card is clickable: the title link's ::after covers
+   the card, so a click on the photo, the summary or the title
+   opens the case page. The title looks like a title, not a
+   link — it underlines only while the card is hovered, the
+   affordance that the card is clickable. The repo and paper
+   links sit above the overlay (position relative, z-index 1)
+   so they stay clickable. */
+.track-title-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.track-title-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.track-card:hover .track-title-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
 }
 
 .track-summary {
@@ -1653,7 +1678,15 @@ footer[id],
 
 /* The repo link appears only where content.ts has one —
    LeaseLens and Sales ETL. The other four cards have no repo
-   link; the "View case study" pill is their only link. */
+   link; the "View case study" pill is their only link. Both sit
+   above the title's stretched-link overlay (see
+   .track-title-link), so they stay clickable. */
+.track-case,
+.track-repo {
+  position: relative;
+  z-index: 1;
+}
+
 .track-repo {
   display: inline-flex;
   align-items: center;
@@ -1672,15 +1705,81 @@ footer[id],
 }
 
 /* The photo: large, right side on desktop, on top in the
-   stack. The same file in light and dark mode. It is the
-   deck's docking destination — the scroll listener measures
-   its rect. next/image (fill) sizes the img; this box only
-   needs position and its frame. */
+   stack. The same file in light and dark mode.
+   next/image (fill) sizes the img; this box only needs
+   position and its frame. */
 .track-photo {
   order: -1;
   position: relative;
   aspect-ratio: 5 / 3;
   overflow: hidden;
+}
+
+/* ---- Earlier work: the three earlier projects as a ruled list
+   below the track, not cards. Year and role, the title (a link
+   stretched over the row, like the track cards), the one-liner
+   and the stack chips per row. Quieter than the track cards by
+   design: no photo, no surface, just hairlines. ---- */
+.earlier-work {
+  margin-top: var(--space-4);
+}
+
+.earlier-work-heading {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-title-lg);
+  line-height: 1.2;
+  letter-spacing: -0.025em;
+}
+
+.earlier-work-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid var(--rule);
+}
+
+.earlier-work-item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding-block: var(--space-3);
+  border-bottom: 1px solid var(--rule);
+}
+
+.earlier-work-title {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-title-md);
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.earlier-work-link {
+  color: inherit;
+  text-decoration: none;
+}
+
+.earlier-work-link::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.earlier-work-item:hover .earlier-work-link {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 2px;
+}
+
+.earlier-work-summary {
+  margin: 0;
+  font-size: var(--text-body);
+  line-height: 1.6;
+  max-width: 60ch;
 }
 
 /* "View More Projects": the section's closing action, after

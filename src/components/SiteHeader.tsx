@@ -222,13 +222,20 @@ export function SiteHeader() {
     return () => window.removeEventListener("hashchange", onHash);
   }, []);
 
-  /* Body scroll lock while the menu is open. */
+  /* Body scroll lock while the menu is open. Lock the root
+   *  element as well as the body: `html { overflow-x: hidden; }`
+   *  (globals.css) makes html's overflow-y compute to `auto`, so
+   *  the body's `overflow: hidden` alone does not propagate to
+   *  the viewport and wheel scrolling still moves the page. */
   useEffect(() => {
     if (!isMenuOpen) return;
-    const prev = document.body.style.overflow;
+    const prevBody = document.body.style.overflow;
+    const prevDoc = document.documentElement.style.overflow;
     document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     return () => {
-      document.body.style.overflow = prev;
+      document.body.style.overflow = prevBody;
+      document.documentElement.style.overflow = prevDoc;
     };
   }, [isMenuOpen]);
 
@@ -273,11 +280,41 @@ export function SiteHeader() {
     : { type: "spring" as const, stiffness: 420, damping: 32 };
 
   return (
-    <header
-      className={`site-header${scrolled ? " is-scrolled" : ""}${
-        isMenuOpen ? " is-menu-open" : ""
-      }`}
-    >
+    <>
+      {/* Outside-tap dismissal layer: a fixed layer over the page
+          (below the header — z-index 40 vs the header's 50) that
+          closes the menu on tap/click, so a tap outside the menu
+          never reaches the underlying page. Transparent, so it
+          adds no visual change; aria-hidden and not focusable, so
+          it stays out of the focus trap and the accessibility
+          tree. It animates with the menu via its own
+          AnimatePresence. */}
+      <AnimatePresence>
+        {isMenuOpen && (
+          <motion.div
+            aria-hidden="true"
+            onClick={() => closeMenu()}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            transition={
+              reduceMotion
+                ? { duration: 0 }
+                : { duration: 0.2, ease: [0.22, 1, 0.36, 1] }
+            }
+            style={{
+              position: "fixed",
+              inset: 0,
+              zIndex: 40,
+            }}
+          />
+        )}
+      </AnimatePresence>
+      <header
+        className={`site-header${scrolled ? " is-scrolled" : ""}${
+          isMenuOpen ? " is-menu-open" : ""
+        }`}
+      >
       <div className="site-header-inner">
         <div className="header-left">
           {/* The wordmark words are visually hidden (not
@@ -394,6 +431,7 @@ export function SiteHeader() {
           </motion.div>
         )}
       </AnimatePresence>
-    </header>
+      </header>
+    </>
   );
 }

@@ -34,11 +34,8 @@
  * title (a link to the case page, stretched over the row), the
  * one-liner and the stack chips. No photo, no stats slot, no
  * proof line. The meta line carries the credential (HITEC:
- * "IT Department intern, May–Oct 2025"). The heading is a
- * locale literal here, not a content.ts string: content.ts is
- * owned by the content pass, and this commit must build
- * standalone — it belongs in content.ts (ui.work.earlierWork)
- * when that file is next touched.
+ * "IT Department intern, May–Oct 2025"). The heading comes
+ * from content.ts (ui.work.earlierHeading).
  */
 "use client";
 
@@ -57,8 +54,7 @@ export function WorkSection() {
     locale === "de"
       ? " (öffnet in einem neuen Tab)"
       : " (opens in a new tab)";
-  const earlierWorkHeading =
-    locale === "de" ? "Frühere Projekte" : "Earlier work";
+  const earlierWorkHeading = ui.earlierHeading;
   const fullProjects = projects.filter((p) => p.tier === "full");
   const compactProjects = projects.filter((p) => p.tier === "compact");
   /* The track chrome (counter + progress hairline) only exists

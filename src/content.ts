@@ -182,7 +182,7 @@ export const projects: Project[] = [
           claim: "three times the monthly cold rent",
           note: "BGB §551. The registry holds the rule for five jurisdictions: Germany, the UK, New York, France, and Japan. Japan has no cap figure.",
         },
-        ". The UK caps it at five weeks' rent, New York at one month, and France at one or two months, depending on whether the flat is furnished. A tenant needs the lease text and the local rule next to each other, and a check that ties the two together.",
+        " and the UK caps it at five weeks' rent, New York at one month, and France at one or two months, depending on whether the flat is furnished. A tenant needs the lease text and the local rule next to each other, and a check that ties the two together.",
       ],
     ],
     result: [
@@ -192,7 +192,7 @@ export const projects: Project[] = [
           claim: "197 tests",
           note: "132 backend, 65 frontend, at v1.0.0.",
         },
-        ". Accepted into the Meta Global AI Developer Hackathon 2026 (Indie Developer Track, Team Shamas #4919); not a top finalist.",
+        " and was accepted into the Meta Global AI Developer Hackathon 2026 (Indie Developer Track, Team Shamas #4919); not a top finalist.",
       ],
       [
         "The dorm demo runs the check on a real lease. The deposit in the lease is €950.00. The legal cap for that flat is €535.41, so the excess is €414.59. The photo evidence for the same flat scored ",
@@ -267,9 +267,8 @@ export const projects: Project[] = [
     category: "Data Engineering",
     rowOutcome:
       "Sales data from several sources, loaded into one trustworthy shape.",
-    rowProof: "A rerun duplicates nothing; a failed run alerts by email.",
+    rowProof: "One DAG, three tasks, four tables, verified in the repository.",
     stats: [
-      { value: "0", label: "duplicates on rerun" },
       { value: "4", label: "tables, star schema" },
       { value: "3", label: "tasks, Airflow DAG" },
     ],
@@ -297,12 +296,15 @@ export const projects: Project[] = [
           claim: "one DAG, three tasks, and four tables",
           note: "dim_date, dim_customer, dim_product, fact_sales. Verified in the repository.",
         },
-        ". The seed loads 4 mock rows and keeps ",
+        " and loads a 4-row mock seed, keeping ",
         {
           claim: "3 unique transactions after dedup",
           note: "The repository seeds 4 mock rows; dedup leaves 3 unique transactions. No larger dataset or runtime has been measured.",
         },
-        ", a rerun duplicates nothing, and a failed run alerts by email.",
+        " in the star schema. A failed run alerts by email.",
+      ],
+      [
+        "What is still to be done: a 1M-row synthetic run, a rerun test, data-quality checks and timings, and an Airflow DAG screenshot. Until then, no outcome numbers are claimed.",
       ],
     ],
     proofCallout:
@@ -341,7 +343,7 @@ export const projects: Project[] = [
           claim: "peer-reviewed journal",
           note: "Spectrum of Engineering Sciences, Vol. 3, Issue 7, pp. 843–852, 2025, ISSN 3007-3138.",
         },
-        ". The dashboard is no longer live; the paper is the record.",
+        " in 2025. The dashboard is no longer live; the paper is the record.",
       ],
     ],
     evidence: {
@@ -380,7 +382,7 @@ export const projects: Project[] = [
     ],
     result: [
       [
-        "Delivered during the IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
+        "Built during the IT Department internship (May–Oct 2025): database-backed web modules, an internal CMS admin panel, and a RAG support chatbot. The project is internal and archived, with no public site or repository, and the live site is maintained externally now that the internship has ended.",
       ],
     ],
     scope:
@@ -407,7 +409,11 @@ export const projects: Project[] = [
         "Defects and quality issues were tracked informally, with no single record.",
       ],
     ],
-    result: [["Shipped as an academic project."]],
+    result: [
+      [
+        "Built as an academic project in 2024: a Laravel/MySQL CRM that keeps defects and quality issues in one relational record. No repository or live site is on record.",
+      ],
+    ],
     scope:
       "Relational defect tracking in Laravel/MySQL — one record for every defect.",
     links: [],
@@ -428,7 +434,11 @@ export const projects: Project[] = [
     problem: [
       ["Conversational support for students had no structured, measured form."],
     ],
-    result: [["Shipped as an academic project."]],
+    result: [
+      [
+        "Built as an academic project in 2024: conversational student support with Hugging Face NLP in Python, structured around dialogue flows. No repository or live site is on record.",
+      ],
+    ],
     scope: "Structured NLP student support in Python/Hugging Face.",
     links: [],
   },

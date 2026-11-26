@@ -65,7 +65,7 @@ export const deContent: SiteContent = {
             claim: "das Dreifache der monatlichen Kaltmiete",
             note: "BGB §551. Das Register enthält die Regel für fünf Rechtsordnungen: Deutschland, Vereinigtes Königreich, New York, Frankreich und Japan. Japan hat keine Obergrenze als Zahl.",
           },
-          ". Im Vereinigten Königreich sind es fünf Wochen Miete, in New York ein Monat und in Frankreich ein oder zwei Monate — je nachdem, ob die Wohnung möbliert ist. Ein Mieter braucht den Vertragstext und die lokale Regel nebeneinander, und eine Prüfung, die beides verbindet.",
+          " und im Vereinigten Königreich sind es fünf Wochen Miete, in New York ein Monat und in Frankreich ein oder zwei Monate, je nachdem, ob die Wohnung möbliert ist. Ein Mieter braucht den Vertragstext und die lokale Regel nebeneinander, und eine Prüfung, die beides verbindet.",
         ],
       ],
       result: [
@@ -75,7 +75,7 @@ export const deContent: SiteContent = {
             claim: "197 Tests",
             note: "132 Backend, 65 Frontend, bei v1.0.0.",
           },
-          ". Aufgenommen in den Meta Global AI Developer Hackathon 2026 (Indie Developer Track, Team Shamas #4919); kein Top-Finalist.",
+          " und wurde in den Meta Global AI Developer Hackathon 2026 aufgenommen (Indie Developer Track, Team Shamas #4919); kein Top-Finalist.",
         ],
         [
           "Die Wohnheim-Demo führt die Prüfung mit einem echten Mietvertrag durch. Die Kaution im Vertrag beträgt €950.00. Die gesetzliche Obergrenze für diese Wohnung liegt bei €535.41, der Überschuss also bei €414.59. Der Fotonachweis für dieselbe Wohnung erreichte ",
@@ -150,9 +150,8 @@ export const deContent: SiteContent = {
       rowOutcome:
         "Verkaufsdaten aus mehreren Quellen, geladen in eine einzige verlässliche Form.",
       rowProof:
-        "Ein erneuter Lauf dupliziert nichts; ein fehlgeschlagener Lauf löst eine E-Mail-Warnung aus.",
+        "Ein DAG, drei Tasks, vier Tabellen, im Repository geprüft.",
       stats: [
-        { value: "0", label: "Duplikate bei erneutem Lauf" },
         { value: "4", label: "Tabellen, Star-Schema" },
         { value: "3", label: "Tasks, Airflow-DAG" },
       ],
@@ -180,12 +179,15 @@ export const deContent: SiteContent = {
             claim: "einem DAG, drei Tasks und vier Tabellen",
             note: "dim_date, dim_customer, dim_product, fact_sales. Im Repository geprüft.",
           },
-          ". Der Seed lädt 4 Mock-Zeilen und behält ",
+          " und lädt einen 4-zeiligen Mock-Seed; dabei bleiben ",
           {
             claim: "3 eindeutige Transaktionen nach der Deduplizierung",
             note: "Das Repository seedet 4 Mock-Zeilen; nach der Deduplizierung bleiben 3 eindeutige Transaktionen. Kein größerer Datensatz und keine Laufzeit wurden gemessen.",
           },
-          ", ein erneuter Lauf dupliziert nichts, und ein fehlgeschlagener Lauf löst eine E-Mail-Warnung aus.",
+          " im Star-Schema. Ein fehlgeschlagener Lauf löst eine E-Mail-Warnung aus.",
+        ],
+        [
+          "Noch zu tun: ein synthetischer Lauf mit 1 Mio. Zeilen, ein Test mit erneutem Lauf, Datenqualitätsprüfungen und Laufzeiten sowie ein Screenshot des Airflow-DAGs. Bis dahin werden keine Ergebniszahlen behauptet.",
         ],
       ],
       proofCallout:
@@ -225,7 +227,7 @@ export const deContent: SiteContent = {
             claim: "peer-reviewten Journal",
             note: "Spectrum of Engineering Sciences, Bd. 3, Heft 7, S. 843–852, 2025, ISSN 3007-3138.",
           },
-          " veröffentlicht. Das Dashboard ist nicht mehr live; das Paper ist der Nachweis.",
+          " im Jahr 2025 veröffentlicht. Das Dashboard ist nicht mehr live; das Paper ist der Nachweis.",
         ],
       ],
       evidence: {
@@ -264,7 +266,7 @@ export const deContent: SiteContent = {
       ],
       result: [
         [
-          "Umgesetzt im IT-Praktikum (Mai–Okt 2025); internes Admin-Panel & CMS, Live-Betrieb extern fortgeführt.",
+          "Gebaut im IT-Praktikum (Mai–Okt. 2025): datenbankgestützte Webmodule, ein internes CMS-Admin-Panel und ein RAG-Support-Chatbot. Das Projekt ist intern und archiviert, ohne öffentliche Website oder Repository, und die Live-Website wird seit dem Ende des Praktikums extern betreut.",
         ],
       ],
       scope:
@@ -292,7 +294,11 @@ export const deContent: SiteContent = {
           "Defekte und Qualitätsprobleme wurden informell erfasst, ohne einen einzigen Datensatz.",
         ],
       ],
-      result: [["Als akademisches Projekt veröffentlicht."]],
+      result: [
+        [
+          "Als akademisches Projekt 2024 gebaut: ein Laravel/MySQL-CRM, das Defekte und Qualitätsprobleme in einem relationalen Datensatz hält. Kein Repository und keine Live-Website liegt vor.",
+        ],
+      ],
       scope:
         "Relationales Defect-Tracking in Laravel/MySQL — ein Datensatz für jeden Defekt.",
       links: [],
@@ -316,7 +322,11 @@ export const deContent: SiteContent = {
           "Gesprächsbasierte Unterstützung für Studierende hatte keine strukturierte, messbare Form.",
         ],
       ],
-      result: [["Als akademisches Projekt veröffentlicht."]],
+      result: [
+        [
+          "Als akademisches Projekt 2024 gebaut: gesprächsbasierte Studierendenbetreuung mit Hugging-Face-NLP in Python, strukturiert über Dialogabläufe. Kein Repository und keine Live-Website liegt vor.",
+        ],
+      ],
       scope: "Strukturierte NLP-Studierendenbetreuung in Python/Hugging Face.",
       links: [],
     },

@@ -790,8 +790,11 @@ footer[id],
 }
 
 @media (min-width: 1024px) {
+  /* The showcase wrapper is 581px wide (the reference's
+     489px card + 92px of fan room), so the right column is
+     fixed at 581px and the copy column takes the rest. */
   .hero {
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-columns: minmax(0, 1fr) 581px;
     gap: var(--space-6);
   }
 }
@@ -1038,35 +1041,49 @@ footer[id],
  *  only, so there is no layout shift. The deck is aria-hidden
  *  and pointer-events none (see HeroDeck.tsx). */
 .hero-deck {
+  /* The reference's showcase wrapper: 581 × 408, with 72px
+     of top padding and 92px of right padding — room for the
+     fan to peek up-right. --deck-scale shrinks the whole
+     geometry below 1024px (same fan, smaller cards). */
+  --deck-scale: 1;
   position: relative;
-  height: 300px;
+  width: calc(581px * var(--deck-scale));
+  height: calc(408px * var(--deck-scale));
+  margin-inline: auto;
+  padding-top: calc(72px * var(--deck-scale));
+  padding-right: calc(92px * var(--deck-scale));
   pointer-events: none;
 }
 
 .deck-card {
+  /* One card: 489 × 336 (16/11), radius 18px, origin
+     bottom-left, a hairline edge and a deep soft shadow.
+     The photo fills the card full-bleed (no browser-chrome
+     bar: the photos are created visuals, not screenshots). */
   position: absolute;
-  left: 50%;
-  top: 50%;
-  width: 320px;
-  aspect-ratio: 5 / 3;
-  transform-origin: center;
-  will-change: transform;
-  transform: translate(
-      calc(-50% + var(--ox, 0px)),
-      calc(-50% + var(--oy, 0px))
-    )
-    rotate(var(--rr, 0deg));
+  left: 0;
+  bottom: 0;
+  width: calc(489px * var(--deck-scale));
+  aspect-ratio: 16 / 11;
+  transform-origin: bottom left;
+  will-change: transform, filter;
+  overflow: hidden;
+  border: 1px solid rgb(10 10 10 / 0.1);
+  border-radius: 18px;
+  box-shadow: 0 30px 60px -24px rgb(10 10 10 / 0.35);
+  transform: translate(var(--ox, 0px), var(--oy, 0px))
+    rotate(var(--rr, 0deg)) scale(var(--sc, 1));
+  filter: brightness(var(--br, 1));
 }
 
 /* The photo fills the card (next/image fill + cover: the 3:2
-   file is cropped to the 5:3 frame). A soft shadow grounds
-   each card (and a hairline edge from the frame); the shadow
-   follows the rounded border box. The photo is the same file in
-   both themes — nothing here switches on the theme. */
+   file is cropped to the 16/11 frame). The hairline edge and
+   the soft shadow live on .deck-card, so they follow the
+   rounded border box; the photo is the same file in both
+   themes — nothing here switches on the theme. */
 .deck-card img {
   display: block;
-  border-radius: 8px;
-  box-shadow: 0 12px 24px var(--deck-shadow);
+  border-radius: 18px;
 }
 
 .deck-card-inner {
@@ -1075,43 +1092,40 @@ footer[id],
   height: 100%;
 }
 
-/* Fanned rest (rotations -8° to +9°, each card peeking at a
-   different edge — the back cards peek furthest, since they
-   show the least). */
+/* Fanned rest — the reference's four slots, up-right only:
+   each deeper card +30px right, −24px up, +3.5° rotation,
+   −0.06 scale, −0.12 brightness. The front card is fully
+   visible; the others peek out top-right. */
 .deck-card--a {
   --ox: 0px;
-  --oy: -6px;
-  --rr: -1deg;
-  z-index: 6;
-}
-.deck-card--b {
-  --ox: 26px;
-  --oy: -16px;
-  --rr: 6deg;
-  z-index: 5;
-}
-.deck-card--c {
-  --ox: -28px;
-  --oy: 8px;
-  --rr: -5deg;
+  --oy: 0px;
+  --rr: -2deg;
+  --sc: 1;
+  --br: 1;
   z-index: 4;
 }
-.deck-card--d {
-  --ox: 46px;
-  --oy: -24px;
-  --rr: 9deg;
+.deck-card--b {
+  --ox: calc(34px * var(--deck-scale));
+  --oy: calc(-26px * var(--deck-scale));
+  --rr: 2.5deg;
+  --sc: 0.94;
+  --br: 0.88;
   z-index: 3;
 }
-.deck-card--e {
-  --ox: -48px;
-  --oy: 18px;
-  --rr: -8deg;
+.deck-card--c {
+  --ox: calc(64px * var(--deck-scale));
+  --oy: calc(-50px * var(--deck-scale));
+  --rr: 6deg;
+  --sc: 0.88;
+  --br: 0.76;
   z-index: 2;
 }
-.deck-card--f {
-  --ox: 14px;
-  --oy: 26px;
-  --rr: 3deg;
+.deck-card--d {
+  --ox: calc(90px * var(--deck-scale));
+  --oy: calc(-70px * var(--deck-scale));
+  --rr: 9.5deg;
+  --sc: 0.82;
+  --br: 0.64;
   z-index: 1;
 }
 
@@ -1135,98 +1149,34 @@ footer[id],
 }
 
 /* Tablet (768–1023px): the hero stacks, so the deck is full
-   width; the six cards stay a compact fan and scroll away with
-   the hero — no vertical fan-out (six cards fanned downward
-   would run ~700px long and slide over the track). Only the
-   rest fan below matters. */
+   width; the four cards stay a compact fan and scroll away
+   with the hero. The whole fan scales down (same slots,
+   smaller cards — 280px wide). */
 @media (max-width: 1023px) {
   .hero-deck {
-    height: 300px;
-  }
-  .deck-card {
-    width: 280px;
-  }
-  .deck-card--a {
-    --ox: 0px;
-    --oy: -5px;
-    --rr: -1deg;
-  }
-  .deck-card--b {
-    --ox: 22px;
-    --oy: -14px;
-    --rr: 6deg;
-  }
-  .deck-card--c {
-    --ox: -24px;
-    --oy: 7px;
-    --rr: -5deg;
-  }
-  .deck-card--d {
-    --ox: 39px;
-    --oy: -20px;
-    --rr: 9deg;
-  }
-  .deck-card--e {
-    --ox: -41px;
-    --oy: 15px;
-    --rr: -8deg;
-  }
-  .deck-card--f {
-    --ox: 12px;
-    --oy: 22px;
-    --rr: 3deg;
+    --deck-scale: 0.573;
   }
 }
 
 /* Phones: the deck is a compact fanned stack below the copy;
-   on scroll it drifts with the hero and scrolls away. The cards
-   are 200px wide so the fanned stack's bounding box fits a
-   170px deck without crowding the copy above it. */
+   on scroll it drifts with the hero and scrolls away. The
+   cards are 200px wide, same fan, scaled down. */
 @media (max-width: 767px) {
   .hero-deck {
-    height: 170px;
-  }
-  .deck-card {
-    width: 200px;
-  }
-  .deck-card--a {
-    --ox: 0px;
-    --oy: -4px;
-    --rr: -1deg;
-  }
-  .deck-card--b {
-    --ox: 16px;
-    --oy: -10px;
-    --rr: 6deg;
-  }
-  .deck-card--c {
-    --ox: -17px;
-    --oy: 5px;
-    --rr: -5deg;
-  }
-  .deck-card--d {
-    --ox: 28px;
-    --oy: -14px;
-    --rr: 9deg;
-  }
-  .deck-card--e {
-    --ox: -29px;
-    --oy: 11px;
-    --rr: -8deg;
-  }
-  .deck-card--f {
-    --ox: 8px;
-    --oy: 16px;
-    --rr: 3deg;
+    --deck-scale: 0.409;
   }
 }
 
 /* Re-fan on tab change: while the .hero-deck--refan class is
-   set (450ms after a tab click), the cards' transform
-   transitions, so they glide to their new rest positions. The
-   class is removed after the transition. */
+   set (350ms after a tab click), the cards' transform and
+   filter transition, so they glide to their new rest positions
+   — the reference's card-change motion: ~300ms, ease-out, no
+   overshoot, all four cards moving at once. The class is
+   removed after the transition. */
 .hero-deck--refan .deck-card {
-  transition: transform 400ms var(--ease);
+  transition:
+    transform 300ms var(--ease),
+    filter 300ms var(--ease);
 }
 
 /* ---- Hero showcase: caption + tabs under the deck ---- */
@@ -1241,12 +1191,52 @@ footer[id],
 }
 
 .hero-caption {
+  /* The caption row keeps a 52px min-height so the exit/enter
+     never moves the layout. */
   margin-top: var(--space-3);
+  min-height: 52px;
+}
+
+.hero-caption-inner {
   display: flex;
   flex-wrap: wrap;
   align-items: baseline;
   justify-content: space-between;
   gap: var(--space-1) var(--space-2);
+}
+
+/* Caption change — the reference's exit/enter: the old
+   caption fades out and rises 6px over 200ms, the new one
+   mounts and fades in over 200ms (the text and link swap at
+   ~300ms, between the two). */
+@keyframes caption-exit {
+  from {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes caption-enter {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.hero-caption-inner--exiting {
+  animation: caption-exit 200ms var(--ease) forwards;
+}
+
+.hero-caption-inner--entering {
+  animation: caption-enter 200ms var(--ease) forwards;
 }
 
 .hero-caption-text {
@@ -1295,39 +1285,58 @@ footer[id],
   }
 }
 
-/* The project tabs: plain grey text, the active one a black
-   pill with white text — the reference's tab row. Real buttons
-   (aria-pressed), 44px tap targets. */
+/* The project tabs: the reference's tab row — rounded pills,
+   the active one a solid pill with white text and a static
+   lime underline, the rest plain grey text. Real tabs
+   (role="tab", aria-selected), 44px tap targets. */
 .hero-tabs {
   margin-top: var(--space-2);
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: 4px 12px;
+  gap: 6px;
 }
 
 .hero-tab {
+  position: relative;
+  overflow: hidden;
   min-width: 44px;
   min-height: 44px;
-  padding: 8px 0;
+  padding: 8px 12px;
   border: 0;
+  border-radius: 999px;
   background: transparent;
   color: var(--ink-muted);
   font-family: var(--font-body);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
+  transition:
+    background-color 150ms cubic-bezier(0.4, 0, 0.2, 1),
+    color 150ms cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .hero-tab:hover {
+  background: var(--surface);
   color: var(--ink);
 }
 
-.hero-tab[aria-pressed="true"] {
-  padding: 8px 16px;
-  border-radius: 999px;
+.hero-tab[aria-selected="true"] {
   background: var(--ink);
   color: var(--bg);
+}
+
+/* The lime mark under the active tab: a 2px static full-width
+   lime underline, clipped by the pill's rounded edge. On the
+   reference it is the auto-advance progress bar; there is no
+   auto-advance here, so it is a static mark. */
+.hero-tab-mark {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 2px;
+  background: var(--lime);
 }
 
 /* ---- Buttons and links: plain verbs ---- */
@@ -3055,6 +3064,13 @@ footer[id],
 
   .hero-deck--refan .deck-card {
     transition: none;
+  }
+
+  /* The caption swaps instantly under reduced motion (no
+     exit/enter). */
+  .hero-caption-inner--exiting,
+  .hero-caption-inner--entering {
+    animation: none;
   }
 
   .reveal.is-visible {

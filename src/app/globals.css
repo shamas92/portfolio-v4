@@ -2007,6 +2007,18 @@ footer[id],
   padding: 2px 0;
 }
 
+/* Coarse pointers (touch): give the inline "Used in" links a
+   44px hit area so they are tappable without overlapping.
+   Desktop (fine pointer) stays compact. */
+@media (pointer: coarse) {
+  .skills-used a {
+    display: inline-block;
+    min-height: 44px;
+    line-height: 44px;
+    padding: 0 6px;
+  }
+}
+
 .skills-studied {
   margin-top: var(--space-4);
   font-size: var(--text-small);

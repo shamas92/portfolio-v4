@@ -15,12 +15,21 @@
  *   instantly.
  * - Tabs: the four project names (LeaseLens, Sales ETL,
  *   OratorPath, HITEC). The active tab is a black pill with
- *   white text and a static lime underline; the rest are plain
+ *   white text and a lime underline; the rest are plain
  *   grey text. They are real tabs (role="tab", aria-selected),
  *   keyboard-operable, 44px tap targets. Clicking one makes
  *   that project the deck's front card and updates the caption.
  *   The tabs only select — they never scroll the page or
  *   change the URL.
+ * - Auto-advance: the showcase steps to the next project every
+ *   5 seconds, wrapping, like the reference. It pauses while
+ *   the user hovers over the showcase or focuses a tab, and
+ *   while the document is hidden; a manual tab selection
+ *   restarts the 5s interval. The lime mark under the active
+ *   tab is the progress bar: it fills scaleX 0 → 1 over each
+ *   interval and resets on advance. There is no auto-advance
+ *   under prefers-reduced-motion — the mark is then a static
+ *   full-width underline.
  *
  * Tab labels: the two long titles are shortened for the tab
  * row ("Sales ETL", "HITEC"). These are display abbreviations,
@@ -31,7 +40,7 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { useContent } from "@/i18n/LocaleProvider";
 import type { Project } from "@/content";
 import { HeroDeck } from "./HeroDeck";
@@ -64,6 +73,10 @@ export const tabLabel = (project: Project): string =>
  *  (caption-exit / caption-enter, 200ms each). */
 const CAPTION_SWAP_MS = 300;
 const CAPTION_DONE_MS = 500;
+
+/** Auto-advance interval: the reference steps every ~4s; the
+ *  user asked for every 5 seconds. */
+const AUTO_ADVANCE_MS = 5000;
 
 export function HeroShowcase({
   activeSlug,
@@ -138,8 +151,124 @@ export function HeroShowcase({
   const shown =
     ordered.find((p) => p.slug === shownSlug) ?? ordered[0]!;
 
+  /* ---- Auto-advance (every 5s, wrapping) ----
+   * A single rAF loop fills the lime mark under the active tab
+   * (scaleX 0 → 1 over the interval) and steps to the next
+   * project when the interval elapses. The loop reads and
+   * writes refs, never React state, so it never re-renders.
+   * - Reset: any selection change (manual click, keyboard, or
+   *   an auto-advance step) restarts the 5s interval from 0.
+   * - Pause: hovering the showcase, focusing a tab, or hiding
+   *   the document freezes the elapsed time; resuming continues
+   *   from the frozen point. The mark freezes with it.
+   * - Reduced motion: no loop at all — the mark stays a static
+   *   full-width underline (see globals.css). */
+  const markRef = useRef<HTMLSpanElement | null>(null);
+  const advRafRef = useRef<number | null>(null);
+  const advStartRef = useRef(0);
+  const advAccRef = useRef(0);
+  const advElapsedRef = useRef(0);
+  const advPrevSlugRef = useRef(activeSlug);
+  const pauseSources = useRef({ hover: false, focus: false, hidden: false });
+  const onSelectRef = useRef(onSelect);
+  const [autoAdvance, setAutoAdvance] = useState(true);
+  const [paused, setPaused] = useState(false);
+
+  /* Keep the latest onSelect without re-running the loop
+     effect when the parent re-renders. */
+  useEffect(() => {
+    onSelectRef.current = onSelect;
+  });
+
+  const updatePaused = useCallback(() => {
+    const p =
+      pauseSources.current.hover ||
+      pauseSources.current.focus ||
+      pauseSources.current.hidden;
+    setPaused((prev) => (prev === p ? prev : p));
+  }, []);
+
+  /* Reduced motion turns auto-advance off (and the
+     .hero-showcase--auto class with it, so the lime mark is a
+     static full-width underline). The state update runs inside
+     a timeout callback, never synchronously in the effect body
+     (see the caption effect above for the same rule). */
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const reduceMotion =
+        typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      setAutoAdvance(!reduceMotion);
+    }, 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* Hiding the document pauses the interval; showing it again
+     resumes from the frozen point. */
+  useEffect(() => {
+    const onVis = () => {
+      pauseSources.current.hidden = document.hidden;
+      updatePaused();
+    };
+    document.addEventListener("visibilitychange", onVis);
+    return () => document.removeEventListener("visibilitychange", onVis);
+  }, [updatePaused]);
+
+  useEffect(() => {
+    if (!autoAdvance) return;
+    if (
+      typeof window !== "undefined" &&
+      window.matchMedia("(prefers-reduced-motion: reduce)").matches
+    ) {
+      return;
+    }
+    /* A new selection restarts the 5s interval from 0. */
+    if (advPrevSlugRef.current !== activeSlug) {
+      advAccRef.current = 0;
+      advElapsedRef.current = 0;
+      advPrevSlugRef.current = activeSlug;
+    }
+    if (paused) return;
+    advStartRef.current = performance.now();
+    const tick = (now: number) => {
+      const elapsed = advAccRef.current + (now - advStartRef.current);
+      advElapsedRef.current = elapsed;
+      const progress = Math.min(elapsed / AUTO_ADVANCE_MS, 1);
+      if (markRef.current) {
+        markRef.current.style.transform = `scaleX(${progress})`;
+      }
+      if (elapsed >= AUTO_ADVANCE_MS) {
+        const idx = SHOWCASE_SLUGS.indexOf(
+          activeSlug as (typeof SHOWCASE_SLUGS)[number],
+        );
+        const next = SHOWCASE_SLUGS[(idx + 1) % SHOWCASE_SLUGS.length];
+        onSelectRef.current(next);
+        return;
+      }
+      advRafRef.current = requestAnimationFrame(tick);
+    };
+    advRafRef.current = requestAnimationFrame(tick);
+    return () => {
+      if (advRafRef.current !== null) cancelAnimationFrame(advRafRef.current);
+      advRafRef.current = null;
+      /* Freeze the elapsed time so a pause resumes from the
+         same point (and the mark with it). */
+      advAccRef.current = Math.min(advElapsedRef.current, AUTO_ADVANCE_MS);
+    };
+  }, [activeSlug, paused, autoAdvance]);
+
   return (
-    <div className="hero-showcase">
+    <div
+      className={`hero-showcase${autoAdvance ? " hero-showcase--auto" : ""}`}
+      onMouseEnter={() => {
+        pauseSources.current.hover = true;
+        updatePaused();
+      }}
+      onMouseLeave={() => {
+        pauseSources.current.hover = false;
+        updatePaused();
+      }}
+    >
       <HeroDeck activeSlug={active.slug} />
       <div
         className="hero-caption"
@@ -168,6 +297,17 @@ export function HeroShowcase({
         aria-label={content.ui.hero.featuredProjects}
         data-entrance
         style={{ "--entrance-delay": "360ms" } as React.CSSProperties}
+        onFocus={() => {
+          pauseSources.current.focus = true;
+          updatePaused();
+        }}
+        onBlur={(e) => {
+          /* Focus moving between tabs stays paused; only focus
+             leaving the tablist entirely resumes. */
+          if (e.currentTarget.contains(e.relatedTarget as Node)) return;
+          pauseSources.current.focus = false;
+          updatePaused();
+        }}
       >
         {ordered.map((project) => {
           const isActive = project.slug === active.slug;
@@ -182,7 +322,11 @@ export function HeroShowcase({
             >
               {tabLabel(project)}
               {isActive && (
-                <span className="hero-tab-mark" aria-hidden="true" />
+                <span
+                  className="hero-tab-mark"
+                  aria-hidden="true"
+                  ref={markRef}
+                />
               )}
             </button>
           );

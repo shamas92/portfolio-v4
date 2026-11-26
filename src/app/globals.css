@@ -1327,10 +1327,14 @@ footer[id],
   color: var(--bg);
 }
 
-/* The lime mark under the active tab: a 2px static full-width
-   lime underline, clipped by the pill's rounded edge. On the
-   reference it is the auto-advance progress bar; there is no
-   auto-advance here, so it is a static mark. */
+/* The lime mark under the active tab: a 2px lime underline,
+   clipped by the pill's rounded edge. On the reference it is
+   the auto-advance progress bar, and here it is too: while
+   auto-advance runs (the .hero-showcase--auto class, set when
+   reduced motion is off), the mark starts empty and a rAF loop
+   fills it scaleX 0 → 1 over each 5s interval. Without
+   auto-advance (reduced motion, or before hydration) it is a
+   static full-width mark. */
 .hero-tab-mark {
   position: absolute;
   left: 0;
@@ -1338,6 +1342,12 @@ footer[id],
   bottom: 0;
   height: 2px;
   background: var(--lime);
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.hero-showcase--auto .hero-tab-mark {
+  transform: scaleX(0);
 }
 
 /* ---- Buttons and links: plain verbs ---- */

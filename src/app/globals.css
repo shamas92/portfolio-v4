@@ -2063,16 +2063,16 @@ footer[id],
 
   /* The tilted detail: a tighter crop of the same photo,
      293 × 203, rotated ~3° clockwise, overlapping the main
-     photo's lower edge by ~155px and breaking out 34px right
-     and ~36px below the card, like the reference's. Light
-     border, soft shadow, its own radius. */
+     photo's lower edge by ~155px and breaking out ~34px right
+     (bounding box) and ~36px below the card, like the
+     reference's. Light border, soft shadow, its own radius. */
   .track-photo-detail {
     display: block;
     position: absolute;
     width: 293px;
     height: 203px;
-    top: 435px;
-    right: -34px;
+    top: 440px;
+    right: -29px;
     transform: rotate(3deg);
     overflow: hidden;
     border: 1px solid var(--media-rule);

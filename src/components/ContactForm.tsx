@@ -224,21 +224,40 @@ export function ContactForm() {
             : ui.submit}
         </button>
       </div>
-      {status === "sent" && (
-        <p className="form-status" role="status">
-          {ui.statusSent}
-        </p>
-      )}
-      {status === "failed" && (
-        <>
-          <p className="form-status form-status--error" role="alert">
-            {ui.statusFailed}
+      {/* Status region: always rendered with a reserved height, so
+          the form does not grow (and the page does not jump) when
+          the status appears. minHeight covers the tallest status —
+          the failure case at 375px: a two-line status (57px) + the
+          grid gap (16px) + the Copy-email fallback (44px) = 117px,
+          plus a 3px buffer. The success status (33px) fits inside
+          the same space. Errors, labels and aria-describedby are
+          untouched; the live-region roles stay on the status
+          paragraphs themselves. */}
+      <div
+        className="form-status-region"
+        style={{
+          display: "grid",
+          gap: "var(--space-2)",
+          alignContent: "start",
+          minHeight: "120px",
+        }}
+      >
+        {status === "sent" && (
+          <p className="form-status" role="status">
+            {ui.statusSent}
           </p>
-          <div className="form-fallback">
-            <CopyEmailButton />
-          </div>
-        </>
-      )}
+        )}
+        {status === "failed" && (
+          <>
+            <p className="form-status form-status--error" role="alert">
+              {ui.statusFailed}
+            </p>
+            <div className="form-fallback">
+              <CopyEmailButton />
+            </div>
+          </>
+        )}
+      </div>
     </form>
   );
 }

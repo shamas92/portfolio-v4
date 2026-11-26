@@ -148,11 +148,10 @@ html[data-theme="dark"] {
 /* Clip horizontal overflow at the root too, so the document's
    scrollWidth stays the viewport width and the page is not
    horizontally scrollable: scrollWidth counts clipped content,
-   so the body's clip alone leaves the viewport scrollable (the
-   deck cards translate ~4m right to dock onto the track's later
-   photos). `hidden` on the root element propagates to the
-   viewport itself, so it does not create a nested scroll
-   container and the sticky track viewport keeps working. */
+   so the body's clip alone leaves the viewport scrollable.
+   `hidden` on the root element propagates to the viewport
+   itself, so it does not create a nested scroll container and
+   the sticky track viewport keeps working. */
 html {
   overflow-x: hidden;
 }
@@ -166,12 +165,11 @@ body {
   -webkit-font-smoothing: antialiased;
   text-rendering: optimizeLegibility;
   font-variant-numeric: tabular-nums;
-  /* Clip overflow (not hidden): the deck cards translate far
-     off-screen to dock onto the track's later photos (the track
-     is ~5.3m wide), and without this they would widen the
-     document and add a horizontal scrollbar. `clip` creates no
-     scroll container, so the sticky track viewport keeps
-     working — `hidden` would break it. */
+  /* Clip overflow (not hidden): the horizontal track is ~2.7m
+     wide, and without this it would widen the document and add
+     a horizontal scrollbar. `clip` creates no scroll container,
+     so the sticky track viewport keeps working — `hidden`
+     would break it. */
   overflow: clip;
 }
 
@@ -203,9 +201,8 @@ body {
   /* Every surface cross-fades, not just the ones listed here
      first: the certificate plates, the location panel and the
      form fields snapped while the sections around them faded.
-     The track card's surface joins here; its opacity is the
-     docking moment's --track-reveal, written every frame by the
-     scroll loop, so it needs no transition of its own. */
+     The track card's surface joins here; it needs no
+     transition of its own. */
   .section,
   .site-footer,
   .mobile-menu,
@@ -284,15 +281,11 @@ footer[id],
   margin: 0 auto;
   padding-inline: max(var(--space-3), env(safe-area-inset-left))
     max(var(--space-3), env(safe-area-inset-right));
-  /* Deck and track scroll variables live here (not on the hero)
-     so the deck and the Work track inherit them; the scroll
-     listener in page.tsx writes them. The defaults are the
-     no-JS / reduced-motion state: the deck at its rest fan, the
-     track fully visible as a stack, no horizontal progress. */
-  --deck-progress: 0;
-  --deck-lag: 0px;
-  --track-reveal: 1;
-  --deck-fade: 1;
+  /* The track scroll variable lives here (not on the hero) so
+     the Work track inherits it; the scroll listener in page.tsx
+     writes it. The default is the no-JS / reduced-motion state:
+     the deck at its rest fan, the track fully visible as a
+     stack, no horizontal progress. */
   --track-x: 0;
 }
 
@@ -1018,41 +1011,21 @@ footer[id],
 }
 
 /* ---- Hero deck: all six projects' photos, fanned at rest,
- *  docking onto the Work track on scroll ----
+ *  staying in the hero ----
  *  The deck is the hero's right column on desktop and stacks
  *  below the copy under 1024px. Its cards are absolutely
  *  positioned on the deck's centre and moved by CSS variables:
- *  --ox/--oy and --rr are the fanned rest state, --sx/--sy and
- *  --sr the spread/docked state, --ss the docked scale.
- *  --deck-progress (0→1, set from page.tsx, smootherstep-eased
- *  and damped toward its target) interpolates rotation, scale
- *  and the vertical offset; --deck-x (0→1) interpolates the
- *  horizontal spread — on desktop it is weighted late, so the
- *  cards stay fanned while the hero text is still visible and
- *  sweep across only once it has left (below 1024px it is 0:
- *  the fan stays compact and scrolls away). --deck-lag
- *  translates the whole deck down as the page scrolls up: on
- *  desktop it equals the scroll distance up to the docking
- *  offset, pinning the deck while the track scrolls up to meet
- *  it; below 1024px it is 0 (no pin — the compact fan scrolls
- *  away 1:1 with the page, so it never drifts over the Work
- *  heading).
- *  Transform/opacity only, so there is no layout shift. The deck
- *  is aria-hidden and pointer-events none (see HeroDeck.tsx).
- *  On desktop the per-card --sx/--sy/--sr/--ss are measured at
- *  runtime from the track's real rects (page.tsx) and written as
- *  inline custom properties, overriding the CSS fallbacks here;
- *  below 1024px the CSS values own the fan. The deck's own
- *  opacity is --deck-fade: it cross-fades out as the track
- *  fades in (--track-reveal). will-change keeps the cards on the
- *  compositor through the dock. */
+ *  --ox/--oy and --rr are the fanned rest state. The deck does
+ *  not move on scroll — it stays a static fan in the hero and
+ *  scrolls away with it (an earlier version pinned the deck and
+ *  docked it onto the Work track; that animation was removed,
+ *  and the track shows fully from the start). Transform/opacity
+ *  only, so there is no layout shift. The deck is aria-hidden
+ *  and pointer-events none (see HeroDeck.tsx). */
 .hero-deck {
   position: relative;
   height: 300px;
   pointer-events: none;
-  transform: translateY(var(--deck-lag, 0px));
-  opacity: var(--deck-fade, 1);
-  will-change: transform, opacity;
 }
 
 .deck-card {
@@ -1064,22 +1037,10 @@ footer[id],
   transform-origin: center;
   will-change: transform;
   transform: translate(
-      calc(
-        -50% + var(--ox, 0px) + (var(--sx, 0px) - var(--ox, 0px)) *
-          var(--deck-x, var(--deck-progress, 0))
-      ),
-      calc(
-        -50% + var(--oy, 0px) + (var(--sy, 0px) - var(--oy, 0px)) *
-          var(--deck-progress, 0)
-      )
+      calc(-50% + var(--ox, 0px)),
+      calc(-50% + var(--oy, 0px))
     )
-    rotate(
-      calc(
-        var(--rr, 0deg) + (var(--sr, 0deg) - var(--rr, 0deg)) *
-          var(--deck-progress, 0)
-      )
-    )
-    scale(calc(1 + (var(--ss, 1) - 1) * var(--deck-progress, 0)));
+    rotate(var(--rr, 0deg));
 }
 
 /* The photo fills the card (next/image fill + cover: the 3:2
@@ -1101,68 +1062,41 @@ footer[id],
 
 /* Fanned rest (rotations -8° to +9°, each card peeking at a
    different edge — the back cards peek furthest, since they
-   show the least) and the fallback spread (a six-card row pair
-   fanning out from the deck's centre, used only if the runtime
-   measurement in page.tsx cannot run — the measured docking
-   offsets replace these on desktop). */
+   show the least). */
 .deck-card--a {
   --ox: 0px;
   --oy: -6px;
   --rr: -1deg;
-  --sx: -674px;
-  --sy: 0px;
-  --sr: 0deg;
-  --ss: 1.07;
   z-index: 6;
 }
 .deck-card--b {
   --ox: 26px;
   --oy: -16px;
   --rr: 6deg;
-  --sx: -293px;
-  --sy: 0px;
-  --sr: 0deg;
-  --ss: 1.07;
   z-index: 5;
 }
 .deck-card--c {
   --ox: -28px;
   --oy: 8px;
   --rr: -5deg;
-  --sx: 88px;
-  --sy: 0px;
-  --sr: 0deg;
-  --ss: 1.07;
   z-index: 4;
 }
 .deck-card--d {
   --ox: 46px;
   --oy: -24px;
   --rr: 9deg;
-  --sx: -674px;
-  --sy: 430px;
-  --sr: 0deg;
-  --ss: 1.07;
   z-index: 3;
 }
 .deck-card--e {
   --ox: -48px;
   --oy: 18px;
   --rr: -8deg;
-  --sx: -293px;
-  --sy: 430px;
-  --sr: 0deg;
-  --ss: 1.07;
   z-index: 2;
 }
 .deck-card--f {
   --ox: 14px;
   --oy: 26px;
   --rr: 3deg;
-  --sx: 88px;
-  --sy: 430px;
-  --sr: 0deg;
-  --ss: 1.07;
   z-index: 1;
 }
 
@@ -1187,10 +1121,9 @@ footer[id],
 
 /* Tablet (768–1023px): the hero stacks, so the deck is full
    width; the six cards stay a compact fan and scroll away with
-   the hero — no docking onto the vertical stack, and no
-   vertical fan-out (six cards fanned downward would run ~700px
-   long and slide over the track). --deck-progress stays 0 below
-   1024px (page.tsx), so only the rest fan below matters. */
+   the hero — no vertical fan-out (six cards fanned downward
+   would run ~700px long and slide over the track). Only the
+   rest fan below matters. */
 @media (max-width: 1023px) {
   .hero-deck {
     height: 300px;
@@ -1231,9 +1164,9 @@ footer[id],
 }
 
 /* Phones: the deck is a compact fanned stack below the copy;
-   on scroll it drifts with the hero and scrolls away above the
-   grid. The cards are 200px wide so the fanned stack's bounding
-   box fits a 170px deck without crowding the copy above it. */
+   on scroll it drifts with the hero and scrolls away. The cards
+   are 200px wide so the fanned stack's bounding box fits a
+   170px deck without crowding the copy above it. */
 @media (max-width: 767px) {
   .hero-deck {
     height: 170px;
@@ -1276,8 +1209,7 @@ footer[id],
 /* Re-fan on tab change: while the .hero-deck--refan class is
    set (650ms after a tab click), the cards' transform
    transitions, so they glide to their new rest positions. The
-   class is removed after the transition, so the scroll-driven
-   docking transform stays immediate. */
+   class is removed after the transition. */
 .hero-deck--refan .deck-card {
   transition: transform 600ms var(--ease);
 }
@@ -1360,6 +1292,7 @@ footer[id],
 }
 
 .hero-tab {
+  min-width: 44px;
   min-height: 44px;
   padding: 8px 0;
   border: 0;
@@ -1380,16 +1313,6 @@ footer[id],
   border-radius: 999px;
   background: var(--ink);
   color: var(--bg);
-}
-
-/* The caption and tabs are hero elements: as the deck starts
-   to pin and dock, they fade out (tied to --deck-progress), so
-   they never slide up over the pinned deck. At rest, and
-   without JavaScript or under reduced motion, they are fully
-   visible. */
-.hero-caption,
-.hero-tabs {
-  opacity: calc(1 - var(--deck-progress, 0) * 2.5);
 }
 
 /* ---- Buttons and links: plain verbs ---- */
@@ -1576,12 +1499,9 @@ footer[id],
   border: 1px solid var(--rule);
   border-radius: 8px;
   overflow: hidden;
-  /* The card's opacity is the docking moment's --track-reveal
-     (0 at rest on desktop, 1 once the deck has docked), driven
-     by the scroll listener in page.tsx. The default is 1, so
-     the track shows fully without JavaScript and under reduced
-     motion. */
-  opacity: var(--track-reveal, 1);
+  /* Positioned, so the title's stretched link (the whole card
+     is clickable) has a containing block. */
+  position: relative;
 }
 
 .track-card-text {
@@ -1792,31 +1712,14 @@ footer[id],
 /* Desktop fold pacing: the hero and Work section lose a little
    on 1080p/900p laptop screens. This block sits after the
    rules it overrides, so it wins the cascade. Mobile keeps
-   the generous pacing. */
+   the generous pacing. (An earlier version pushed #work down
+   100px here to hide the empty slot of the track while it sat
+   invisible until the deck docked; the docking is gone and the
+   track shows from the start, so the section uses its standard
+   spacing and the first card sits nearer the fold.) */
 @media (min-width: 1024px) {
   .hero-actions {
     margin-top: var(--space-3);
-  }
-
-  /* 124px, not 24px: the track is the deck's destination and
-     sits at opacity 0 until the deck docks, so at rest the
-     space below the Work intro is the first card's empty slot
-     — a blank band that read as a hole (269px of it in the
-     first viewport at 1440x900). Pushing the whole Work section
-     down 100px moves that empty slot down with it, so only
-     169px of it shows at rest; the gap this opens above the
-     heading is section spacing at a section boundary (the
-     hairline rule marks it), where a generous gap reads as
-     intentional, not missing content. The fold moves with it
-     (first card top 631px to 731px) — the same 100px, because
-     the band IS the space above the first card. The docking
-     offset is measured at runtime from the real rects
-     (page.tsx), so the deck still lands exactly on the track;
-     the spread and reveal formulas are unchanged and scale to
-     the longer dock. Desktop only: the phone track has no
-     docking and no band (the first card peeks by 24px there). */
-  #work {
-    padding-top: 124px;
   }
 }
 
@@ -2260,7 +2163,11 @@ footer[id],
   text-decoration-color: var(--accent);
   text-decoration-thickness: 1px;
   text-underline-offset: 3px;
-  padding: 10px 0.15em;
+  /* No horizontal padding: a 0.15em gap before any punctuation
+     following a claim button read as a stray space ("cold rent
+     ."), so the padding is vertical only and punctuation
+     attaches to the preceding word. */
+  padding: 10px 0;
   margin-block: -10px;
   cursor: pointer;
   position: relative;
@@ -2904,17 +2811,10 @@ footer[id],
   /* The track is a vertical stack under reduced motion (its
      desktop media query requires no-preference), so there is
      nothing to override here. */
-  /* The deck scroll effect is transform-only, so it is
-     switched off here too: the deck sits at its rest fanned
-     state and does not move on scroll. Only the deck's lag
-     transform is removed — the cards keep their rest fan (the
-     JS never sets --deck-progress under reduced motion, so the
-     interpolation stays at 0 and the cards sit fanned, not
-     piled). The hero text never moves on scroll, so nothing
-     else needs overriding. */
-  .hero-deck {
-    transform: none;
-  }
+  /* The deck is a static fan that does not move on scroll, so
+     there is nothing to switch off here either — the re-fan
+     transition below is the only deck motion, and it is
+     removed. */
 
   .hero-deck--refan .deck-card {
     transition: none;

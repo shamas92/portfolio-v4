@@ -16,33 +16,60 @@ const PHOTOS: Record<string, string> = {
   upliftu: "/projects/upliftu.jpg",
 };
 
+/** What the created visual depicts, per project — the alt text.
+ *  It describes the scene (a device against a backdrop), never
+ *  claims the image is a product screenshot or a real photo. */
+const ALT: Record<string, string> = {
+  leaselens:
+    "A phone on a rainy neon street, its screen showing the LeaseLens app",
+  "sales-etl-pipeline":
+    "A laptop in a dark studio, its screen showing the Sales ETL pipeline",
+  oratorpath:
+    "A laptop on a dark stage, its screen showing the OratorPath dashboard",
+  "hitec-cms":
+    "A laptop in a bright office, its screen showing the HITEC admin panel",
+  "quality-crm":
+    "A laptop in a warm workshop, its screen showing the Quality CRM",
+  upliftu:
+    "A phone in a bright campus study space, its screen showing the UpliftU app",
+};
+
 /** A project's photo, cropped to the card's frame
  *  (object-fit: cover — the files are 3:2, so the frame trims a
  *  little top and bottom, never the device). next/image serves a
- *  responsive size, and the deck and the track use the same sizes
- *  string, so the browser reuses one optimised file per width
- *  instead of fetching the same photo twice. The desktop slot is
- *  640px, not 360px: the track photo displays at ~429x568, and a
- *  360px slot served a 359x239 file that the checker measured
- *  blown up 2.38x; 640px serves a 750w file that covers it.
- *  Decorative inside its link or deck card (alt ""), never a
- *  screenshot claim. */
+ *  responsive size, and the deck and the track use different
+ *  sizes strings — their real display widths — so the browser
+ *  fetches a file close to what it shows instead of the 1920w
+ *  file a shared 640px slot served at DPR 2: the deck card is
+ *  320px wide (200px on phones, 280px on tablets), the track
+ *  photo about 429px on desktop and near full width in the
+ *  vertical stack. The sizes caps keep the DPR-2 pick at 640w
+ *  (deck) and 1080w (track), never 1920w. */
 export function ProjectPhoto({
   slug,
+  variant = "track",
   eager,
+  fetchPriority,
 }: {
   slug: string;
+  variant?: "deck" | "track";
   eager?: boolean;
+  fetchPriority?: "high" | "low" | "auto";
 }) {
   const src = PHOTOS[slug];
   if (!src) return null;
+  const sizes =
+    variant === "deck"
+      ? "(max-width: 767px) 200px, (max-width: 1023px) 280px, 320px"
+      : "(max-width: 767px) 90vw, (max-width: 1023px) 90vw, 429px";
   return (
     <Image
       src={src}
-      alt=""
+      alt={ALT[slug] ?? ""}
       fill
-      sizes="(max-width: 767px) 90vw, (max-width: 1023px) 45vw, 640px"
+      sizes={sizes}
       loading={eager ? "eager" : "lazy"}
+      fetchPriority={fetchPriority}
       style={{ objectFit: "cover" }}
     />
   );

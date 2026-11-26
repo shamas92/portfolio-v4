@@ -131,7 +131,7 @@ export function TrackCard({ project }: { project: Project }) {
             ))}
           </ul>
         </div>
-        <div className="track-links" style={{ marginTop: 0 }}>
+        <div className="track-links">
           <Link href={`/work/${project.slug}`} className="track-case">
             {ui.viewCaseStudy}{" "}
             <span className="track-case-arrow" aria-hidden="true">

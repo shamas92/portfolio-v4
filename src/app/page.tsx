@@ -44,12 +44,10 @@ export default function Home() {
   const [activeSlug, setActiveSlug] = useState("leaselens");
   /* The track's scroll range, for --track-x: the track
      section's document top and (height − viewport height).
-     trackOk is false until the track has been measured (and
-     stays false where the track is a vertical stack — below
-     1024px, or under reduced motion — where no measurement is
-     needed). Recomputed on mount, resize, font load and locale
-     change, so it holds across widths and languages. */
-  const trackOkRef = useRef(false);
+     Recomputed on mount, resize, font load and locale change,
+     so it holds across widths and languages. Below 1024px, or
+     under reduced motion, the track is a vertical stack and no
+     measurement is needed. */
   const trackTopRef = useRef(0);
   const trackRangeRef = useRef(0);
 
@@ -73,11 +71,11 @@ export default function Home() {
 
   /* Work track scroll — the track moves left as the user scrolls
    *  vertically (desktop, 1024px and up): a tall scroll range
-   *  (.track-scroll, 200vh) holds a sticky viewport, and the
+   *  (.track-scroll, 160vh) holds a sticky viewport, and the
    *  scroll listener drives --track-x (0→1) across it. The
    *  variable lives on the .page element, so the track reads it;
-   *  it is written straight from the scroll (no damping), so the
-   *  track follows the wheel, like the reference. Below 1024px
+   *  it is written from the scroll (no damping), so the track
+   *  follows the wheel, like the reference. Below 1024px
    *  there is no horizontal track: the track shows as a vertical
    *  stack. The deck does not move on scroll — it stays a static
    *  fan in the hero (see HeroDeck.tsx); the track is fully
@@ -86,39 +84,64 @@ export default function Home() {
    *  docked and toggled inert on its cards, which dropped links
    *  from a fast keyboard Tab pass — that mechanism is gone).
    *
-   *  A passive rAF scroll listener, skipped under reduced
-   *  motion and without JavaScript (the track is a stack then,
-   *  and --track-x keeps its CSS default of 0). useLayoutEffect
+   *  A passive scroll listener coalesced to at most one
+   *  requestAnimationFrame, skipped under reduced motion and
+   *  without JavaScript (the track is a stack then, and
+   *  --track-x keeps its CSS default of 0). DOM writes are
+   *  skipped when the value has not changed. useLayoutEffect
    *  so the first update lands before paint. */
   useLayoutEffect(() => {
     const page = pageRef.current;
     if (!page) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let disposed = false;
+    /* Scroll-write caches (item 5): coalesce scroll updates to
+       at most one requestAnimationFrame, and skip DOM writes
+       whose value has not changed. */
+    let ticking = false;
+    let lastTrackX = "";
+    let lastCounterIndex = -1;
+    /* The counter element is rendered conditionally (desktop +
+       motion allowed), so resolve it lazily and cache it; the
+       card count is fixed for the session (it only changes on
+       locale, which re-runs this effect). */
+    let counterEl: HTMLElement | null = null;
+    const totalCards = page.querySelectorAll(".track-card").length;
 
     const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
 
     /* The track's horizontal progress: 0 until the track section
-       arrives, 1 once it has scrolled through. Written straight
-       from the scroll, no damping. Also updates the track
-       counter ("2 / 3") — the current full card, from the
-       track's progress. */
+       arrives, 1 once it has scrolled through. Written from the
+       scroll, no damping. Also updates the track counter
+       ("2 / 3") — the current full card, from the track's
+       progress. DOM writes are skipped when the value has not
+       changed: --track-x only when the rounded progress
+       differs, the counter only when the displayed index
+       differs. */
     const sync = () => {
       const y = window.scrollY;
       const trackProgress =
         trackRangeRef.current > 0
           ? clamp01((y - trackTopRef.current) / trackRangeRef.current)
           : 0;
-      page.style.setProperty("--track-x", trackProgress.toFixed(3));
-      const counter = page.querySelector<HTMLElement>(".track-counter");
-      if (counter) {
-        const total = page.querySelectorAll(".track-card").length;
-        if (total > 0) {
+      const trackX = trackProgress.toFixed(3);
+      if (trackX !== lastTrackX) {
+        page.style.setProperty("--track-x", trackX);
+        lastTrackX = trackX;
+      }
+      if (totalCards > 0) {
+        if (!counterEl) {
+          counterEl = page.querySelector<HTMLElement>(".track-counter");
+        }
+        if (counterEl) {
           const index = Math.min(
-            total - 1,
-            Math.floor(trackProgress * total),
+            totalCards - 1,
+            Math.floor(trackProgress * totalCards),
           );
-          counter.textContent = `${index + 1} / ${total}`;
+          if (index !== lastCounterIndex) {
+            counterEl.textContent = `${index + 1} / ${totalCards}`;
+            lastCounterIndex = index;
+          }
         }
       }
     };
@@ -133,12 +156,14 @@ export default function Home() {
         page.querySelector<HTMLElement>(".track-viewport");
       const trackScroll = page.querySelector<HTMLElement>(".track-scroll");
       if (!isDesktop() || !track || !trackViewport || !trackScroll) {
-        trackOkRef.current = false;
         return false;
       }
       /* Reset the track translation so the photos are at their
-         rest positions for the measurement. */
-      page.style.setProperty("--track-x", "0");
+         rest positions for the measurement. Keep the write
+         cache in sync so the next sync() does not rewrite the
+         same value. */
+      page.style.setProperty("--track-x", "0.000");
+      lastTrackX = "0.000";
       /* The track's max translation: content width minus the
          viewport width. Layout-based, so it is safe to measure
          at any scroll position. */
@@ -157,12 +182,19 @@ export default function Home() {
       );
       trackTopRef.current = trackTop;
       trackRangeRef.current = trackRange;
-      trackOkRef.current = true;
       return true;
     };
 
+    /* Coalesce scroll updates to at most one
+       requestAnimationFrame: a scroll event only schedules a
+       sync if one is not already pending. */
     const onScroll = () => {
-      sync();
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(() => {
+        ticking = false;
+        if (!disposed) sync();
+      });
     };
     const onResize = () => {
       measure();
@@ -191,49 +223,16 @@ export default function Home() {
        wraps differently, so the hero and the track move. */
   }, [locale]);
 
-  /* S4: a hero tab also scrolls the track to that project — the
-     full cards by their track position, the compact projects by
-     scrolling to their row in the Earlier work list below the
-     track; on the vertical stack (mobile / reduced motion) the
-     card or row itself is scrolled into view. */
-  const scrollTrackTo = (slug: string) => {
-    const project = content.projects.find((p) => p.slug === slug);
-    if (!project) return;
-    const reduced = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    const behavior: ScrollBehavior = reduced ? "auto" : "smooth";
-    const isDesktop = window.matchMedia("(min-width: 1024px)").matches;
-    if (isDesktop && trackOkRef.current && trackRangeRef.current > 0) {
-      if (project.tier === "full") {
-        const full = content.projects.filter((p) => p.tier === "full");
-        const index = full.findIndex((p) => p.slug === slug);
-        const progress =
-          full.length > 1 ? Math.max(0, index) / (full.length - 1) : 0;
-        window.scrollTo({
-          top: trackTopRef.current + progress * trackRangeRef.current,
-          behavior,
-        });
-        return;
-      }
-    }
-    const card = pageRef.current?.querySelector<HTMLElement>(
-      `[data-slug="${slug}"]`,
-    );
-    if (card) {
-      window.scrollTo({
-        top: Math.max(
-          0,
-          card.getBoundingClientRect().top + window.scrollY - 96,
-        ),
-        behavior,
-      });
-    }
-  };
-
+  /* A hero tab only selects the project: it switches the hero
+     showcase (front card, caption, active tab) and nothing
+     else. It does NOT scroll the page or change the URL — the
+     visitor stays at the hero, at the same scroll position.
+     Only the selected project's explicit "View case study"
+     action navigates to the case page. (An earlier version
+     scrolled the track to the project on tab select; that
+     scroll call was removed.) */
   const handleTabSelect = (slug: string) => {
     setActiveSlug(slug);
-    scrollTrackTo(slug);
   };
 
   return (
@@ -297,12 +296,11 @@ export default function Home() {
         aria-labelledby="work-head"
         tabIndex={-1}
       >
-        <Reveal>
-          <h2 className="section-head" id="work-head">
-            {ui.work.heading}
-          </h2>
-          <p className="section-intro">{ui.work.intro}</p>
-        </Reveal>
+        {/* The section heading and intro live inside the track
+            (WorkSection renders them as the first panel, the
+            reference's "Selected work" text panel), not as a
+            header above it — so the first card follows promptly
+            with no blank lead-in. */}
         <WorkSection />
       </section>
 

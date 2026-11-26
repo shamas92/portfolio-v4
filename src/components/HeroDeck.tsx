@@ -10,7 +10,7 @@
  *
  * The front card follows the active tab (page.tsx owns the state,
  * default LeaseLens): the deck re-fans with the active project in
- * front. The re-fan is a 600ms transform transition, enabled only
+ * front. The re-fan is a 400ms transform transition, enabled only
  * while the tab change settles (the .hero-deck--refan class).
  *
  * The mechanism:
@@ -63,9 +63,10 @@ export function HeroDeck({ activeSlug }: { activeSlug: string }) {
     activeSlug,
     ...SLUGS.filter((s) => s !== activeSlug),
   ];
-  /* Re-fan transition: enabled for 650ms after the active tab
-     changes, so the cards glide to their new rest positions,
-     then removed. Skipped on the first render. */
+  /* Re-fan transition: enabled for 450ms after the active tab
+     changes (a 400ms transition plus a small buffer), so the
+     cards glide to their new rest positions, then removed.
+     Skipped on the first render. */
   const [refanning, setRefanning] = useState(false);
   const firstRender = useRef(true);
   useEffect(() => {
@@ -74,7 +75,7 @@ export function HeroDeck({ activeSlug }: { activeSlug: string }) {
       return;
     }
     setRefanning(true);
-    const t = setTimeout(() => setRefanning(false), 650);
+    const t = setTimeout(() => setRefanning(false), 450);
     return () => clearTimeout(t);
   }, [activeSlug]);
 

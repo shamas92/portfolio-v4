@@ -2,12 +2,15 @@
  * The Work section: a horizontal scroll-driven track of the three
  * full projects, like the reference's "Selected work", plus a
  * compact "Earlier work" list of the three earlier projects
- * below it. The track moves left as the user scrolls vertically
- * (desktop, 1024px and up): a tall scroll range (.track-scroll,
- * 200vh) holds a sticky viewport, and the scroll listener in
- * page.tsx drives --track-x (0→1) across it. The deck stays in
- * the hero and does not dock onto the track; the track shows
- * fully from the start.
+ * below it. The track opens with the section intro as its first
+ * panel (strong heading + concise supporting line), so the
+ * first card follows promptly with no blank lead-in. The track
+ * moves left as the user scrolls vertically (desktop, 1024px
+ * and up): a tall scroll range (.track-scroll, 160vh) holds a
+ * sticky viewport, and the scroll listener in page.tsx drives
+ * --track-x (0→1) across it. The deck stays in the hero and
+ * does not dock onto the track; the track shows fully from the
+ * start.
  *
  * The filter is gone: it dimmed cards in a grid where all six
  * were visible at once, which does not fit a horizontal track —
@@ -95,6 +98,19 @@ export function WorkSection() {
       <div className="track-scroll">
         <div className="track-viewport">
           <div className="track">
+            {/* The section intro as the track's first panel (the
+                reference's "Selected work" text panel): the
+                strong heading and the concise supporting line.
+                It sits at the start of the track, so the first
+                card follows promptly with no blank lead-in. On
+                the vertical stack (mobile / reduced motion) it
+                reads as the section header above the cards. */}
+            <div className="track-intro">
+              <h2 className="section-head" id="work-head">
+                {ui.heading}
+              </h2>
+              <p className="section-intro">{ui.intro}</p>
+            </div>
             {fullProjects.map((project) => (
               <TrackCard key={project.slug} project={project} />
             ))}

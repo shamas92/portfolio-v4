@@ -893,6 +893,15 @@ footer[id],
      with the content edge. 2px of inline margin keeps the
      rotated corners inside the content box. */
   margin-inline: 2px;
+  /* The highlight may hold a long word ("Datenpipelines",
+     14 characters): cap it at the column width and let the
+     word break, so at 320px it wraps instead of overflowing
+     the content column. box-decoration-break: clone keeps the
+     marker treatment on every fragment; hyphens lets German
+     compound words break at a hyphen where the browser can. */
+  max-width: 100%;
+  overflow-wrap: break-word;
+  hyphens: auto;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
 }
@@ -1213,11 +1222,11 @@ footer[id],
 }
 
 /* Re-fan on tab change: while the .hero-deck--refan class is
-   set (650ms after a tab click), the cards' transform
+   set (450ms after a tab click), the cards' transform
    transitions, so they glide to their new rest positions. The
    class is removed after the transition. */
 .hero-deck--refan .deck-card {
-  transition: transform 600ms var(--ease);
+  transition: transform 400ms var(--ease);
 }
 
 /* ---- Hero showcase: caption + tabs under the deck ---- */
@@ -1472,25 +1481,36 @@ footer[id],
 /* ---- Work track: three wide cards, a horizontal scroll-driven row on desktop ---- */
 /* On desktop (1024px and up, motion allowed, scripting enabled)
    the track scrolls horizontally as the user scrolls vertically:
-   the section is 200vh tall, its viewport is sticky, and the row
+   the section is 160vh tall, its viewport is sticky, and the row
    translates left by --track-x * --track-max. --track-x (0→1)
    and --track-max (content width minus viewport width) are
-   written by the scroll listener in page.tsx. Everywhere else
-   — mobile, reduced motion, no JavaScript, or print — the track
-   is a vertical stack: no sticky, no translation, every card
-   fully visible. The reference's "Selected work" is a horizontal
-   track; the heading stays "Latest Projects" and the "Track
-   record" strip is omitted (no equivalent verified stats
-   exist). The filter is removed: it dimmed cards in a grid
-   where all six were visible at once, which does not fit a
-   track. The three earlier projects (HITEC, Quality CRM,
-   UpliftU) sit in a ruled "Earlier work" list below the track,
-   not in it. */
+   written by the scroll listener in page.tsx. The track opens
+   with the section intro as its first panel (a text panel at
+   the start of the row), so the first card follows promptly.
+   Everywhere else — mobile, reduced motion, no JavaScript, or
+   print — the track is a vertical stack: no sticky, no
+   translation, every card fully visible, the intro panel
+   reading as the section header above them. The reference's
+   "Selected work" is a horizontal track; the heading stays
+   "Latest Projects" and the "Track record" strip is omitted
+   (no equivalent verified stats exist). The filter is removed:
+   it dimmed cards in a grid where all six were visible at
+   once, which does not fit a horizontal track — the cards pass
+   one at a time, so dimming adds nothing, and the reference
+   has no filter. */
 
 /* The stack (the default, and the fallback): photo on top,
    text below, every card fully visible. */
 .track-scroll {
   margin-top: var(--space-3);
+}
+
+/* The section intro as the track's first panel. On the vertical
+   stack it is a plain block at the top of the column (the
+   section header above the cards); its fixed width lives in
+   the desktop media query, where the track is a row. */
+.track-intro {
+  min-width: 0;
 }
 
 .track {
@@ -1852,7 +1872,7 @@ footer[id],
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    height: 200vh;
+    height: 160vh;
   }
 
   .track-viewport {
@@ -1874,14 +1894,41 @@ footer[id],
   .track-card {
     flex: none;
     width: min(860px, calc(100vw - 2 * var(--space-3)));
-    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
-    align-items: start;
+    /* Media left (~58%), copy right (~42%) — the reference's
+       pairing. The DOM order stays text-first (better for
+       screen readers); the visual order is swapped by `order`
+       below. */
+    grid-template-columns: minmax(0, 1.4fr) minmax(0, 1fr);
+    /* Stretch so the text column is the card's full height and
+       the links row can pin to its bottom edge. */
+    align-items: stretch;
   }
 
+  /* Media on the left, copy on the right (the reference's
+     pairing). */
   .track-photo {
-    order: 0;
+    order: 1;
     aspect-ratio: auto;
     align-self: stretch;
+  }
+
+  .track-card-text {
+    order: 2;
+  }
+
+  /* The links row pins to the text column's bottom edge, like
+     the reference's bottom row. */
+  .track-links {
+    margin-top: auto;
+  }
+
+  /* The intro panel: a fixed-width text panel at the start of
+     the track, like the reference's "Selected work" intro,
+     centred against the cards. */
+  .track-intro {
+    flex: none;
+    width: min(420px, calc(100vw - 2 * var(--space-3)));
+    align-self: center;
   }
 }
 

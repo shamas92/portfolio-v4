@@ -1,16 +1,16 @@
 /**
  * The Work section: a horizontal scroll-driven track of the four
- * full projects, like the reference's "Selected work", plus a
- * compact "Earlier work" list of the two earlier projects
- * below it. The track opens with the section intro as its first
- * panel (strong heading + concise supporting line), so the
- * first card follows promptly with no blank lead-in. The track
- * moves left as the user scrolls vertically (desktop, 1024px
- * and up): a tall scroll range (.track-scroll, 220vh) holds a
- * sticky viewport, and the scroll listener in page.tsx drives
- * --track-x (0→1) across it. The deck stays in the hero and
- * does not dock onto the track; the track shows fully from the
- * start.
+ * full projects, like the reference's "Selected work". The track
+ * opens with the section intro as its first panel (strong
+ * heading + concise supporting line), so the first card follows
+ * promptly with no blank lead-in. The track moves left as the
+ * user scrolls vertically (desktop, 1024px and up): a tall
+ * scroll range (.track-scroll) holds a sticky viewport, and the
+ * scroll listener in page.tsx drives --track-x (0→1) across it.
+ * The deck stays in the hero and does not dock onto the track;
+ * the track shows fully from the start. The earlier projects
+ * are NOT listed here — they live on the /work index, linked
+ * from the track's lime end card ("All 6 projects").
  *
  * The filter is gone: it dimmed cards in a grid where all six
  * were visible at once, which does not fit a horizontal track —
@@ -33,26 +33,18 @@
  * stack of the same cards (photo on top, text below), no sticky,
  * no horizontal translation — the cards are all visible in
  * normal flow, the end card last.
- *
- * Earlier work: a ruled list, not cards — year and role, the
- * title (a link to the case page, stretched over the row), the
- * one-liner and the stack chips. No photo, no stats slot, no
- * proof line. The heading comes from content.ts
- * (ui.work.earlierHeading).
  */
 "use client";
 
 import Link from "next/link";
 import { useContent } from "@/i18n/LocaleProvider";
-import { TrackCard, cardTitle } from "./TrackCard";
+import { TrackCard } from "./TrackCard";
 
 export function WorkSection() {
   const content = useContent();
   const projects = content.projects;
   const ui = content.ui.work;
-  const earlierWorkHeading = ui.earlierHeading;
   const fullProjects = projects.filter((p) => p.tier === "full");
-  const compactProjects = projects.filter((p) => p.tier === "compact");
 
   return (
     <>
@@ -116,42 +108,6 @@ export function WorkSection() {
           <div className="track-progress" aria-hidden="true" />
         </div>
       </div>
-      {/* Earlier work: the compact tier as a ruled list below the
-          track. No photo, no stats slot, no proof line; year and
-          role, the title (linked, stretched over the row), the
-          one-liner and the stack chips per row. */}
-      {compactProjects.length > 0 && (
-        <div className="earlier-work">
-          <h3 className="earlier-work-heading">{earlierWorkHeading}</h3>
-          <ul className="earlier-work-list">
-            {compactProjects.map((project) => (
-              <li
-                key={project.slug}
-                className="earlier-work-item"
-                data-slug={project.slug}
-              >
-                <p className="track-meta">
-                  {project.year} · {project.role}
-                </p>
-                <h4 className="earlier-work-title">
-                  <Link
-                    href={`/work/${project.slug}`}
-                    className="earlier-work-link"
-                  >
-                    {cardTitle(project)}
-                  </Link>
-                </h4>
-                <p className="earlier-work-summary">{project.rowOutcome}</p>
-                <ul className="track-stack">
-                  {project.stack.slice(0, 5).map((tag) => (
-                    <li key={tag}>{tag}</li>
-                  ))}
-                </ul>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
     </>
   );
 }

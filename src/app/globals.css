@@ -1585,6 +1585,14 @@ footer[id],
   margin-top: var(--space-3);
 }
 
+/* The green progress line: hidden by default (mobile, reduced
+   motion, no JS) — it only shows in the desktop track context,
+   where the track is a horizontal scroll (see the desktop
+   media query below). */
+.track-progress {
+  display: none;
+}
+
 /* The section intro as the track's first panel. On the vertical
    stack it is a plain block at the top of the column (the
    section header above the cards); its fixed width lives in
@@ -2031,6 +2039,26 @@ footer[id],
     display: flex;
     align-items: center;
     overflow: hidden;
+  }
+
+  /* The green progress line, the reference's: a 3px lime fill,
+     full width, no rail, no label. The cards are vertically
+     centred in the viewport, so their bottom edge is at
+     50vh + 320px; the line sits 111px below that
+     (50vh + 431px). It fills left-to-right with --track-x
+     (0 at the first card, 1 at the last) — direct, since the
+     lerp is gone, so the fill matches the on-screen track
+     position exactly. */
+  .track-progress {
+    display: block;
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: calc(50vh + 431px);
+    height: 3px;
+    background: var(--lime);
+    transform: scaleX(var(--track-x, 0));
+    transform-origin: left;
   }
 
   .track {

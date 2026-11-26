@@ -23,9 +23,11 @@
  * "More on GitHub" link, which now lives on the /work page.
  *
  * Track navigation (S4): a "Skip the track" link at the track
- * start jumps to #background. The reference has no counter and
- * no progress hairline, so the track carries neither — the
- * scroll-driven movement itself shows the position.
+ * start jumps to #background. The reference has no counter, but
+ * it does have a green progress line below the section — a 3px
+ * lime fill, full width, no rail, no label — that grows
+ * left-to-right as the track scrolls, so the track carries
+ * one (the .track-progress element in the viewport).
  *
  * Mobile (<1024px) and reduced motion: the track is a vertical
  * stack of the same cards (photo on top, text below), no sticky,
@@ -102,6 +104,16 @@ export function WorkSection() {
               </span>
             </Link>
           </div>
+          {/* The green progress line, the reference's: a 3px lime
+              fill, full width, no rail, no label, 111px below
+              the track cards, growing left-to-right with
+              --track-x (0 at the first card, 1 at the last).
+              It sits inside the viewport (after the track, so
+              it does not move horizontally) and is only shown
+              in the desktop track context — hidden below 1024px
+              and under reduced motion, where the track is a
+              vertical stack. Decorative (aria-hidden). */}
+          <div className="track-progress" aria-hidden="true" />
         </div>
       </div>
       {/* Earlier work: the compact tier as a ruled list below the

@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useContent } from "@/i18n/LocaleProvider";
 import { deContent } from "@/content.de";
@@ -11,6 +11,36 @@ import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
 
 const SECTION_IDS = ["work", "background", "contact"] as const;
+
+/** Scroll state: the pill morph starts at y >= 24px. The scroll
+ *  position is external DOM state, so it is read with
+ *  useSyncExternalStore (the same pattern ThemeToggle uses for
+ *  data-theme): the first client render already has the correct
+ *  value when the page is restored mid-scroll, instead of the
+ *  server's `false` flipping after an effect runs. The
+ *  subscription only notifies when the boolean flips across the
+ *  24px threshold, so scrolling does not re-render on every
+ *  pixel. The server snapshot is false (at top). */
+function getScrolled(): boolean {
+  return typeof window !== "undefined" && window.scrollY >= 24;
+}
+
+function getServerScrolled(): boolean {
+  return false;
+}
+
+function subscribeScrolled(onChange: () => void): () => void {
+  let current = window.scrollY >= 24;
+  const onScroll = () => {
+    const next = window.scrollY >= 24;
+    if (next !== current) {
+      current = next;
+      onChange();
+    }
+  };
+  window.addEventListener("scroll", onScroll, { passive: true });
+  return () => window.removeEventListener("scroll", onScroll);
+}
 
 /** The global header, rebuilt: a fixed bar that is a full-width
  *  flush container at scroll top and morphs into a centered
@@ -28,7 +58,30 @@ export function SiteHeader() {
   const pathname = usePathname();
   const reduceMotion = useReducedMotion();
   const [active, setActive] = useState<string | null>("work");
-  const [scrolled, setScrolled] = useState(false);
+  const scrolled = useSyncExternalStore(
+    subscribeScrolled,
+    getScrolled,
+    getServerScrolled,
+  );
+  /* Mounted: false until the first effect after mount. The morph
+   *  transition only runs once mounted (see the
+   *  .site-header.is-mounted rule in globals.css), so a state flip
+   *  right after mount — e.g. the scroll position landing after
+   *  hydration — snaps instantly instead of animating the 200ms
+   *  morph. Normal user scrolling still animates smoothly. The
+   *  nav pill's transition is likewise duration 0 until mounted. */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    /* State updates run inside a timeout callback, never
+       synchronously in the effect body (the codebase rule —
+       see HeroShowcase). The timeout also means `mounted`
+       flips after the active-section computation has committed,
+       so the pill's first placement on a mid-scroll reload
+       still uses the duration-0 transition and snaps instead
+       of springing. */
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
   /* The menu is open for the route it was opened on: a route change
    *  closes it by derivation, with no effect and no ref. */
   const [menuPathname, setMenuPathname] = useState<string | null>(null);
@@ -72,13 +125,10 @@ export function SiteHeader() {
    *  active by rule instead of by scroll-spy. */
   const activeSection = isCasePage ? "work" : active;
 
-  /* Scroll state: the pill morph starts at y >= 24px. */
-  useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY >= 24);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
+  /* Scroll state: the pill morph starts at y >= 24px — read
+   *  during render via useSyncExternalStore (see getScrolled
+   *  above), not in an effect, so a mid-scroll reload renders
+   *  the pill form on the first client render. */
 
   /* Active-section tracking: a scroll-position computation, not an
    * IntersectionObserver. The observer it replaced watched a 5%
@@ -275,9 +325,15 @@ export function SiteHeader() {
     return () => document.removeEventListener("keydown", onKeyDown);
   }, [isMenuOpen]);
 
-  const pillTransition = reduceMotion
-    ? { duration: 0 }
-    : { type: "spring" as const, stiffness: 420, damping: 32 };
+  /* The nav pill's transition: duration 0 under reduced motion
+   *  and until mounted, so the pill never animates on load (e.g.
+   *  when the active-section computation lands on a section
+   *  other than Work after a mid-scroll reload); a spring once
+   *  mounted, so normal navigation still glides. */
+  const pillTransition =
+    reduceMotion || !mounted
+      ? { duration: 0 }
+      : { type: "spring" as const, stiffness: 420, damping: 32 };
 
   return (
     <>
@@ -313,7 +369,7 @@ export function SiteHeader() {
       <header
         className={`site-header${scrolled ? " is-scrolled" : ""}${
           isMenuOpen ? " is-menu-open" : ""
-        }`}
+        }${mounted ? " is-mounted" : ""}`}
       >
       <div className="site-header-inner">
         <div className="header-left">

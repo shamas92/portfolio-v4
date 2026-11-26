@@ -327,6 +327,15 @@ footer[id],
   background: transparent;
   border: 1px solid transparent;
   border-radius: 0;
+}
+
+/* The morph transition only runs once the header is mounted:
+ *  a state flip right after mount — e.g. the scroll position
+ *  landing after hydration on a mid-scroll reload — snaps
+ *  instantly instead of animating the 200ms morph, which was
+ *  the visible flicker. Normal user scrolling still animates
+ *  smoothly. */
+.site-header.is-mounted .site-header-inner {
   transition:
     max-width 200ms var(--ease),
     margin-top 200ms var(--ease),
@@ -3118,6 +3127,7 @@ footer[id],
   }
 
   .site-header-inner,
+  .site-header.is-mounted .site-header-inner,
   .site-nav a::before,
   .menu-line,
   .copy-icon-envelope,

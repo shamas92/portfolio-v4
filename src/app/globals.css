@@ -1171,17 +1171,14 @@ footer[id],
   }
 }
 
-/* Re-fan on tab change: while the .hero-deck--refan class is
-   set (350ms after a tab click), the cards' transform and
-   filter transition, so they glide to their new rest positions
-   — the reference's card-change motion: ~300ms, ease-out, no
-   overshoot, all four cards moving at once. The class is
-   removed after the transition. */
-.hero-deck--refan .deck-card {
-  transition:
-    transform 300ms var(--ease),
-    filter 300ms var(--ease);
-}
+/* Card changes are a JS rAF lerp, not a CSS transition (see
+   HeroDeck.tsx): the cards' transform and filter are written
+   inline every frame, interpolating from their current slot
+   to their new slot with the reference's ease-out profile
+   (fast initial motion, long gentle settle). There is no
+   transition here on purpose — one would lag behind the lerp
+   and fight it. The kind classes below still set each card's
+   z-index and are the no-JavaScript rest state. */
 
 /* ---- Hero showcase: caption + tabs under the deck ---- */
 /* The caption: bold project name + the verified one-line

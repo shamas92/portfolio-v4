@@ -45,9 +45,9 @@ export const deContent: SiteContent = {
       rowProof:
         "Kaution €950.00 gegenüber Obergrenze €535.41: Überschuss von €414.59 in einem echten Mietvertrag festgestellt.",
       stats: [
-        { value: "86.1%", label: "registered IoU, v7-Demo" },
-        { value: "197", label: "Tests, 132 Backend · 65 Frontend" },
-        { value: "5", label: "Rechtsordnungen im Register" },
+        { value: "86.1%", label: "registered IoU" },
+        { value: "197", label: "Tests" },
+        { value: "5", label: "Rechtsordnungen" },
       ],
       stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
       contribution:
@@ -152,8 +152,9 @@ export const deContent: SiteContent = {
       rowProof:
         "Ein DAG, drei Tasks, vier Tabellen, im Repository geprüft.",
       stats: [
-        { value: "4", label: "Tabellen, Star-Schema" },
-        { value: "3", label: "Tasks, Airflow-DAG" },
+        { value: "1", label: "DAG" },
+        { value: "3", label: "Tasks" },
+        { value: "4", label: "Tabellen" },
       ],
       stack: [
         "Apache Airflow",
@@ -209,6 +210,11 @@ export const deContent: SiteContent = {
         "Gemessenes Feedback für Entwickler, die öffentlich sprechen.",
       rowProof:
         "Veröffentlicht in *Spectrum of Engineering Sciences*, Bd. 3, Heft 7, S. 843–852 (2025).",
+      stats: [
+        { value: "Bd. 3", label: "Band" },
+        { value: "Heft 7", label: "Heft" },
+        { value: "843–852", label: "Seiten" },
+      ],
       stack: ["PyTorch", "Hugging Face", "NLP"],
       contribution:
         "Ich habe den Sprachanalyse-Coach (PyTorch, Hugging Face, NLP) als Abschlussprojekt gebaut und das veröffentlichte Paper mitverfasst.",
@@ -253,6 +259,11 @@ export const deContent: SiteContent = {
         "Datenbankgestützte Universitäts-Webmodule, ein internes CMS-Admin-Panel sowie ein integrierter RAG-Support-Chatbot.",
       rowProof:
         "Umgesetzt im IT-Praktikum (Mai–Okt 2025); internes Admin-Panel & CMS, Live-Betrieb extern fortgeführt.",
+      stats: [
+        { value: "6 Monate", label: "Monate, Mai–Okt. 2025" },
+        { value: "3 Teile", label: "Teile: Module, CMS, Chatbot" },
+        { value: "5 Technologien", label: "Technologien" },
+      ],
       stack: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
       contribution:
         "Ich habe die datenbankgestützten Webmodule, das interne CMS-Admin-Panel und den RAG-Support-Chatbot im IT-Praktikum gebaut.",
@@ -480,6 +491,7 @@ export const deContent: SiteContent = {
       intro: "Vier Projekte im Detail, zwei weitere darunter.",
       proof: "Nachweis",
       viewCaseStudy: "Fallstudie ansehen",
+      trackCaseStudy: "Fallstudie",
       viewMore: "Mehr auf GitHub",
       allProjects: "Alle 6 Projekte",
       earlierHeading: "Frühere Projekte",

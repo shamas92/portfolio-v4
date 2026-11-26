@@ -37,15 +37,23 @@ const ALT: Record<string, string> = {
 /** A project's photo, cropped to the card's frame
  *  (object-fit: cover — the files are 3:2, so the frame trims a
  *  little top and bottom, never the device). next/image serves a
- *  responsive size, and the deck and the track use different
- *  sizes strings — their real display widths — so the browser
- *  fetches a file close to what it shows instead of the 1920w
- *  file a shared 640px slot served at DPR 2: the deck card is
- *  489px wide (200px on phones, 280px on tablets), the track
- *  photo about 652px on desktop and near full width in the
- *  vertical stack. The sizes caps keep the DPR-2 pick at 1080w
- *  (deck) and 1920w (track, the native file for a 652px
- *  display), never larger than the file itself. */
+ *  responsive size, and the deck, the track and the track's
+ *  tilted detail use different sizes strings — their real
+ *  display widths — so the browser fetches a file close to what
+ *  it shows instead of the 1920w file a shared 640px slot
+ *  served at DPR 2: the deck card is 489px wide (200px on
+ *  phones, 280px on tablets), the track photo 590px on desktop
+ *  and near full width in the vertical stack, the detail about
+ *  293px. The sizes caps keep the DPR-2 pick at 1080w (deck)
+ *  and 1200w (track, the next file above 1180px for a 590px
+ *  display), never larger than the file itself; the detail's
+ *  DPR-2 pick is 640w.
+ *
+ *  The detail variant is the SAME photo shown tighter: the
+ *  image is scaled up (1.7×, centred on the device, which is
+ *  the subject of every photo) inside its frame, so the tilted
+ *  detail reads as a closer look at the same created visual —
+ *  never a screenshot, never a second image. */
 export function ProjectPhoto({
   slug,
   variant = "track",
@@ -53,7 +61,7 @@ export function ProjectPhoto({
   fetchPriority,
 }: {
   slug: string;
-  variant?: "deck" | "track";
+  variant?: "deck" | "track" | "detail";
   eager?: boolean;
   fetchPriority?: "high" | "low" | "auto";
 }) {
@@ -62,7 +70,9 @@ export function ProjectPhoto({
   const sizes =
     variant === "deck"
       ? "(max-width: 767px) 200px, (max-width: 1023px) 280px, 489px"
-      : "(max-width: 767px) 90vw, (max-width: 1023px) 90vw, 652px";
+      : variant === "detail"
+        ? "293px"
+        : "(max-width: 767px) 90vw, (max-width: 1023px) 90vw, 590px";
   return (
     <Image
       src={src}
@@ -71,7 +81,11 @@ export function ProjectPhoto({
       sizes={sizes}
       loading={eager ? "eager" : "lazy"}
       fetchPriority={fetchPriority}
-      style={{ objectFit: "cover" }}
+      style={
+        variant === "detail"
+          ? { objectFit: "cover", transform: "scale(1.7)" }
+          : { objectFit: "cover" }
+      }
     />
   );
 }

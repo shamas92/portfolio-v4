@@ -162,9 +162,9 @@ export const projects: Project[] = [
     rowProof:
       "Deposit €950.00 vs legal cap €535.41: excess €414.59 flagged on a real lease.",
     stats: [
-      { value: "86.1%", label: "registered IoU, v7 demo" },
-      { value: "197", label: "tests, 132 backend · 65 frontend" },
-      { value: "5", label: "jurisdictions in registry" },
+      { value: "86.1%", label: "registered IoU" },
+      { value: "197", label: "tests" },
+      { value: "5", label: "jurisdictions" },
     ],
     stack: ["Next.js", "TypeScript", "FastAPI", "Python", "SAM 3.1"],
     contribution:
@@ -269,8 +269,9 @@ export const projects: Project[] = [
       "Sales data from several sources, loaded into one trustworthy shape.",
     rowProof: "One DAG, three tasks, four tables, verified in the repository.",
     stats: [
-      { value: "4", label: "tables, star schema" },
-      { value: "3", label: "tasks, Airflow DAG" },
+      { value: "1", label: "DAG" },
+      { value: "3", label: "tasks" },
+      { value: "4", label: "tables" },
     ],
     stack: [
       "Apache Airflow",
@@ -325,6 +326,11 @@ export const projects: Project[] = [
     rowOutcome: "Measured feedback for developers who speak in public.",
     rowProof:
       "Published in *Spectrum of Engineering Sciences*, Vol. 3, Issue 7, pp. 843–852 (2025).",
+    stats: [
+      { value: "Vol. 3", label: "volume" },
+      { value: "Issue 7", label: "issue" },
+      { value: "843–852", label: "pages" },
+    ],
     stack: ["PyTorch", "Hugging Face", "NLP"],
     contribution:
       "Built the speech-analysis coach (PyTorch, Hugging Face, NLP) as the final-year thesis project and co-authored the published paper.",
@@ -369,6 +375,11 @@ export const projects: Project[] = [
       "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
     rowProof:
       "Delivered during IT Department internship (May–Oct 2025); internal admin panel & CMS, live site maintained externally post-internship.",
+    stats: [
+      { value: "6 months", label: "months, May–Oct 2025" },
+      { value: "3 parts", label: "parts: modules, CMS, chatbot" },
+      { value: "5 technologies", label: "technologies" },
+    ],
     stack: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
     contribution:
       "Built the database-backed web modules, the internal CMS admin panel, and the RAG support chatbot during the IT Department internship.",
@@ -629,6 +640,10 @@ export type UiStrings = {
     intro: string;
     proof: string;
     viewCaseStudy: string;
+    /** Track card's bottom-row pill: "Case study" (shorter than
+     *  the hero caption's "View case study", which keeps its own
+     *  wording). */
+    trackCaseStudy: string;
     viewMore: string;
     /** The track's lime end card: "All 6 projects", a whole-card
      *  link to the /work index. */
@@ -790,6 +805,7 @@ export const ui: UiStrings = {
     intro: "Four projects in depth, two more below.",
     proof: "Proof",
     viewCaseStudy: "View case study",
+    trackCaseStudy: "Case study",
     viewMore: "More on GitHub",
     allProjects: "All 6 projects",
     earlierHeading: "Earlier work",

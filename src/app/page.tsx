@@ -22,7 +22,7 @@ const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 
 /** Home: hero (profile row, headline, ask, one action, "see the
  *  work first" link, and the deck showcase with its tabs and
- *  caption) in a two-column split, Work (three full projects in
+ *  caption) in a two-column split, Work (four full projects in
  *  a horizontal scroll-driven track, the earlier projects as a
  *  compact list below it), Background (with the first-person
  *  About as its lead), Skills, Contact (the footer). The work
@@ -71,7 +71,7 @@ export default function Home() {
 
   /* Work track scroll — the track moves left as the user scrolls
    *  vertically (desktop, 1024px and up): a tall scroll range
-   *  (.track-scroll, 160vh) holds a sticky viewport, and the
+   *  (.track-scroll, 190vh) holds a sticky viewport, and the
    *  scroll listener drives --track-x (0→1) across it. The
    *  variable lives on the .page element, so the track reads it;
    *  it is written from the scroll (no damping), so the track
@@ -83,6 +83,13 @@ export default function Home() {
    *  (an earlier docking version hid the track until the deck
    *  docked and toggled inert on its cards, which dropped links
    *  from a fast keyboard Tab pass — that mechanism is gone).
+   *
+   *  The track's max translation (--track-max) is measured from
+   *  the layout (content width minus viewport width), so the
+   *  longer track — four cards plus the lime end card — needs
+   *  no code change here, only the taller .track-scroll range
+   *  in globals.css. The counter counts .track-card elements
+   *  only (four now); the end card is not one.
    *
    *  A passive scroll listener coalesced to at most one
    *  requestAnimationFrame, skipped under reduced motion and

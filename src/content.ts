@@ -362,7 +362,7 @@ export const projects: Project[] = [
     slug: "hitec-cms",
     title: "HITEC University Web Platform & Admin Panel",
     shortTitle: "HITEC Web Platform & Admin Panel",
-    tier: "compact",
+    tier: "full",
     year: 2025,
     category: "Internal / Archived",
     rowOutcome:
@@ -628,9 +628,18 @@ export type UiStrings = {
     proof: string;
     viewCaseStudy: string;
     viewMore: string;
-    /** Heading for the compact "Earlier work" list (HITEC,
-     *  Quality CRM, UpliftU) below the three featured projects. */
+    /** The track's lime end card: "All 6 projects", a whole-card
+     *  link to the /work index. */
+    allProjects: string;
+    /** Heading for the compact "Earlier work" list (Quality CRM,
+     *  UpliftU) below the four featured projects. */
     earlierHeading: string;
+  };
+  /** The /work index page: every project in one place. */
+  workIndex: {
+    heading: string;
+    intro: string;
+    back: string;
   };
   background: {
     heading: string;
@@ -775,11 +784,18 @@ export const ui: UiStrings = {
   },
   work: {
     heading: "Latest projects",
-    intro: "Three projects in depth, three more below.",
+    intro: "Four projects in depth, two more below.",
     proof: "Proof",
     viewCaseStudy: "View case study",
     viewMore: "More on GitHub",
+    allProjects: "All 6 projects",
     earlierHeading: "Earlier work",
+  },
+  workIndex: {
+    heading: "All projects",
+    intro:
+      "All six projects — the four featured in the track, and the two earlier ones.",
+    back: "Home",
   },
   background: {
     heading: "Background",

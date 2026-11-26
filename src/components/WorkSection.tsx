@@ -1,12 +1,12 @@
 /**
- * The Work section: a horizontal scroll-driven track of the three
+ * The Work section: a horizontal scroll-driven track of the four
  * full projects, like the reference's "Selected work", plus a
- * compact "Earlier work" list of the three earlier projects
+ * compact "Earlier work" list of the two earlier projects
  * below it. The track opens with the section intro as its first
  * panel (strong heading + concise supporting line), so the
  * first card follows promptly with no blank lead-in. The track
  * moves left as the user scrolls vertically (desktop, 1024px
- * and up): a tall scroll range (.track-scroll, 160vh) holds a
+ * and up): a tall scroll range (.track-scroll, 190vh) holds a
  * sticky viewport, and the scroll listener in page.tsx drives
  * --track-x (0→1) across it. The deck stays in the hero and
  * does not dock onto the track; the track shows fully from the
@@ -16,47 +16,45 @@
  * were visible at once, which does not fit a horizontal track —
  * the cards pass one at a time, so dimming adds nothing, and
  * the reference has no filter. The filter strings left
- * content.ts / content.de.ts with it. The "View More Projects"
- * link stays, after the track, as the section's closing action.
+ * content.ts / content.de.ts with it. The track closes with a
+ * lime end card ("All 6 projects", the reference's "All 8
+ * projects" end card adapted to the portfolio's six projects),
+ * a whole-card link to the /work index — that replaces the
+ * "More on GitHub" link, which now lives on the /work page.
  *
  * Track navigation (S4): a "Skip the track" link at the track
  * start jumps to #background; a mono counter top-right of the
- * sticky viewport ("2 / 3", written by the scroll listener in
+ * sticky viewport ("1 / 4", written by the scroll listener in
  * page.tsx) and a 2px progress hairline under the viewport,
  * driven by --track-x, orient the visitor inside the track.
  * Both only render where the track is horizontal (desktop with
  * motion allowed); everywhere else the track is a vertical
- * stack and they would overlay the first card.
+ * stack and they would overlay the first card. The counter
+ * counts project cards only — the end card is not a
+ * .track-card, so it never changes the count.
  *
  * Mobile (<1024px) and reduced motion: the track is a vertical
  * stack of the same cards (photo on top, text below), no sticky,
  * no horizontal translation — the cards are all visible in
- * normal flow.
+ * normal flow, the end card last.
  *
  * Earlier work: a ruled list, not cards — year and role, the
  * title (a link to the case page, stretched over the row), the
  * one-liner and the stack chips. No photo, no stats slot, no
- * proof line. The meta line carries the credential (HITEC:
- * "IT Department intern, May–Oct 2025"). The heading comes
- * from content.ts (ui.work.earlierHeading).
+ * proof line. The heading comes from content.ts
+ * (ui.work.earlierHeading).
  */
 "use client";
 
 import Link from "next/link";
 import { useEffect, useState } from "react";
-import { useContent, useLocale } from "@/i18n/LocaleProvider";
-import { Reveal } from "./Reveal";
+import { useContent } from "@/i18n/LocaleProvider";
 import { TrackCard, cardTitle } from "./TrackCard";
 
 export function WorkSection() {
   const content = useContent();
-  const { locale } = useLocale();
   const projects = content.projects;
   const ui = content.ui.work;
-  const newTabNote =
-    locale === "de"
-      ? " (öffnet in einem neuen Tab)"
-      : " (opens in a new tab)";
   const earlierWorkHeading = ui.earlierHeading;
   const fullProjects = projects.filter((p) => p.tier === "full");
   const compactProjects = projects.filter((p) => p.tier === "compact");
@@ -114,10 +112,23 @@ export function WorkSection() {
             {fullProjects.map((project) => (
               <TrackCard key={project.slug} project={project} />
             ))}
+            {/* The end card: a lime "All 6 projects" card, the
+                reference's "All 8 projects" end card adapted to
+                the portfolio's six projects — a whole-card link
+                to the /work index. It is NOT a .track-card, so
+                the counter in page.tsx keeps counting project
+                cards (1 / 4) and the end card needs no stats,
+                proof or stack. */}
+            <Link href="/work" className="track-end-card">
+              <span className="track-end-title">{ui.allProjects}</span>
+              <span className="track-end-circle" aria-hidden="true">
+                →
+              </span>
+            </Link>
           </div>
           {showTrackChrome && (
             <>
-              {/* S4: the track counter ("2 / 3") — its text is
+              {/* S4: the track counter ("1 / 4") — its text is
                   written by the scroll listener in page.tsx. */}
               <p
                 className="track-counter"
@@ -193,22 +204,6 @@ export function WorkSection() {
           </ul>
         </div>
       )}
-      <Reveal>
-        <p className="work-more">
-          <a
-            href="https://github.com/shamas92"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="work-more-link"
-          >
-            {ui.viewMore}
-            <span className="work-more-arrow" aria-hidden="true">
-              ↗
-            </span>
-            <span className="visually-hidden">{newTabNote}</span>
-          </a>
-        </p>
-      </Reveal>
     </>
   );
 }

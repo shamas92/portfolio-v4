@@ -1478,26 +1478,27 @@ footer[id],
   max-width: 60ch;
 }
 
-/* ---- Work track: three wide cards, a horizontal scroll-driven row on desktop ---- */
+/* ---- Work track: four wide cards, a horizontal scroll-driven row on desktop ---- */
 /* On desktop (1024px and up, motion allowed, scripting enabled)
    the track scrolls horizontally as the user scrolls vertically:
-   the section is 160vh tall, its viewport is sticky, and the row
+   the section is 190vh tall, its viewport is sticky, and the row
    translates left by --track-x * --track-max. --track-x (0→1)
    and --track-max (content width minus viewport width) are
    written by the scroll listener in page.tsx. The track opens
    with the section intro as its first panel (a text panel at
-   the start of the row), so the first card follows promptly.
-   Everywhere else — mobile, reduced motion, no JavaScript, or
-   print — the track is a vertical stack: no sticky, no
-   translation, every card fully visible, the intro panel
-   reading as the section header above them. The reference's
-   "Selected work" is a horizontal track; the heading stays
-   "Latest Projects" and the "Track record" strip is omitted
-   (no equivalent verified stats exist). The filter is removed:
-   it dimmed cards in a grid where all six were visible at
-   once, which does not fit a horizontal track — the cards pass
-   one at a time, so dimming adds nothing, and the reference
-   has no filter. */
+   the start of the row), so the first card follows promptly,
+   and closes with a lime "All 6 projects" end card linking to
+   the /work index. Everywhere else — mobile, reduced motion, no
+   JavaScript, or print — the track is a vertical stack: no
+   sticky, no translation, every card fully visible, the intro
+   panel reading as the section header above them and the end
+   card last. The reference's "Selected work" is a horizontal
+   track; the heading stays "Latest Projects" and the "Track
+   record" strip is omitted (no equivalent verified stats
+   exist). The filter is removed: it dimmed cards in a grid
+   where all six were visible at once, which does not fit a
+   horizontal track — the cards pass one at a time, so dimming
+   adds nothing, and the reference has no filter. */
 
 /* The stack (the default, and the fallback): photo on top,
    text below, every card fully visible. */
@@ -1511,6 +1512,59 @@ footer[id],
    the desktop media query, where the track is a row. */
 .track-intro {
   min-width: 0;
+}
+
+/* The end card: a lime "All 6 projects" card, the reference's
+   "All 8 projects" end card adapted to the portfolio's six
+   projects — a whole-card link to the /work index. Bright lime
+   background with dark text in both themes (var(--lime) is the
+   same in both; the dark text is the light theme's ink, so it
+   never flips). On the vertical stack it is 70vw wide, like
+   the reference's mobile end card; its fixed desktop width
+   lives in the desktop media query, where the track is a row. */
+.track-end-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 70vw;
+  height: min(640px, 76dvh);
+  padding: var(--space-4);
+  background: var(--lime);
+  color: var(--ink-light);
+  border-radius: 28px;
+  text-decoration: none;
+}
+
+.track-end-title {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 40px;
+  line-height: 0.95;
+  letter-spacing: -0.03em;
+}
+
+.track-end-circle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--ink-light);
+  color: var(--lime);
+  font-size: 24px;
+  line-height: 1;
+  transition: transform var(--dur-med) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .track-end-card:hover .track-end-circle {
+    transform: translateX(4px);
+  }
+}
+
+.track-end-card:active {
+  transform: scale(0.99);
 }
 
 .track {
@@ -1872,7 +1926,7 @@ footer[id],
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    height: 160vh;
+    height: 190vh;
   }
 
   .track-viewport {
@@ -1929,6 +1983,20 @@ footer[id],
     flex: none;
     width: min(420px, calc(100vw - 2 * var(--space-3)));
     align-self: center;
+  }
+
+  /* The end card: fixed 340px wide on desktop, the reference's
+     size, with the 52px display title and 40px padding. It is
+     shorter than the cards, so it centres against them. */
+  .track-end-card {
+    flex: none;
+    align-self: center;
+    width: 340px;
+    padding: 40px;
+  }
+
+  .track-end-title {
+    font-size: 52px;
   }
 }
 

@@ -246,7 +246,7 @@ export const deContent: SiteContent = {
       slug: "hitec-cms",
       title: "HITEC University Webplattform & Admin-Panel",
       shortTitle: "HITEC Webplattform & Admin-Panel",
-      tier: "compact",
+      tier: "full",
       year: 2025,
       category: "Intern / Archiviert",
       rowOutcome:
@@ -476,11 +476,18 @@ export const deContent: SiteContent = {
     },
     work: {
       heading: "Neueste Projekte",
-      intro: "Drei Projekte im Detail, drei weitere darunter.",
+      intro: "Vier Projekte im Detail, zwei weitere darunter.",
       proof: "Nachweis",
       viewCaseStudy: "Fallstudie ansehen",
       viewMore: "Mehr auf GitHub",
+      allProjects: "Alle 6 Projekte",
       earlierHeading: "Frühere Projekte",
+    },
+    workIndex: {
+      heading: "Alle Projekte",
+      intro:
+        "Alle sechs Projekte — die vier aus der Übersicht und die zwei früheren.",
+      back: "Startseite",
     },
     background: {
       heading: "Werdegang",

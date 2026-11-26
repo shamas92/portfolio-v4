@@ -23,8 +23,9 @@ const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
 /** Home: hero (profile row, headline, ask, one action, "see the
  *  work first" link, and the deck showcase with its tabs and
  *  caption) in a two-column split, Work (four full projects in
- *  a horizontal scroll-driven track, the earlier projects as a
- *  compact list below it), Background (with the first-person
+ *  a horizontal scroll-driven track; the earlier projects live
+ *  on the /work index, linked from the track's lime end card),
+ *  Background (with the first-person
  *  About as its lead), Skills, Contact (the footer). The work
  *  is the first thing after the hero; the "View More Projects"
  *  link sits after the track, so the first project is visible
@@ -42,14 +43,18 @@ export default function Home() {
      project — the reference's front card is its first project
      too. */
   const [activeSlug, setActiveSlug] = useState("leaselens");
-  /* The track's scroll range, for --track-x: the track
-     section's document top and (height − viewport height).
-     Recomputed on mount, resize, font load and locale change,
-     so it holds across widths and languages. Below 1024px, or
-     under reduced motion, the track is a vertical stack and no
-     measurement is needed. */
+  /* The track's scroll position, for --track-x: the track
+     section's document top and the horizontal travel
+     (--track-max). Recomputed on mount, resize, font load and
+     locale change, so it holds across widths and languages.
+     Below 1024px, or under reduced motion, the track is a
+     vertical stack and no measurement is needed. The progress
+     denominator is the horizontal travel (not the full scroll
+     range), so --track-x reaches 1 once the track has scrolled
+     through and stays at 1 during the dwell that follows
+     (see measure()). */
   const trackTopRef = useRef(0);
-  const trackRangeRef = useRef(0);
+  const trackMaxRef = useRef(0);
 
   /* The headline, with the claim's highlight phrase wrapped in
      the lime marker span. The highlight phrase comes from
@@ -73,10 +78,13 @@ export default function Home() {
    *  vertically (desktop, 1024px and up), direct 1:1 like the
    *  reference: one vertical pixel moves the track one
    *  horizontal pixel, no smoothing, no lag. The scroll range
-   *  (.track-scroll) is set in measure() to --track-max +
-   *  viewport height, so the vertical range equals the
-   *  horizontal travel exactly; the CSS height (555vh) is only
-   *  the no-JS fallback approximation. The viewport is sticky,
+   *  (.track-scroll) is set in measure() to --track-max + a
+   *  60vh dwell + viewport height: the vertical range for the
+   *  track itself equals the horizontal travel exactly, and
+   *  the dwell after it keeps the lime end card fully visible
+   *  for 60vh of scroll before the section unpins. The CSS
+   *  height (610vh) is only the no-JS fallback approximation.
+   *  The viewport is sticky,
    *  and the scroll listener writes --track-x (0→1) straight
    *  from the scroll position — the track follows the wheel
    *  immediately and never drifts after the scroll stops. The
@@ -135,9 +143,15 @@ export default function Home() {
        has scrolled through. */
     const sync = () => {
       const y = window.scrollY;
+      /* Progress over the horizontal travel only: 0 until the
+         track section arrives, 1 once it has scrolled through
+         (after trackMax of vertical scroll). During the dwell
+         that follows, the numerator keeps growing but clamp01
+         holds the progress at 1, so the track and the progress
+         line stay at their end values and never drift. */
       const progress =
-        trackRangeRef.current > 0
-          ? clamp01((y - trackTopRef.current) / trackRangeRef.current)
+        trackMaxRef.current > 0
+          ? clamp01((y - trackTopRef.current) / trackMaxRef.current)
           : 0;
       writeTrack(progress);
     };
@@ -168,22 +182,28 @@ export default function Home() {
         track.scrollWidth - trackViewport.clientWidth,
       );
       track.style.setProperty("--track-max", `${max}px`);
-      /* 1:1 ratio: the vertical scroll range must equal the
-         horizontal travel, so the scroll container's height is
-         set to trackMax + viewport height (the range is height
-         minus viewport height). This overrides the CSS fallback
-         height with the exact value for this viewport. */
-      trackScroll.style.height = `${max + window.innerHeight}px`;
-      /* Cache the track's scroll range for sync(). */
+      /* 1:1 ratio + dwell: the vertical scroll range for the
+         track itself must equal the horizontal travel, so the
+         scroll container's height is set to trackMax + dwell
+         + viewport height (the range is height minus viewport
+         height). The dwell (60vh) is extra scroll AFTER the
+         track reaches 100%, during which the end card stays
+         fully visible before the section unpins — like the
+         reference, whose end panel gets ~64vh of its own. This
+         overrides the CSS fallback height with the exact value
+         for this viewport. */
+      const dwell = Math.round(window.innerHeight * 0.6);
+      trackScroll.style.height = `${max + dwell + window.innerHeight}px`;
+      /* Cache the track's top and horizontal travel for
+         sync(). The progress denominator is the travel (max),
+         not the full range (max + dwell), so --track-x hits 1
+         at the end of the track and holds there through the
+         dwell. */
       const y = window.scrollY;
       const trackRect = trackScroll.getBoundingClientRect();
       const trackTop = trackRect.top + y;
-      const trackRange = Math.max(
-        1,
-        trackScroll.offsetHeight - window.innerHeight,
-      );
       trackTopRef.current = trackTop;
-      trackRangeRef.current = trackRange;
+      trackMaxRef.current = Math.max(1, max);
       /* Snap the position to the new layout, so the track does
          not sit at a stale position after a resize or font
          load. */

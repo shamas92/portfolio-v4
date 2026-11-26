@@ -1557,7 +1557,10 @@ footer[id],
 /* ---- Work track: four wide cards, a horizontal scroll-driven row on desktop ---- */
 /* On desktop (1024px and up, motion allowed, scripting enabled)
    the track scrolls horizontally as the user scrolls vertically:
-   the section is 220vh tall, its viewport is sticky, and the row
+   the section is ~555vh tall (exact height set by measure() in
+   page.tsx: --track-max + viewport height, so the vertical
+   range equals the horizontal travel — a direct 1:1 scroll,
+   like the reference), its viewport is sticky, and the row
    translates left by --track-x * --track-max. --track-x (0→1)
    and --track-max (content width minus viewport width) are
    written by the scroll listener in page.tsx. The track opens
@@ -2012,7 +2015,13 @@ footer[id],
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    height: 220vh;
+    /* Fallback height (no JS): ~555vh approximates the 1:1
+       ratio at a 900px viewport (trackMax 4092px + 900px
+       viewport = 4992px ≈ 555vh). With JS, measure() in
+       page.tsx sets the exact height (trackMax + viewport
+       height) so the vertical range equals the horizontal
+       travel at any viewport. */
+    height: 555vh;
   }
 
   .track-viewport {

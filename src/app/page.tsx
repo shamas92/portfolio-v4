@@ -70,28 +70,33 @@ export default function Home() {
   };
 
   /* Work track scroll — the track moves left as the user scrolls
-   *  vertically (desktop, 1024px and up): a tall scroll range
-   *  (.track-scroll, 220vh) holds a sticky viewport, and the
-   *  scroll listener drives --track-x (0→1) across it. The
-   *  variable lives on the .page element, so the track reads it.
-   *  The track eases toward the scroll position (a lerp inside
-   *  requestAnimationFrame) instead of tracking the wheel 1:1,
-   *  so the motion feels smooth and fluid without detaching
-   *  from the scroll. Below 1024px there is no horizontal
-   *  track: the track shows as a vertical stack. The deck does
-   *  not move on scroll — it stays a static fan in the hero
-   *  (see HeroDeck.tsx); the track is fully visible from the
-   *  start, so its cards never need `inert` (an earlier docking
-   *  version hid the track until the deck docked and toggled
-   *  inert on its cards, which dropped links from a fast
-   *  keyboard Tab pass — that mechanism is gone).
+   *  vertically (desktop, 1024px and up), direct 1:1 like the
+   *  reference: one vertical pixel moves the track one
+   *  horizontal pixel, no smoothing, no lag. The scroll range
+   *  (.track-scroll) is set in measure() to --track-max +
+   *  viewport height, so the vertical range equals the
+   *  horizontal travel exactly; the CSS height (555vh) is only
+   *  the no-JS fallback approximation. The viewport is sticky,
+   *  and the scroll listener writes --track-x (0→1) straight
+   *  from the scroll position — the track follows the wheel
+   *  immediately and never drifts after the scroll stops. The
+   *  variable lives on the .page element, so the track (and the
+   *  progress line in WorkSection) read it. Below 1024px there
+   *  is no horizontal track: the track shows as a vertical
+   *  stack. The deck does not move on scroll — it stays a
+   *  static fan in the hero (see HeroDeck.tsx); the track is
+   *  fully visible from the start, so its cards never need
+   *  `inert` (an earlier docking version hid the track until
+   *  the deck docked and toggled inert on its cards, which
+   *  dropped links from a fast keyboard Tab pass — that
+   *  mechanism is gone).
    *
    *  The track's max translation (--track-max) is measured from
    *  the layout (content width minus viewport width), so the
    *  longer track — four 1120px cards plus the lime end card —
-   *  needs no code change here, only the taller .track-scroll
-   *  range in globals.css. The counter counts .track-card
-   *  elements only (four now); the end card is not one.
+   *  needs no code change here. The counter is gone (the
+   *  reference has none); --track-x now drives the track
+   *  translate and the green progress line.
    *
    *  A passive scroll listener coalesced to at most one
    *  requestAnimationFrame, skipped under reduced motion and
@@ -104,91 +109,37 @@ export default function Home() {
     if (!page) return;
     if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     let disposed = false;
-    /* Scroll-write caches: coalesce scroll updates to at most
+    /* Scroll-write cache: coalesce scroll updates to at most
        one requestAnimationFrame, and skip DOM writes whose
        value has not changed. */
     let ticking = false;
     let lastTrackX = "";
-    let lastCounterIndex = -1;
-    /* The counter element is rendered conditionally (desktop +
-       motion allowed), so resolve it lazily and cache it; the
-       card count is fixed for the session (it only changes on
-       locale, which re-runs this effect). */
-    let counterEl: HTMLElement | null = null;
-    const totalCards = page.querySelectorAll(".track-card").length;
 
     const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
 
-    /* Smoothing: the track eases toward the scroll target
-       instead of tracking it 1:1. `target` is the scroll
-       progress (0→1) from the wheel; `current` is the eased
-       progress actually written to --track-x. Each animation
-       frame moves `current` 20% of the remaining distance, so
-       the track settles in ~250ms — smooth without feeling
-       detached from the scroll. The loop runs only while the
-       two differ, then stops; a snap threshold of 0.001 ends
-       it (a smaller change is invisible at --track-x's three
-       decimals). The counter and the progress hairline both
-       read the eased value, so they match what is on screen. */
-    let target = 0;
-    let current = 0;
-    let rafId: number | null = null;
-
-    /* Write one progress value to --track-x and the counter.
-       DOM writes are skipped when the value has not changed:
-       --track-x only when the rounded progress differs, the
-       counter only when the displayed index differs. */
+    /* Write one progress value to --track-x. The write is
+       skipped when the rounded progress has not changed. */
     const writeTrack = (progress: number) => {
       const trackX = progress.toFixed(3);
       if (trackX !== lastTrackX) {
         page.style.setProperty("--track-x", trackX);
         lastTrackX = trackX;
       }
-      if (totalCards > 0) {
-        if (!counterEl) {
-          counterEl = page.querySelector<HTMLElement>(".track-counter");
-        }
-        if (counterEl) {
-          const index = Math.min(
-            totalCards - 1,
-            Math.floor(progress * totalCards),
-          );
-          if (index !== lastCounterIndex) {
-            counterEl.textContent = `${index + 1} / ${totalCards}`;
-            lastCounterIndex = index;
-          }
-        }
-      }
     };
 
-    /* One smoothing step: ease `current` toward `target`,
-       write it, and schedule the next frame until the two
-       converge. */
-    const step = () => {
-      current += (target - current) * 0.2;
-      if (Math.abs(target - current) < 0.001) current = target;
-      writeTrack(current);
-      if (current !== target && !disposed) {
-        rafId = requestAnimationFrame(step);
-      } else {
-        rafId = null;
-      }
-    };
-
-    /* Recompute the scroll target from scrollY and start the
-       smoothing loop if it is not already running (and the
-       track is not already at the target). The track's
-       horizontal progress: 0 until the track section arrives,
-       1 once it has scrolled through. */
+    /* Recompute the scroll target from scrollY and write it
+       directly — no easing, no smoothing loop: the track
+       follows the wheel 1:1, like the reference, and never
+       drifts after the scroll stops. The track's horizontal
+       progress: 0 until the track section arrives, 1 once it
+       has scrolled through. */
     const sync = () => {
       const y = window.scrollY;
-      target =
+      const progress =
         trackRangeRef.current > 0
           ? clamp01((y - trackTopRef.current) / trackRangeRef.current)
           : 0;
-      if (rafId === null && current !== target && !disposed) {
-        rafId = requestAnimationFrame(step);
-      }
+      writeTrack(progress);
     };
 
     /* Measure the track's scroll range. The section itself is in
@@ -217,6 +168,12 @@ export default function Home() {
         track.scrollWidth - trackViewport.clientWidth,
       );
       track.style.setProperty("--track-max", `${max}px`);
+      /* 1:1 ratio: the vertical scroll range must equal the
+         horizontal travel, so the scroll container's height is
+         set to trackMax + viewport height (the range is height
+         minus viewport height). This overrides the CSS fallback
+         height with the exact value for this viewport. */
+      trackScroll.style.height = `${max + window.innerHeight}px`;
       /* Cache the track's scroll range for sync(). */
       const y = window.scrollY;
       const trackRect = trackScroll.getBoundingClientRect();
@@ -227,16 +184,10 @@ export default function Home() {
       );
       trackTopRef.current = trackTop;
       trackRangeRef.current = trackRange;
-      /* Snap the smoothed position to the new layout, so the
-         track does not ease from a stale position after a
-         resize or font load. Cancel any running loop first. */
-      if (rafId !== null) {
-        cancelAnimationFrame(rafId);
-        rafId = null;
-      }
-      target = trackRange > 0 ? clamp01((y - trackTop) / trackRange) : 0;
-      current = target;
-      writeTrack(current);
+      /* Snap the position to the new layout, so the track does
+         not sit at a stale position after a resize or font
+         load. */
+      sync();
       return true;
     };
 
@@ -271,7 +222,6 @@ export default function Home() {
     }
     return () => {
       disposed = true;
-      if (rafId !== null) cancelAnimationFrame(rafId);
       window.removeEventListener("scroll", onScroll);
       window.removeEventListener("resize", onResize);
     };

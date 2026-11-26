@@ -8,12 +8,17 @@ import { Annotated } from "./ProofNote";
 import { EtlAsset, LeaseLensAsset, OratorPathAsset } from "./SpecAssets";
 
 /* The italic serif for quotes and citations. Loaded only on case
-   pages, so the home page never pays for it. */
+   pages, so the home page never pays for it. `preload: false`
+   stops the App Router's <Link> prefetch from pulling the italic
+   preloads onto the home page (where the face is never used and
+   the browser warns about the unused preloads); the font still
+   loads on demand when a case page renders it. */
 const newsreaderItalic = Newsreader({
   subsets: ["latin", "latin-ext"],
   weight: ["500"],
   style: ["italic"],
   display: "swap",
+  preload: false,
   variable: "--font-newsreader-italic",
 });
 

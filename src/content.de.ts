@@ -473,6 +473,7 @@ export const deContent: SiteContent = {
       emailMe: "E-Mail schreiben",
       downloadCv: "Lebenslauf herunterladen",
       seeWorkFirst: "Die Projekte ansehen",
+      featuredProjects: "Ausgewählte Projekte",
     },
     work: {
       heading: "Neueste Projekte",

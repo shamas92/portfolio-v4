@@ -621,6 +621,8 @@ export type UiStrings = {
     emailMe: string;
     downloadCv: string;
     seeWorkFirst: string;
+    /** Accessible label for the hero's project-name tablist. */
+    featuredProjects: string;
   };
   work: {
     heading: string;
@@ -781,6 +783,7 @@ export const ui: UiStrings = {
     emailMe: "Email me",
     downloadCv: "Download CV",
     seeWorkFirst: "See the projects",
+    featuredProjects: "Featured projects",
   },
   work: {
     heading: "Latest projects",

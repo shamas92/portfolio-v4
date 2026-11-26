@@ -165,7 +165,7 @@ export function HeroShowcase({
       <div
         className="hero-tabs"
         role="tablist"
-        aria-label="Featured projects"
+        aria-label={content.ui.hero.featuredProjects}
         data-entrance
         style={{ "--entrance-delay": "360ms" } as React.CSSProperties}
       >

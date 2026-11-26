@@ -21,7 +21,7 @@ import type { SiteContent } from "./content";
 export const deContent: SiteContent = {
   profile: {
     name: "Shamas Ur Rehman",
-    role: "Data- & ML-Engineer",
+    role: "Data-Engineering-Student",
     location: "Dresden, Deutschland",
     address: "Dresden, Deutschland",
     claim: "Ich baue Datenpipelines und ML-Systeme.",
@@ -454,9 +454,7 @@ export const deContent: SiteContent = {
       ask: "Ich suche eine Werkstudentenstelle in Datenentwicklung oder ML.",
       emailMe: "E-Mail schreiben",
       downloadCv: "Lebenslauf herunterladen",
-      /* PROPOSAL, needs the user's confirmation: no verified
-         German string exists for this link. */
-      seeWorkFirst: "Oder zuerst die Projekte ansehen",
+      seeWorkFirst: "Die Projekte ansehen",
     },
     work: {
       heading: "Neueste Projekte",
@@ -464,6 +462,7 @@ export const deContent: SiteContent = {
       proof: "Nachweis",
       viewCaseStudy: "Fallstudie ansehen",
       viewMore: "Mehr auf GitHub",
+      earlierHeading: "Frühere Projekte",
     },
     background: {
       heading: "Werdegang",
@@ -587,7 +586,7 @@ export const deContent: SiteContent = {
       },
     },
     meta: {
-      titleSuffix: "Data- & ML-Engineer, Dresden",
+      titleSuffix: "Data-Engineering-Student, Dresden",
       description:
         "Shamas Ur Rehman, MSc-Informatikstudent an der TU Dresden. Datenpipelines und ML-Systeme: LeaseLens, eine Sales-ETL-Pipeline und vier weitere Projekte, jedes mit seinem Nachweis.",
     },

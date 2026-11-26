@@ -24,7 +24,7 @@ export type Profile = {
 
 export const profile: Profile = {
   name: "Shamas Ur Rehman",
-  role: "Data & ML Engineer",
+  role: "Data Engineering Student",
   location: "Dresden, Germany",
   address: "Dresden, Germany",
   claim: "I build data pipelines and ML systems.",
@@ -41,6 +41,22 @@ export const contentTodos = [
   {
     id: "available-from",
     label: "Available-from month (start date)",
+  },
+  {
+    id: "credential-url-advanced-data-analytics",
+    label: "TODO(owner): credential URL, Google Advanced Data Analytics",
+  },
+  {
+    id: "credential-url-data-analytics",
+    label: "TODO(owner): credential URL, Google Data Analytics",
+  },
+  {
+    id: "credential-url-it-automation-python",
+    label: "TODO(owner): credential URL, Google IT Automation with Python",
+  },
+  {
+    id: "credential-url-project-management",
+    label: "TODO(owner): credential URL, Google Project Management",
   },
 ];
 
@@ -594,6 +610,9 @@ export type UiStrings = {
     proof: string;
     viewCaseStudy: string;
     viewMore: string;
+    /** Heading for the compact "Earlier work" list (HITEC,
+     *  Quality CRM, UpliftU) below the three featured projects. */
+    earlierHeading: string;
   };
   background: {
     heading: string;
@@ -734,7 +753,7 @@ export const ui: UiStrings = {
     ask: "Looking for a working-student role in data engineering or ML.",
     emailMe: "Email me",
     downloadCv: "Download CV",
-    seeWorkFirst: "Or see the work first",
+    seeWorkFirst: "See the projects",
   },
   work: {
     heading: "Latest projects",
@@ -742,6 +761,7 @@ export const ui: UiStrings = {
     proof: "Proof",
     viewCaseStudy: "View case study",
     viewMore: "More on GitHub",
+    earlierHeading: "Earlier work",
   },
   background: {
     heading: "Background",
@@ -863,7 +883,7 @@ export const ui: UiStrings = {
     },
   },
   meta: {
-    titleSuffix: "Data & ML Engineer, Dresden",
+    titleSuffix: "Data Engineering Student, Dresden",
     description:
       "Shamas Ur Rehman, MSc Computer Science student at TU Dresden. Data pipelines and ML systems: LeaseLens, a sales ETL pipeline, and four more projects, each with its evidence.",
   },

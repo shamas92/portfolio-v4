@@ -42,7 +42,7 @@ const description =
 export const metadata: Metadata = {
   metadataBase: new URL(siteUrl),
   title: {
-    default: "Shamas Ur Rehman — Data & ML Engineer, Dresden",
+    default: "Shamas Ur Rehman — Data Engineering Student, Dresden",
     template: "%s — Shamas Ur Rehman",
   },
   description,
@@ -51,7 +51,7 @@ export const metadata: Metadata = {
     type: "website",
     url: siteUrl,
     siteName: "Shamas Ur Rehman",
-    title: "Shamas Ur Rehman — Data & ML Engineer, Dresden",
+    title: "Shamas Ur Rehman — Data Engineering Student, Dresden",
     description,
     images: [
       {
@@ -64,7 +64,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Shamas Ur Rehman — Data & ML Engineer, Dresden",
+    title: "Shamas Ur Rehman — Data Engineering Student, Dresden",
     description,
     images: ["/og.png"],
   },

@@ -1,17 +1,49 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { siteUrl } from "@/content";
+
+const description =
+  "Datenschutzerklärung von Shamas Ur Rehman — was diese Website speichert und was nicht.";
 
 export const metadata: Metadata = {
   title: "Datenschutzerklärung",
-  description:
-    "Datenschutzerklärung von Shamas Ur Rehman — was diese Website speichert und was nicht.",
+  description,
   alternates: { canonical: "/datenschutz" },
+  openGraph: {
+    type: "website",
+    url: `${siteUrl}/datenschutz`,
+    title: "Datenschutzerklärung — Shamas Ur Rehman",
+    description,
+    images: [
+      {
+        url: "/og.png",
+        width: 1200,
+        height: 630,
+        alt: "Shamas Ur Rehman",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Datenschutzerklärung — Shamas Ur Rehman",
+    description,
+    images: ["/og.png"],
+  },
 };
 
 /* Datenschutzerklärung. Jeder Satz ist gegen den Code geprüft:
    kein Tracking, keine Cookies, keine Drittanbieter-Inhalte,
    Schriften lokal, Theme und Sprache nur im localStorage.
-   Das Kontaktformular läuft über den E-Mail-Dienst Resend. */
+   Das Kontaktformular läuft über den E-Mail-Dienst Resend.
+   Die Übermittlung in die USA ist offengelegt: Vercel und
+   Resend sind US-Unternehmen, beide unter dem EU-U.S. Data
+   Privacy Framework zertifiziert; zusätzlich gelten die
+   Standardvertragsklauseln der Europäischen Kommission.
+   TODO(owner-confirm-legal): Bitte bestätigen, dass die
+   Übermittlungsgrundlage (Data-Privacy-Framework-Zertifizierung
+   plus Standardvertragsklauseln) und ein
+   Auftragsverarbeitungsvertrag (Art. 28 DSGVO) mit beiden
+   Anbietern so stimmen. */
 export default function DatenschutzPage() {
   return (
     <div className="page">
@@ -54,6 +86,23 @@ export default function DatenschutzPage() {
           Betriebssystem), um die Seite auszuliefern und abzusichern.
           Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO (berechtigtes
           Interesse an einem sicheren Betrieb der Website).
+        </p>
+      </section>
+
+      <section className="case-block" aria-labelledby="usa-head">
+        <h2 className="case-block-head" id="usa-head">
+          Übermittlung in die USA
+        </h2>
+        <p className="case-text">
+          Vercel Inc. und Resend, Inc. sind Unternehmen mit Sitz in den
+          USA. Die technischen Zugriffsdaten (siehe „Hosting") und die
+          Angaben aus dem Kontaktformular (siehe „Kontaktformular")
+          können daher in die USA übermittelt werden. Beide Unternehmen
+          sind unter dem EU-U.S. Data Privacy Framework zertifiziert;
+          die Übermittlung stützt sich auf den Angemessenheitsbeschluss
+          der Europäischen Kommission vom 10. Juli 2023 (Art. 45
+          DSGVO). Zusätzlich gelten die Standardvertragsklauseln der
+          Europäischen Kommission (Art. 46 Abs. 2 lit. c DSGVO).
         </p>
       </section>
 

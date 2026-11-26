@@ -1,7 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { useContent } from "@/i18n/LocaleProvider";
+import { useContent, useLocale } from "@/i18n/LocaleProvider";
 import { isEmail } from "@/lib/contact";
 import { CopyEmailButton } from "./CopyEmailButton";
 
@@ -17,6 +17,7 @@ import { CopyEmailButton } from "./CopyEmailButton";
  *  visitor clicks Send. */
 export function ContactForm() {
   const content = useContent();
+  const { locale } = useLocale();
   const ui = content.ui.form;
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,6 +29,11 @@ export function ContactForm() {
   }>({});
   const [status, setStatus] = useState<"idle" | "sent" | "failed">("idle");
   const [sending, setSending] = useState(false);
+  /* Synchronous in-flight guard: `disabled={sending}` is async
+     React state, so a second click can land before the button
+     disables and POST twice. This ref flips synchronously in
+     onSubmit, so the second submit is dropped before any fetch. */
+  const inFlightRef = useRef(false);
   const nameRef = useRef<HTMLInputElement>(null);
   const emailRef = useRef<HTMLInputElement>(null);
   const messageRef = useRef<HTMLTextAreaElement>(null);
@@ -80,9 +86,17 @@ export function ContactForm() {
     const next = validateAll();
     setErrors(next);
     if (Object.keys(next).length > 0) {
-      focusFirstInvalid(next);
+      /* Focus after the state flush: focusing synchronously here
+         loses to the browser's own focus handling after the
+         submit button is activated, leaving focus on the button.
+         A frame later the invalid field takes focus. */
+      requestAnimationFrame(() => focusFirstInvalid(next));
       return;
     }
+    /* Second submit while one is in flight (e.g. a double-click
+       before React disables the button): drop it silently. */
+    if (inFlightRef.current) return;
+    inFlightRef.current = true;
     setSending(true);
     setStatus("idle");
     try {
@@ -106,6 +120,7 @@ export function ContactForm() {
       setStatus("failed");
     } finally {
       setSending(false);
+      inFlightRef.current = false;
     }
   }
 
@@ -202,7 +217,11 @@ export function ContactForm() {
 
       <div className="form-actions">
         <button type="submit" className="btn btn-primary" disabled={sending}>
-          {ui.submit}
+          {sending
+            ? locale === "de"
+              ? "Wird gesendet…"
+              : "Sending…"
+            : ui.submit}
         </button>
       </div>
       {status === "sent" && (

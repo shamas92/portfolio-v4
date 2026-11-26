@@ -1,12 +1,13 @@
 /**
  * The Work section: a horizontal scroll-driven track of the three
  * full projects, like the reference's "Selected work", plus a
- * compact row of the three compact projects below it. The track
- * moves left as the user scrolls vertically (desktop, 1024px and
- * up): a tall scroll range (.track-scroll, 200vh) holds a sticky
- * viewport, and the scroll listener in page.tsx drives --track-x
- * (0→1) across it. The deck docks onto the track's first card
- * before the horizontal movement starts (see page.tsx).
+ * compact "Earlier work" list of the three earlier projects
+ * below it. The track moves left as the user scrolls vertically
+ * (desktop, 1024px and up): a tall scroll range (.track-scroll,
+ * 200vh) holds a sticky viewport, and the scroll listener in
+ * page.tsx drives --track-x (0→1) across it. The deck stays in
+ * the hero and does not dock onto the track; the track shows
+ * fully from the start.
  *
  * The filter is gone: it dimmed cards in a grid where all six
  * were visible at once, which does not fit a horizontal track —
@@ -27,16 +28,22 @@
  * Mobile (<1024px) and reduced motion: the track is a vertical
  * stack of the same cards (photo on top, text below), no sticky,
  * no horizontal translation — the cards are all visible in
- * normal flow. The track's opacity is the docking moment's
- * --track-reveal on desktop only; the default is 1, so the
- * track shows fully without JavaScript.
+ * normal flow.
+ *
+ * Earlier work: a ruled list, not cards — year and role, the
+ * title (a link to the case page, stretched over the row), the
+ * one-liner and the stack chips. No photo, no stats slot, no
+ * proof line. The meta line carries the credential (HITEC:
+ * "IT Department intern, May–Oct 2025"). The heading comes
+ * from content.ts (ui.work.earlierHeading).
  */
 "use client";
 
+import Link from "next/link";
 import { useEffect, useState } from "react";
 import { useContent, useLocale } from "@/i18n/LocaleProvider";
 import { Reveal } from "./Reveal";
-import { CompactCard, TrackCard } from "./TrackCard";
+import { TrackCard, cardTitle } from "./TrackCard";
 
 export function WorkSection() {
   const content = useContent();
@@ -47,6 +54,7 @@ export function WorkSection() {
     locale === "de"
       ? " (öffnet in einem neuen Tab)"
       : " (opens in a new tab)";
+  const earlierWorkHeading = ui.earlierHeading;
   const fullProjects = projects.filter((p) => p.tier === "full");
   const compactProjects = projects.filter((p) => p.tier === "compact");
   /* The track chrome (counter + progress hairline) only exists
@@ -133,22 +141,40 @@ export function WorkSection() {
           )}
         </div>
       </div>
-      {/* M7: the compact tier — a row below the track. No photo,
-          no stats slot, no proof line; title, one-liner, stack
-          chips and a case-study link per card. */}
+      {/* Earlier work: the compact tier as a ruled list below the
+          track. No photo, no stats slot, no proof line; year and
+          role, the title (linked, stretched over the row), the
+          one-liner and the stack chips per row. */}
       {compactProjects.length > 0 && (
-        <div
-          className="compact-row"
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-            gap: "var(--space-3)",
-            marginTop: "var(--space-3)",
-          }}
-        >
-          {compactProjects.map((project) => (
-            <CompactCard key={project.slug} project={project} />
-          ))}
+        <div className="earlier-work">
+          <h3 className="earlier-work-heading">{earlierWorkHeading}</h3>
+          <ul className="earlier-work-list">
+            {compactProjects.map((project) => (
+              <li
+                key={project.slug}
+                className="earlier-work-item"
+                data-slug={project.slug}
+              >
+                <p className="track-meta">
+                  {project.year} · {project.role}
+                </p>
+                <h4 className="earlier-work-title">
+                  <Link
+                    href={`/work/${project.slug}`}
+                    className="earlier-work-link"
+                  >
+                    {cardTitle(project)}
+                  </Link>
+                </h4>
+                <p className="earlier-work-summary">{project.rowOutcome}</p>
+                <ul className="track-stack">
+                  {project.stack.slice(0, 5).map((tag) => (
+                    <li key={tag}>{tag}</li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+          </ul>
         </div>
       )}
       <Reveal>

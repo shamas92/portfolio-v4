@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
 import { projects, siteUrl } from "@/content";
 import { CaseStudy } from "@/components/CaseStudy";
@@ -52,11 +53,25 @@ export default async function CaseStudyPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const project = projects.find((p) => p.slug === slug);
-  if (!project) notFound();
+  const index = projects.findIndex((p) => p.slug === slug);
+  if (index < 0) notFound();
+  const prev = index > 0 ? projects[index - 1]! : undefined;
+  const next = index < projects.length - 1 ? projects[index + 1]! : undefined;
   return (
     <div className="page">
       <CaseStudy slug={slug} />
+      <div className="case-pager">
+        {prev && (
+          <Link className="case-back" href={`/work/${prev.slug}`}>
+            ← {prev.shortTitle ?? prev.title}
+          </Link>
+        )}
+        {next && (
+          <Link className="case-back" href={`/work/${next.slug}`}>
+            {next.shortTitle ?? next.title} →
+          </Link>
+        )}
+      </div>
     </div>
   );
 }

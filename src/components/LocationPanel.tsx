@@ -84,8 +84,14 @@ export function LocationPanel() {
       <div className="location-body">
         <p className="location-eyebrow">{loc.eyebrow}</p>
         <p className="location-place">{content.profile.location}</p>
+        {/* The separator renders only once the clock has mounted,
+            so the line never reads "Now in Dresden ·" with an
+            empty time. The time span itself stays rendered (and
+            reserves its 12ch width) so the panel does not shift
+            when the clock appears. */}
         <p className="location-clock">
-          {loc.nowIn} ·{" "}
+          {loc.nowIn}
+          {now && " · "}
           <time
             dateTime={now ? now.toISOString() : undefined}
             className="location-clock-time"

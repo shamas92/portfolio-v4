@@ -1800,6 +1800,28 @@ footer[id],
   color: var(--ink-soft);
 }
 
+/* Phones: three 28px figures in ~81px columns collide
+   ("monthsparts", "technologies" clipped at the card edge,
+   "843–852" wrapping mid-number; at 320px "86.1%197"). Let
+   the row wrap to two columns so long values get a near-full
+   row, and drop the figure to the 22px title role so the
+   first-row values fit their cells. Desktop (768px+) is
+   untouched — the row fits there. */
+@media (max-width: 767px) {
+  .track-stats {
+    flex-wrap: wrap;
+    row-gap: var(--space-2);
+  }
+
+  .track-stat {
+    flex: 1 1 40%;
+  }
+
+  .track-stat-value {
+    font-size: var(--text-title-lg);
+  }
+}
+
 /* The stack: verified chips from content.ts, no invented
    entries, no label above them. Grey-filled sans pills, like
    the reference's. */

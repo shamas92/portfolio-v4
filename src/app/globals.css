@@ -23,6 +23,10 @@
   --ink-light: #141413;
   --ink-muted-light: #57534e;
   --rule-light: #e6e4e0;
+  /* Form-field and theme-toggle borders: the hairline --rule
+     measures 1.27:1 against a white field (WCAG 1.4.11 needs
+     3:1 for control boundaries). #737373 is 4.75:1 on white. */
+  --field-rule-light: #737373;
   --accent-light: #3f6212;
   --accent-wash-light: #f0f9d2;
   --accent-on-wash-light: #3f6212;
@@ -63,6 +67,10 @@
   --ink-dark: #f5f5f4;
   --ink-muted-dark: #a8a29e;
   --rule-dark: #262624;
+  /* Same control-boundary token in dark mode: #737373 is
+     3.88:1 on the #141413 field (the dark hairline --rule
+     measured 1.22:1). */
+  --field-rule-dark: #737373;
   --accent-dark: #bff73b;
   --accent-wash-dark: #22330b;
   --accent-on-wash-dark: #bff73b;
@@ -85,6 +93,7 @@
   --ink: var(--ink-light);
   --ink-muted: var(--ink-muted-light);
   --rule: var(--rule-light);
+  --field-rule: var(--field-rule-light);
   --accent: var(--accent-light);
   --accent-ink: var(--accent-light);
   --accent-on-wash: var(--accent-on-wash-light);
@@ -154,6 +163,7 @@ html[data-theme="dark"] {
   --ink: var(--ink-dark);
   --ink-muted: var(--ink-muted-dark);
   --rule: var(--rule-dark);
+  --field-rule: var(--field-rule-dark);
   --accent: var(--accent-dark);
   --accent-ink: var(--accent-dark);
   --accent-on-wash: var(--accent-on-wash-dark);
@@ -627,7 +637,7 @@ footer[id],
   width: 44px;
   height: 44px;
   background: transparent;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--field-rule);
   border-radius: 8px;
   color: var(--ink);
   cursor: pointer;
@@ -3237,7 +3247,7 @@ footer[id],
   font: inherit;
   color: var(--ink);
   background: var(--surface);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--field-rule);
   border-radius: 8px;
   padding: 10px 12px;
   min-height: 44px;

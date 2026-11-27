@@ -1495,8 +1495,8 @@ footer[id],
 /* The footer Download CV is a plain .btn-secondary (not the
    header's .copy-btn--pill), so it gets the pill shape here:
    one shape for Download CV in header, hero and footer. The
-   case-study .btn-secondary links are not inside .site-footer,
-   so they keep the 8px radius. */
+   case-study rail links are .btn-secondary too, and they take
+   the 999px radius from .case-rail-link instead. */
 .site-footer .btn-secondary {
   border-radius: 999px;
 }
@@ -1959,42 +1959,59 @@ footer[id],
   display: none;
 }
 
-/* ---- Earlier work: the three earlier projects as a ruled list
-   below the track, not cards. Year and role, the title (a link
-   stretched over the row, like the track cards), the one-liner
-   and the stack chips per row. Quieter than the track cards by
-   design: no photo, no surface, just hairlines. ---- */
-.earlier-work {
-  margin-top: var(--space-4);
-}
-
-.earlier-work-heading {
-  margin: 0 0 var(--space-2);
-  font-family: var(--font-display);
-  font-weight: 600;
-  font-size: var(--text-title-lg);
-  line-height: 1.2;
-  letter-spacing: -0.025em;
-}
-
-.earlier-work-list {
-  margin: 0;
+/* ---- /work index: full-width numbered rows (Direction A) ---- */
+.work-index-list {
+  margin: var(--space-4) 0 0;
   padding: 0;
   list-style: none;
   border-top: 1px solid var(--rule);
 }
 
-.earlier-work-item {
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
-  padding-block: var(--space-3);
+.work-index-item {
   border-bottom: 1px solid var(--rule);
 }
 
-.earlier-work-title {
-  margin: 0;
+/* The whole row is one link: full-width, min-height 24px (audit
+   S7 row minimum — rows are far taller in practice). The global
+   `a` underline/accent colour is overridden here so the row reads
+   as a row, not a link; the title underlines on hover instead. */
+.work-index-row {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  grid-template-areas: "num main arrow";
+  gap: var(--space-2) var(--space-3);
+  align-items: start;
+  min-height: 24px;
+  padding-block: var(--space-3);
+  color: inherit;
+  text-decoration: none;
+}
+
+.work-index-num {
+  grid-area: num;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--ink-muted);
+  padding-top: 4px;
+}
+
+.work-index-main {
+  grid-area: main;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.work-index-meta {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+.work-index-title {
   font-family: var(--font-display);
   font-weight: 600;
   font-size: var(--text-title-md);
@@ -2002,29 +2019,91 @@ footer[id],
   letter-spacing: -0.01em;
 }
 
-.earlier-work-link {
-  color: inherit;
-  text-decoration: none;
-}
-
-.earlier-work-link::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-  z-index: 1;
-}
-
-.earlier-work-item:hover .earlier-work-link {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-thickness: 2px;
-}
-
-.earlier-work-summary {
+.work-index-summary {
   margin: 0;
   font-size: var(--text-body);
   line-height: 1.6;
+  color: var(--ink-soft);
   max-width: 60ch;
+}
+
+.work-index-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: var(--space-1) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.work-index-stack li {
+  font-size: var(--text-caption);
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--pill-fill);
+  color: var(--ink-soft);
+  white-space: nowrap;
+}
+
+/* Circled arrow. Border is --field-rule (#737373 both themes,
+   4.74:1 light / 3.88:1 dark on --bg), so the circle meets the
+   ≥3:1 UI-border rule in both themes; --rule would not. */
+.work-index-arrow {
+  grid-area: arrow;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  border: 1px solid var(--field-rule);
+  border-radius: 50%;
+  color: var(--ink);
+  transition:
+    transform var(--dur-med) var(--ease),
+    border-color var(--dur-med) var(--ease),
+    color var(--dur-med) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .work-index-row:hover .work-index-title {
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    text-decoration-thickness: 2px;
+  }
+
+  .work-index-row:hover .work-index-arrow {
+    transform: translateX(4px);
+    border-color: var(--accent-ink);
+    color: var(--accent-ink);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .work-index-arrow {
+    transition: none;
+  }
+}
+
+/* Rows stack below 768px: number + arrow share the top row;
+   the content drops below them. */
+@media (max-width: 767px) {
+  .work-index-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    grid-template-areas:
+      "num arrow"
+      "main main";
+    gap: var(--space-1) var(--space-2);
+    padding-block: var(--space-2);
+  }
+
+  .work-index-num {
+    padding-top: 0;
+    align-self: center;
+  }
+
+  .work-index-title {
+    font-size: var(--text-title-sm);
+  }
 }
 
 /* "View More Projects": the section's closing action, after
@@ -2300,19 +2379,13 @@ footer[id],
   }
 }
 
-/* ---- Skills: grouped columns, each skill naming the project
+/* ---- Skills: 2×2 cards, each skill naming the project
    that used it; the unshipped skills gather under one line ---- */
 .skills-grid {
   margin-top: var(--space-3);
   display: grid;
   gap: var(--space-4);
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-}
-
-@media (max-width: 1023px) {
-  .skills-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
+  grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
 @media (max-width: 767px) {
@@ -2321,18 +2394,28 @@ footer[id],
   }
 }
 
-.skills-col {
-  border-top: 2px solid var(--ink);
-  padding-top: var(--space-2);
+.skills-card {
+  min-width: 0;
+  background: var(--surface);
+  border: 1px solid var(--field-rule);
+  border-radius: 8px;
+  padding: var(--space-3);
 }
 
-.skills-col-head {
+.skills-card-head {
   font-family: var(--font-display);
   font-weight: 600;
-  font-size: var(--text-title-sm);
+  font-size: var(--text-title-md);
   line-height: 1.3;
   letter-spacing: -0.01em;
   margin-bottom: var(--space-1);
+}
+
+.skills-purpose {
+  margin: 0 0 var(--space-2);
+  font-size: var(--text-small);
+  line-height: 1.55;
+  color: var(--ink-muted);
 }
 
 .skills-list {
@@ -2350,7 +2433,13 @@ footer[id],
   border-top: 1px solid var(--rule);
 }
 
-.skills-name {
+.skills-pill {
+  display: inline-block;
+  align-self: flex-start;
+  background: var(--pill-fill);
+  border: 1px solid var(--field-rule);
+  border-radius: 999px;
+  padding: 2px 10px;
   font-weight: 600;
 }
 
@@ -2373,21 +2462,6 @@ footer[id],
     line-height: 44px;
     padding: 0 6px;
   }
-}
-
-.skills-studied {
-  margin-top: var(--space-4);
-  font-size: var(--text-small);
-  line-height: 1.6;
-  color: var(--ink-muted);
-  max-width: 68ch;
-}
-
-.skills-studied-label {
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
-  font-weight: 500;
-  color: var(--ink);
 }
 
 /* ---- Certificates: typographic grid, no badges. Four Google
@@ -2460,13 +2534,76 @@ footer[id],
   color: var(--ink-muted);
 }
 
-.certificates-note {
-  margin-top: var(--space-2);
-  font-size: var(--text-small);
+/* ---- Certificates: headed chip block (Direction A) ---- */
+.cert-block {
+  margin-top: var(--space-4);
+}
+
+.cert-head {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: var(--text-title-sm);
+  line-height: 1.3;
+}
+
+.cert-period {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  font-weight: 400;
   color: var(--ink-muted);
 }
 
-/* ---- Background: Experience left, Education right ---- */
+.cert-chips {
+  list-style: none;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+  padding: 0;
+}
+
+.cert-chip {
+  background: var(--surface);
+  border: 1px solid var(--field-rule);
+  border-radius: 999px;
+  padding: 8px 12px;
+  font-size: var(--text-small);
+  line-height: 1.4;
+  color: var(--ink);
+}
+
+/* ---- Direction A spine device: mono kicker + hairline rule ----
+   Shared by the home sections, /work, the case pages, the legal
+   pages and the footer. Single definition: the legal handoff's
+   declarations are the base (0.08em tracking, flex + gap for the
+   number; the background handoff's 0.12em / margin-right variant
+   and the work handoff's --text-mono / --ink number variant are
+   superseded by this one). */
+.section-kicker {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-1);
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.section-number {
+  font-weight: 600;
+  color: var(--accent-ink);
+}
+
+.section-rule {
+  border: 0;
+  border-top: 1px solid var(--rule);
+  margin: var(--space-3) 0 0;
+}
+
+/* ---- Background: sticky left column + merged timeline ---- */
 .about-lead {
   margin-top: var(--space-3);
   font-size: var(--text-body);
@@ -2474,28 +2611,57 @@ footer[id],
   max-width: 60ch;
 }
 
-.bg-grid {
-  margin-top: var(--space-3);
+.bg-layout {
   display: grid;
+  grid-template-columns: 320px minmax(0, 1fr);
   gap: var(--space-4);
-  grid-template-columns: 1.15fr minmax(0, 1fr);
+  margin-top: var(--space-3);
+}
+
+.bg-sticky {
+  position: sticky;
+  top: 108px;
+  align-self: start;
 }
 
 @media (max-width: 1023px) {
-  .bg-grid {
+  .bg-layout {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .bg-sticky {
+    position: static;
   }
 }
 
-.bg-col-head {
-  font-family: var(--font-display);
+.bg-intro {
+  font-size: var(--text-body);
+  line-height: 1.65;
+  color: var(--ink);
+}
+
+.bg-links {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.bg-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
   font-weight: 600;
-  font-size: var(--text-title-md);
-  line-height: 1.3;
-  letter-spacing: -0.01em;
-  border-top: 2px solid var(--ink);
-  padding-top: var(--space-2);
-  margin-bottom: var(--space-2);
+  color: var(--ink);
+  text-decoration: underline;
+  text-decoration-color: var(--accent);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 3px;
+}
+
+.bg-link:hover {
+  text-decoration-thickness: 2px;
 }
 
 /* ---- Metadata strip: spoken languages, one line ---- */
@@ -2612,9 +2778,46 @@ footer[id],
   padding: 0;
 }
 
+.timeline--rail {
+  position: relative;
+  padding-left: var(--space-3);
+  border-left: 2px solid var(--accent);
+}
+
+.timeline--rail .timeline-row {
+  position: relative;
+  border-top: 0;
+}
+
+.timeline--rail .timeline-row:last-child {
+  border-bottom: 0;
+}
+
+.timeline--rail .timeline-row::before {
+  content: "";
+  position: absolute;
+  left: calc(-1 * var(--space-3) - 7px);
+  top: calc(var(--space-2) + 2px);
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: var(--ground);
+  border: 2px solid var(--accent);
+}
+
+.timeline-kind {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  font-weight: 500;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+  margin-bottom: 2px;
+}
+
 .timeline-row {
   display: grid;
-  grid-template-columns: 170px minmax(0, 1fr);
+  grid-template-columns: 200px minmax(0, 1fr);
   gap: var(--space-1) var(--space-3);
   padding-block: var(--space-2);
   border-top: 1px solid var(--rule);
@@ -2629,6 +2832,7 @@ footer[id],
   font-size: var(--text-mono);
   color: var(--ink-muted);
   padding-top: 3px;
+  white-space: nowrap;
 }
 
 .timeline-what h3 {
@@ -2951,31 +3155,340 @@ footer[id],
   font-weight: 600;
 }
 
-.case-links {
-  margin-top: var(--space-2);
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--space-1) var(--space-3);
+/* ---- Case layout: 2/3 + 1/3, rail below the column under 1024px.
+   The rail is not sticky: the fixed header's height varies (pill
+   morph), so a sticky offset would be a magic number that overlaps
+   it. The rail scrolls with the page instead. ---- */
+.case-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+  gap: var(--space-6);
+  align-items: start;
 }
 
-.case-links a {
+.case-main {
+  min-width: 0;
+}
+
+.case-rail {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+@media (max-width: 1023px) {
+  .case-layout {
+    grid-template-columns: minmax(0, 1fr);
+  }
+}
+
+/* Case head: outcome lede + scope pills. */
+.case-lede {
+  margin-top: var(--space-2);
+  font-size: var(--text-title-md);
+  line-height: 1.45;
+  color: var(--ink-soft);
+  max-width: 60ch;
+  text-wrap: balance;
+}
+
+/* Scope pills (audit S7: case-study pills are 44px min-height).
+   Non-interactive labels, so the 44px is vertical presence, not a
+   tap target — the height is the audit's number, kept verbatim. */
+.case-scope-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: var(--space-3) 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-scope-list li {
   display: inline-flex;
   align-items: center;
   min-height: 44px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--pill-fill);
+  color: var(--ink-soft);
+  font-size: var(--text-caption);
+  white-space: nowrap;
 }
 
-.case-stack-list {
-  list-style: none;
-  padding: 0;
+/* Two-line section headings (Result, Evidence). */
+.case-block-head--two {
   display: flex;
-  flex-wrap: wrap;
-  font-family: var(--font-mono);
-  font-size: var(--text-mono);
+  flex-direction: column;
+  gap: 4px;
+}
+
+.case-block-head-sub {
+  font-family: var(--font-body);
+  font-weight: 400;
+  font-size: var(--text-body);
+  line-height: 1.5;
+  letter-spacing: 0;
   color: var(--ink-muted);
 }
 
-.case-stack-list li + li::before {
-  content: ",\00a0";
+/* Rail card + full-width link buttons (999px radius). Card border
+   is --field-rule (≥3:1 in both themes), not --rule. */
+.case-rail-card {
+  background: var(--surface);
+  border: 1px solid var(--field-rule);
+  border-radius: 8px;
+  padding: var(--space-3);
+}
+
+.case-rail-head {
+  margin: 0 0 var(--space-2);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--text-mono-sm);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-muted);
+}
+
+.case-rail-stack {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.case-rail-stack li {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 4px 12px;
+  border-radius: 999px;
+  background: var(--pill-fill);
+  color: var(--ink-soft);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  white-space: nowrap;
+}
+
+.case-rail-links {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.case-rail-link {
+  width: 100%;
+  border-radius: 999px;
+}
+
+/* ---- Outcome charts ---- */
+.outcome-charts {
+  display: grid;
+  gap: var(--space-3);
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  margin-top: var(--space-3);
+}
+
+.outcome-chart {
+  margin: 0;
+  min-width: 0;
+}
+
+.outcome-chart--segments {
+  grid-column: 1 / -1;
+}
+
+.outcome-chart-title {
+  margin: 0 0 var(--space-1);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--ink-muted);
+}
+
+.outcome-footnote {
+  margin-top: var(--space-1);
+  font-size: var(--text-small);
+  line-height: 1.5;
+  color: var(--ink-muted);
+  max-width: 60ch;
+}
+
+/* Donut (LeaseLens 86.1% IoU). 120px wide; the centre value is
+   20px mono, so "86.1%" fits the ring with room. */
+.outcome-donut {
+  width: 120px;
+  height: auto;
+  display: block;
+}
+
+.outcome-donut-value {
+  font-family: var(--font-mono);
+  font-size: 20px;
+  font-weight: 600;
+  fill: var(--ink);
+}
+
+/* Bar pair (LeaseLens tests 132/65). The track/fill are
+   decorative (aria-hidden); the label and value are real text. */
+.outcome-bar-pair-list {
+  display: grid;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.outcome-bar-pair-row {
+  display: grid;
+  grid-template-columns: 96px minmax(0, 1fr) 48px;
+  gap: var(--space-1);
+  align-items: center;
+}
+
+.outcome-bar-pair-label {
+  font-size: var(--text-small);
+  color: var(--ink-soft);
+}
+
+.outcome-bar-pair-track {
+  display: block;
+  height: 10px;
+  border-radius: 999px;
+  background: var(--pill-fill);
+  overflow: hidden;
+}
+
+.outcome-bar-pair-fill {
+  display: block;
+  height: 100%;
+  background: var(--accent);
+  border-radius: 999px;
+}
+
+.outcome-bar-pair-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-body);
+  font-weight: 600;
+  text-align: right;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Named segments (LeaseLens 5 jurisdictions). Two columns below
+   768px so "United Kingdom" and "New York, US" get room. */
+.outcome-segments {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: var(--space-1);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.outcome-segment {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-1);
+  border-radius: 8px;
+  background: var(--accent-wash);
+  color: var(--accent-on-wash);
+  font-size: var(--text-small);
+  font-weight: 600;
+  line-height: 1.35;
+  text-align: center;
+}
+
+@media (max-width: 767px) {
+  .outcome-segments {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* Vertical bars (Sales ETL 1/3/4, HITEC 6/3/5). Fill height is
+   set inline (value / max × 96px); the track is a fixed 96px. */
+.outcome-bars {
+  display: flex;
+  gap: var(--space-3);
+  align-items: stretch;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.outcome-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-1);
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.outcome-bar-value {
+  font-family: var(--font-mono);
+  font-size: var(--text-title-md);
+  font-weight: 600;
+  color: var(--ink);
+  font-variant-numeric: tabular-nums;
+}
+
+.outcome-bar-track {
+  display: flex;
+  align-items: flex-end;
+  height: 96px;
+}
+
+.outcome-bar-fill {
+  display: block;
+  width: 48px;
+  background: var(--accent);
+  border-radius: 4px 4px 0 0;
+}
+
+.outcome-bar-label {
+  font-size: var(--text-small);
+  color: var(--ink-muted);
+  text-align: center;
+}
+
+/* Page-span bar (OratorPath 843–852). Border is --accent, ≥3:1
+   as a UI border in both themes (light #3f6212, dark #bff73b). */
+.outcome-span {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-2);
+  align-items: baseline;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--accent);
+  border-radius: 8px;
+  background: var(--accent-wash);
+}
+
+.outcome-span-range {
+  font-family: var(--font-mono);
+  font-size: var(--text-title-md);
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.outcome-span-count {
+  font-size: var(--text-small);
+  color: var(--accent-on-wash);
+}
+
+.outcome-span-meta {
+  margin: var(--space-1) 0 0;
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--ink-muted);
 }
 
 /* ---- Footer / contact ---- */
@@ -2987,7 +3500,7 @@ footer[id],
   max-width: var(--measure);
   margin: 0 auto;
   padding: var(--space-8) max(var(--space-3), env(safe-area-inset-left))
-    var(--space-12) max(var(--space-3), env(safe-area-inset-right));
+    var(--space-8) max(var(--space-3), env(safe-area-inset-right));
   display: grid;
   gap: var(--space-4);
 }
@@ -2998,6 +3511,149 @@ footer[id],
     grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
     align-items: start;
   }
+}
+
+/* The panel, kicker, rule, columns and bottom bar span both
+   grid columns at desktop; without this the kicker lands in
+   column 1 and the rule in column 2. At mobile the inner is a
+   single column, so the span is harmless there. */
+.site-footer-inner > .cta-panel,
+.site-footer-inner > .section-kicker,
+.site-footer-inner > .section-rule,
+.site-footer-inner > .footer-columns,
+.site-footer-inner > .footer-bottombar {
+  grid-column: 1 / -1;
+}
+
+/* The kicker and rule carry margins from the spine definition
+   that were tuned for block layout; inside the grid they would
+   stack on top of the 32px grid gap. Zero them here so the grid
+   gap alone sets the rhythm. */
+.site-footer-inner > .section-kicker {
+  margin-bottom: 0;
+}
+
+.site-footer-inner > .section-rule {
+  margin-top: 0;
+}
+
+/* ---- Lime CTA panel (Parish): fixed lime in both themes.
+   Every colour inside is therefore a fixed dark token
+   (--ink-light, --ink-muted-light), never the themed --ink /
+   --ink-muted, which turn near-white in dark mode and would
+   vanish on lime. ---- */
+.cta-panel {
+  background: var(--lime);
+  border-radius: 16px;
+  padding: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .cta-panel {
+    padding: var(--space-6);
+  }
+}
+
+.cta-panel-head {
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: clamp(2rem, 5vw, 3rem);
+  line-height: 1.1;
+  letter-spacing: -0.025em;
+  color: var(--ink-light);
+}
+
+.cta-panel-sub {
+  margin-top: var(--space-1);
+  font-size: var(--text-body);
+  color: var(--ink-muted-light);
+}
+
+.cta-panel-actions {
+  margin-top: var(--space-3);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  align-items: center;
+}
+
+/* Black pill (mailto). Do NOT reuse .btn-primary here: it uses
+   var(--ink) / var(--bg), which flip in dark mode to a
+   near-white pill, and its hover sets background: var(--accent)
+   — lime on lime, invisible. Fixed dark pill instead. */
+.cta-panel-mail {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: var(--space-1) var(--space-3);
+  font-weight: 600;
+  text-decoration: none;
+  color: var(--lime);
+  background: var(--ink-light);
+  border: 1px solid var(--ink-light);
+  border-radius: 999px;
+  transition:
+    background-color var(--dur-med) var(--ease),
+    color var(--dur-med) var(--ease);
+}
+
+.cta-panel-mail:hover {
+  background: var(--ground-dark);
+  border-color: var(--ground-dark);
+  color: var(--lime);
+}
+
+.cta-panel-mail:active {
+  transform: translateY(1px);
+}
+
+/* Text link (→ /work). Fixed dark, underlined like every other
+   text link on the site. */
+.cta-panel-link {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+  font-weight: 600;
+  color: var(--ink-light);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.cta-panel-link:hover {
+  text-decoration-thickness: 2px;
+}
+
+/* Copy-email button inside the panel (outline variant). The base
+   .copy-btn uses themed --ink, which is near-white in dark mode;
+   override it to fixed dark. These rules sit before the base
+   .copy-btn block in the file, but their higher specificity
+   (0,3,0) / (0,4,0) wins over the base (0,1,0) / (0,2,0)
+   regardless of order. */
+.cta-panel .copy-btn {
+  border-color: var(--ink-light);
+  color: var(--ink-light);
+  background: transparent;
+}
+
+.cta-panel .copy-btn:hover {
+  border-color: var(--ink-light);
+  color: var(--lime);
+  background: var(--ink-light);
+}
+
+.cta-panel .copy-btn[data-copied="true"] {
+  border-color: var(--ink-light);
+  color: var(--ink-light);
+  background: transparent;
+}
+
+/* Focus on the panel. The global :focus-visible rule uses
+   var(--focus), which is lime in dark mode — invisible on the
+   lime panel. Override the colour only, inside the panel. */
+.cta-panel :focus-visible {
+  outline-color: var(--ink-light);
 }
 
 .footer-contact {
@@ -3061,10 +3717,97 @@ footer[id],
   align-items: center;
 }
 
-.footer-links a {
+.footer-links a,
+.footer-links .copy-btn--text {
   min-height: 44px;
   display: inline-flex;
   align-items: center;
+}
+
+/* Footer columns: one column below 768px, four equal columns
+   at 768px and up. The columns sit under a hairline with 32px
+   of air, matching the bottom bar's hairline below them. */
+.footer-columns {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: var(--space-3);
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-4);
+}
+
+@media (min-width: 768px) {
+  .footer-columns {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: var(--space-4);
+  }
+}
+
+.footer-col-head {
+  font-family: var(--font-body);
+  font-size: var(--text-small);
+  font-weight: 700;
+  margin: 0 0 var(--space-1);
+}
+
+.footer-col-links,
+.footer-col-lines {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.footer-col-links a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 44px;
+}
+
+.footer-col-lines li {
+  color: var(--ink-muted);
+  font-size: var(--text-small);
+  line-height: 1.5;
+}
+
+/* Bottom bar: one row, space-between, wrapping; hairline above,
+   mono muted text. */
+.footer-bottombar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1) var(--space-3);
+  justify-content: space-between;
+  border-top: 1px solid var(--rule);
+  padding-top: var(--space-2);
+  font-family: var(--font-mono);
+  font-size: var(--text-mono);
+  color: var(--ink-muted);
+}
+
+.footer-bottombar p {
+  margin: 0;
+}
+
+/* Giant cropped wordmark (Parish device). Decorative
+   (aria-hidden in markup). Full-width, one line, cropped at the
+   bottom by its wrapper. */
+.footer-wordmark-wrap {
+  overflow: hidden;
+}
+
+.footer-wordmark {
+  margin: 0;
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: clamp(3.5rem, 13.5vw, 10rem);
+  line-height: 0.8;
+  letter-spacing: -0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  text-align: center;
+  color: var(--ink);
+  opacity: 0.1;
+  transform: translateY(22%);
 }
 
 /* ---- Copy email: outline (footer), high-contrast pill
@@ -3205,6 +3948,36 @@ footer[id],
   }
 }
 
+/* Text variant of the copy button (footer-links row, audit S3):
+   a plain text link, not a pill — the row's other items have no
+   icons, and the label alone ("Copy email" / "Copied ✓") carries
+   the action. After the base .copy-btn block: same specificity,
+   so later position wins. */
+.copy-btn--text {
+  background: transparent;
+  border-color: transparent;
+  color: var(--accent-ink);
+  padding: 0;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-thickness: 1px;
+}
+
+.copy-btn--text:hover {
+  border-color: transparent;
+  color: var(--accent-ink);
+  text-decoration-thickness: 2px;
+}
+
+.copy-btn--text[data-copied="true"] {
+  border-color: transparent;
+  color: var(--accent-ink);
+}
+
+.copy-btn--text .copy-icon {
+  display: none;
+}
+
 .footer-line {
   color: var(--ink-muted);
   font-size: var(--text-small);
@@ -3310,12 +4083,20 @@ footer[id],
 
 .form-honeypot {
   position: absolute;
+  left: 0;
   width: 1px;
+  max-width: 1px;
   height: 1px;
   overflow: hidden;
   clip: rect(0 0 0 0);
   clip-path: inset(50%);
   white-space: nowrap;
+}
+
+.form-honeypot input {
+  width: 1px;
+  min-width: 0;
+  max-width: 1px;
 }
 
 /* ---- Dev-only TODO(content) marker: visible in dev, absent in prod ---- */
@@ -3401,7 +4182,13 @@ footer[id],
   .copy-btn,
   .claim,
   .skip-link,
-  .theme-toggle {
+  .theme-toggle,
+  .cta-panel-mail,
+  .cta-panel-link,
+  .cta-panel .copy-btn,
+  .copy-btn--text,
+  .footer-links a,
+  .footer-col-links a {
     transition: none;
   }
 }
@@ -3426,7 +4213,8 @@ footer[id],
   .header-spacer,
   .skip-link,
   .copy-btn,
-  .hero-actions {
+  .hero-actions,
+  .footer-wordmark-wrap {
     display: none;
   }
 

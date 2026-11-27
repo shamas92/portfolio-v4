@@ -55,6 +55,7 @@ export const deContent: SiteContent = {
       decision:
         "Das Modell markiert Stellen; der Validator entscheidet. Die Kautionsberechnung läuft in Python, nie im Modell, sodass eine Zahl, die das Modell erfindet, nicht ins Ergebnis gelangen kann — auf Kosten eines zweiten, deterministischen Durchlaufs über jedes markierte Zitat.",
       role: "Hackathon · Team Shamas #4919",
+      scopePills: ["Kautionsobergrenzen-Register", "Fotonachweis", "5 Rechtsordnungen"],
       problem: [
         [
           "Wer in einem anderen Land mietet, unterschreibt einen Vertrag, zahlt eine Kaution und bekommt Monate später eine Forderung für Schäden oder Reinigung. Die Frage ist einfach: Stimmt die Forderung mit Mietvertrag und Gesetz überein? Um das zu beantworten, muss man ein langes Dokument in einer fremden Sprache lesen — und die Kautionsobergrenze ändert sich an jeder Grenze.",
@@ -168,6 +169,7 @@ export const deContent: SiteContent = {
       decision:
         "Upserts leben in Python (psycopg2 ON CONFLICT), nicht in Stored Procedures: Ein erneuter Lauf kann keine Zeilen duplizieren, und die Logik bleibt in der Codebasis, wo man sie lesen und testen kann. Mailpit warnt, wenn ein Lauf fehlschlägt.",
       role: "Eigenes Projekt",
+      scopePills: ["Airflow-DAG", "Star-Schema", "Duplikatsichere Upserts"],
       problem: [
         [
           "Verkaufsdaten kamen aus mehreren Quellen, ohne eine einzige verlässliche Form für die Analyse.",
@@ -221,6 +223,7 @@ export const deContent: SiteContent = {
       decision:
         "Der Coach gibt gemessenes Feedback zurück — Tempo, Füllwörter, Klarheit — statt Eindrücke. Zahlen machen Fortschritt über Sitzungen hinweg vergleichbar; über den Vortrag selbst sagen sie nichts, das muss der Sprecher weiterhin selbst beurteilen.",
       role: "Abschlussarbeit · Mitautor, veröffentlichtes Paper",
+      scopePills: ["Sprachanalyse", "Veröffentlichtes Paper"],
       problem: [
         [
           "Feedback zum öffentlichen Sprechen war für Softwareentwickler anekdotisch, nicht gemessen.",
@@ -282,6 +285,7 @@ export const deContent: SiteContent = {
       ],
       scope:
         "Datenbankgestützte Universitäts-Webmodule, ein internes CMS-Admin-Panel sowie ein integrierter RAG-Support-Chatbot.",
+      scopePills: ["Webmodule", "CMS-Admin-Panel", "RAG-Chatbot"],
       badge: "Intern / Archiviert",
       links: [],
     },
@@ -312,6 +316,7 @@ export const deContent: SiteContent = {
       ],
       scope:
         "Relationales Defect-Tracking in Laravel/MySQL — ein Datensatz für jeden Defekt.",
+      scopePills: ["Fehlerdatensätze", "Laravel/MySQL"],
       links: [],
     },
     {
@@ -339,6 +344,7 @@ export const deContent: SiteContent = {
         ],
       ],
       scope: "Strukturierte NLP-Studierendenbetreuung in Python/Hugging Face.",
+      scopePills: ["Strukturierter Dialog", "Hugging-Face-NLP"],
       links: [],
     },
   ],
@@ -346,6 +352,8 @@ export const deContent: SiteContent = {
   background: {
     about:
       "Ich studiere Informatik im Master an der TU Dresden, nach einem Bachelor in Software Engineering an der HITEC University in Pakistan. Sechs Monate habe ich in der IT-Abteilung einer Universität datenbankgestützte Webmodule und einen RAG-Chatbot gebaut; in meiner eigenen Zeit baue ich Datenpipelines und ML-Systeme — zuletzt LeaseLens, das Kautionsforderungen gegen Mietvertrag und Gesetz prüft. Ich suche eine Werkstudentenstelle im Data Engineering oder ML in Dresden, 20 Stunden pro Woche, und will Arbeit, deren Ergebnis man messen kann.",
+    timelineIntro:
+      "Neueste zuerst, vom Master in Dresden zurück zum Bachelor in Taxila.",
     education: [
       {
         degree: "MSc Informatik",
@@ -361,6 +369,12 @@ export const deContent: SiteContent = {
       },
     ],
     experience: [
+      {
+        role: "Freelance-Webentwickler",
+        org: "Tools420",
+        period: "Nov. 2025 – Aug. 2026",
+        note: "Freelance-WordPress/WooCommerce-Arbeit für einen kanadischen Onlineshop: eigene Backend-Architekturen und proprietäre Plugins in PHP, MySQL und JavaScript; Datenbankmigrationen und Deployments ohne ungeplante Ausfallzeiten.",
+      },
       {
         role: "Praktikant in der IT-Abteilung",
         org: "HITEC University",
@@ -379,14 +393,24 @@ export const deContent: SiteContent = {
       { language: "Deutsch", level: "A1/A2 (Kurs an der TU Dresden)" },
       { language: "Urdu", level: "Muttersprache" },
     ],
-    certifications:
-      "Google-Zertifikate (2025–2026): Advanced Data Analytics · Data Analytics · IT Automation with Python · Project Management.",
+    certificates: {
+      heading: "Google-Zertifikate",
+      period: "2025–2026",
+      items: [
+        "Advanced Data Analytics",
+        "Data Analytics",
+        "IT Automation with Python",
+        "Project Management",
+      ],
+    },
   },
 
   skills: {
     groups: [
       {
         title: "Data Engineering",
+        purpose:
+          "Der Pipeline-Stack. Airflow plant jeden Ladevorgang, PostgreSQL und Parquet halten das Ergebnis, und Docker macht den Lauf wiederholbar.",
         items: [
           { name: "Apache Airflow", usedIn: ["Sales ETL"] },
           { name: "SQL", usedIn: ["Sales ETL"] },
@@ -399,6 +423,8 @@ export const deContent: SiteContent = {
       },
       {
         title: "Programmiersprachen",
+        purpose:
+          "Python trägt den größten Teil der Arbeit. C#, TypeScript und PHP kommen zum Einsatz, wo das Projekt sie verlangt.",
         items: [
           {
             name: "Python",
@@ -411,6 +437,8 @@ export const deContent: SiteContent = {
       },
       {
         title: "Frameworks & KI",
+        purpose:
+          "FastAPI und Next.js stellen die Produkte bereit; PyTorch, Hugging Face und SAM 3.1 betreiben die Modelle dahinter.",
         items: [
           { name: "FastAPI", usedIn: ["LeaseLens"] },
           { name: "ASP.NET MVC", usedIn: ["HITEC"] },
@@ -422,15 +450,12 @@ export const deContent: SiteContent = {
         ],
       },
       {
-        title: "Datenbanken",
+        title: "Datenbanken & Werkzeuge",
+        purpose:
+          "SQL Server und MySQL halten die Projektdaten, Git verfolgt jede Änderung, und REST-APIs verbinden die Teile.",
         items: [
           { name: "SQL Server", usedIn: ["HITEC"] },
           { name: "MySQL", usedIn: ["Quality CRM"] },
-        ],
-      },
-      {
-        title: "Werkzeuge",
-        items: [
           {
             name: "Git",
             usedIn: [
@@ -501,6 +526,8 @@ export const deContent: SiteContent = {
       intro:
         "Alle sechs Projekte — die vier aus der Übersicht und die zwei früheren.",
       back: "Startseite",
+      kickerNumber: "Arbeit",
+      kickerText: "Alle Arbeiten — {count} Projekte",
     },
     background: {
       heading: "Werdegang",
@@ -515,9 +542,18 @@ export const deContent: SiteContent = {
     skills: {
       heading: "Skills",
       usedIn: "Eingesetzt in",
+      usedInLabel: "{skill} — eingesetzt in {project}",
     },
     footer: {
       heading: "Kontakt",
+      ctaHeading: "Haben Sie eine Stelle im Sinn? Sprechen wir darüber.",
+      ctaSub: "Ich antworte innerhalb von 2 Werktagen.",
+      exploreHeading: "Entdecken",
+      elsewhereHeading: "Im Netz",
+      currentlyHeading: "Aktuell",
+      currentlyWorking: "Arbeitet an LeaseLens v1.0.0",
+      currentlyLooking: "Sucht Werkstudentenstellen",
+      builtWith: "Gebaut mit Next.js, gehostet auf Vercel",
     },
     form: {
       heading: "Nachricht schreiben",
@@ -549,6 +585,16 @@ export const deContent: SiteContent = {
       role: "Meine Rolle",
       registryHeading: "Kautionsobergrenzen im Register",
       limitsHeading: "Grenzen",
+      outcomeTitle: "Das Ergebnis.",
+      outcomeSub: "Die Ergebnisse ansehen.",
+      evidenceTitle: "Die Nachweise.",
+      evidenceSub: "Was es belegt.",
+      builtWith: "Gebaut mit",
+      scope: "Umfang",
+      testsBackend: "Backend",
+      testsFrontend: "Frontend",
+      testsSplit: "{backend} Backend, {frontend} Frontend, bei {version}",
+      pagesCount: "{count} Seiten",
     },
     proofNote: { evidence: "Nachweis", close: "Schließen" },
     assets: {

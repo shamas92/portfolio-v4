@@ -106,6 +106,9 @@ export type Project = {
    *  ("My role"). Only what a source states: a job title, a
    *  hackathon team name, a thesis, an academic project. */
   role: string;
+  /** Short scope pills for the case-page head, paraphrased only
+   *  from the project's own contribution and scope text. */
+  scopePills?: string[];
   problem: Prose;
   result: Prose;
   /** The one verified figure, when one exists. */
@@ -172,6 +175,7 @@ export const projects: Project[] = [
     decision:
       "The model flags passages; the validator decides. Deposit math runs in Python, never in the model, so a number the model invents cannot reach the result — at the cost of a second, deterministic pass over every flagged quote.",
     role: "Hackathon · Team Shamas #4919",
+    scopePills: ["Deposit-cap registry", "Photo evidence", "5 jurisdictions"],
     problem: [
       [
         "A tenant who rents in another country signs a lease, pays a deposit, and months later gets a claim for damage or cleaning. The question is simple: does the claim match the lease and the law? Answering it means reading a long document in a foreign language, and the deposit cap changes at every border.",
@@ -285,6 +289,7 @@ export const projects: Project[] = [
     decision:
       "Upserts live in Python (psycopg2 ON CONFLICT), not in stored procedures: a rerun cannot duplicate rows, and the logic stays in the codebase where it can be read and tested. Mailpit alerts when a run fails.",
     role: "Personal project",
+    scopePills: ["Airflow DAG", "Star schema", "Duplicate-proof upserts"],
     problem: [
       [
         "Sales data arrived from several sources with no single, trustworthy shape for analysis.",
@@ -337,6 +342,7 @@ export const projects: Project[] = [
     decision:
       "The coach returns measured feedback — pace, filler words, clarity — instead of impressions. Numbers make progress comparable across sessions; they say nothing about delivery, which the speaker still has to judge.",
     role: "Thesis · Co-author, published paper",
+    scopePills: ["Speech analysis", "Published paper"],
     problem: [
       [
         "Public-speaking feedback for software developers was anecdotal, not measured.",
@@ -398,6 +404,7 @@ export const projects: Project[] = [
     ],
     scope:
       "Database-backed university web modules, an internal content-management admin panel, and an integrated RAG support chatbot.",
+    scopePills: ["Web modules", "CMS admin panel", "RAG chatbot"],
     badge: "Internal / Archived",
     links: [],
   },
@@ -427,6 +434,7 @@ export const projects: Project[] = [
     ],
     scope:
       "Relational defect tracking in Laravel/MySQL — one record for every defect.",
+    scopePills: ["Defect records", "Laravel/MySQL"],
     links: [],
   },
   {
@@ -451,6 +459,7 @@ export const projects: Project[] = [
       ],
     ],
     scope: "Structured NLP student support in Python/Hugging Face.",
+    scopePills: ["Structured dialogue", "Hugging Face NLP"],
     links: [],
   },
 ];
@@ -473,17 +482,27 @@ export type BackgroundContent = {
   /** First-person introduction, 2–3 sentences, rendered as the
    *  lead paragraph of the Background section. */
   about: string;
+  /** One-line intro for the sticky timeline column (newest
+   *  first). Localised. */
+  timelineIntro: string;
   education: EducationEntry[];
   experience: ExperienceEntry[];
   languages: { language: string; level: string }[];
-  /** Certificates as one line under Education, not a section:
-   *  the certificate names and their shared period. */
-  certifications: string;
+  /** Certificates as a headed chip block: the shared heading
+   *  and period, plus one item per certificate. Replaces the
+   *  old single-line `certifications` string. */
+  certificates: {
+    heading: string;
+    period: string;
+    items: string[];
+  };
 };
 
 export const background: BackgroundContent = {
   about:
     "I am an MSc Computer Science student at TU Dresden, after a BSc in Software Engineering from HITEC University in Pakistan. I spent six months in a university IT department building database-backed web modules and a RAG chatbot, and I build data pipelines and ML systems in my own time — most recently LeaseLens, which checks rental deposit claims against the lease and the law. I am looking for a working-student role in data engineering or ML in Dresden, 20 hours a week, and I want work where the result can be measured.",
+  timelineIntro:
+    "Newest first, from the MSc in Dresden back to the BSc in Taxila.",
   education: [
     {
       degree: "MSc Computer Science",
@@ -499,6 +518,12 @@ export const background: BackgroundContent = {
     },
   ],
   experience: [
+    {
+      role: "Freelance Web Developer",
+      org: "Tools420",
+      period: "Nov 2025 – Aug 2026",
+      note: "Freelance WordPress/WooCommerce work for a Canadian online store: custom backend architectures and proprietary plugins in PHP, MySQL and JavaScript; database migrations and deployments with zero unplanned downtime.",
+    },
     {
       role: "IT Department Intern",
       org: "HITEC University",
@@ -517,8 +542,16 @@ export const background: BackgroundContent = {
     { language: "German", level: "A1/A2 (TU Dresden course)" },
     { language: "Urdu", level: "Native" },
   ],
-  certifications:
-    "Google certificates (2025–2026): Advanced Data Analytics · Data Analytics · IT Automation with Python · Project Management.",
+  certificates: {
+    heading: "Google certificates",
+    period: "2025–2026",
+    items: [
+      "Advanced Data Analytics",
+      "Data Analytics",
+      "IT Automation with Python",
+      "Project Management",
+    ],
+  },
 };
 
 /** Skills as evidence tiers. Each skill appears once, with the
@@ -528,7 +561,13 @@ export const background: BackgroundContent = {
  *  on this page live in `coursework` instead: the Google
  *  certificates name the evidence (coursework), not the absence. */
 export type Skills = {
-  groups: { title: string; items: { name: string; usedIn: string[] }[] }[];
+  groups: {
+    title: string;
+    /** One-line purpose statement for the card (Ubaid model):
+     *  what this group's skills are for. Localised. */
+    purpose: string;
+    items: { name: string; usedIn: string[] }[];
+  }[];
   coursework: string;
 };
 
@@ -536,6 +575,8 @@ export const skills: Skills = {
   groups: [
     {
       title: "Data engineering",
+      purpose:
+        "The pipeline stack. Airflow schedules each load, PostgreSQL and Parquet hold the result, and Docker makes the run repeatable.",
       items: [
         { name: "Apache Airflow", usedIn: ["Sales ETL"] },
         { name: "SQL", usedIn: ["Sales ETL"] },
@@ -548,6 +589,8 @@ export const skills: Skills = {
     },
     {
       title: "Languages",
+      purpose:
+        "Python does most of the work here. C#, TypeScript and PHP cover the projects that asked for them.",
       items: [
         {
           name: "Python",
@@ -560,6 +603,8 @@ export const skills: Skills = {
     },
     {
       title: "Frameworks & AI",
+      purpose:
+        "FastAPI and Next.js serve the products; PyTorch, Hugging Face and SAM 3.1 run the models behind them.",
       items: [
         { name: "FastAPI", usedIn: ["LeaseLens"] },
         { name: "ASP.NET MVC", usedIn: ["HITEC"] },
@@ -571,15 +616,12 @@ export const skills: Skills = {
       ],
     },
     {
-      title: "Databases",
+      title: "Databases & tools",
+      purpose:
+        "SQL Server and MySQL hold the project data, Git tracks every change, and REST APIs connect the pieces.",
       items: [
         { name: "SQL Server", usedIn: ["HITEC"] },
         { name: "MySQL", usedIn: ["Quality CRM"] },
-      ],
-    },
-    {
-      title: "Tools",
-      items: [
         {
           name: "Git",
           usedIn: [
@@ -657,6 +699,11 @@ export type UiStrings = {
     heading: string;
     intro: string;
     back: string;
+    /** Spine kicker number above the heading ("Work"). */
+    kickerNumber: string;
+    /** Spine kicker text, template with {count} = project count,
+     *  zero-padded to two digits by the component. */
+    kickerText: string;
   };
   background: {
     heading: string;
@@ -671,8 +718,28 @@ export type UiStrings = {
   skills: {
     heading: string;
     usedIn: string;
+    /** aria-label template for one "Used in" link: "{skill} — used
+     *  in {project}". {project} is the full project title. */
+    usedInLabel: string;
   };
-  footer: { heading: string };
+  footer: {
+    heading: string;
+    /** Lime CTA panel heading (huge, on the lime panel). */
+    ctaHeading: string;
+    /** Lime CTA panel subline. Reuses the reply-time promise the
+     *  form already makes in `ui.form.statusSent`. */
+    ctaSub: string;
+    /** Footer column headings. */
+    exploreHeading: string;
+    elsewhereHeading: string;
+    currentlyHeading: string;
+    /** "Currently" column, plain text (no dot, no pill — the hero
+     *  pill is the site's one availability indicator). */
+    currentlyWorking: string;
+    currentlyLooking: string;
+    /** Bottom bar: "Built with Next.js, hosted on Vercel". */
+    builtWith: string;
+  };
   form: {
     heading: string;
     nameLabel: string;
@@ -702,6 +769,24 @@ export type UiStrings = {
     role: string;
     registryHeading: string;
     limitsHeading: string;
+    /** Two-line Result heading: "The Outcome." / "See the results." */
+    outcomeTitle: string;
+    outcomeSub: string;
+    /** Two-line Evidence heading: "The Evidence." / "What proves it." */
+    evidenceTitle: string;
+    evidenceSub: string;
+    /** Rail card heading ("Built with", shown uppercased by CSS). */
+    builtWith: string;
+    /** Accessible label for the scope-pills list. */
+    scope: string;
+    /** Bar-pair labels for the LeaseLens test split. */
+    testsBackend: string;
+    testsFrontend: string;
+    /** Footnote template: "{backend} backend, {frontend} frontend,
+     *  at {version}". */
+    testsSplit: string;
+    /** Template for the OratorPath page count: "{count} pages". */
+    pagesCount: string;
   };
   proofNote: { evidence: string; close: string };
   assets: {
@@ -815,6 +900,8 @@ export const ui: UiStrings = {
     intro:
       "All six projects — the four featured in the track, and the two earlier ones.",
     back: "Home",
+    kickerNumber: "Work",
+    kickerText: "All work — {count} projects",
   },
   background: {
     heading: "Background",
@@ -829,9 +916,18 @@ export const ui: UiStrings = {
   skills: {
     heading: "Skills",
     usedIn: "Used in",
+    usedInLabel: "{skill} — used in {project}",
   },
   footer: {
     heading: "Contact",
+    ctaHeading: "Have a role in mind? Let's talk.",
+    ctaSub: "I reply within 2 working days.",
+    exploreHeading: "Explore",
+    elsewhereHeading: "Elsewhere",
+    currentlyHeading: "Currently",
+    currentlyWorking: "Working on LeaseLens v1.0.0",
+    currentlyLooking: "Looking for Werkstudent roles",
+    builtWith: "Built with Next.js, hosted on Vercel",
   },
   form: {
     heading: "Send a message",
@@ -862,6 +958,16 @@ export const ui: UiStrings = {
     role: "My role",
     registryHeading: "Deposit caps in the registry",
     limitsHeading: "Limits",
+    outcomeTitle: "The Outcome.",
+    outcomeSub: "See the results.",
+    evidenceTitle: "The Evidence.",
+    evidenceSub: "What proves it.",
+    builtWith: "Built with",
+    scope: "Scope",
+    testsBackend: "Backend",
+    testsFrontend: "Frontend",
+    testsSplit: "{backend} backend, {frontend} frontend, at {version}",
+    pagesCount: "{count} pages",
   },
   proofNote: { evidence: "Evidence", close: "Close" },
   assets: {

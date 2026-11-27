@@ -19,13 +19,18 @@ import { useContent } from "@/i18n/LocaleProvider";
 
 const mono = "var(--font-mono)";
 
-/** Shared window chrome: frame, title bar, status strip. */
+/** Shared window chrome: frame, title bar, status strip. Text
+ *  sizes default to 9px; LeaseLens passes larger sizes (audit
+ *  NICE: diagram text to 10–11px) without touching the other
+ *  mockups. */
 function MockupWindow({
   ariaLabel,
   title,
   windowTitle,
   status,
   statusAccent = false,
+  titleSize = 9,
+  statusSize = 9,
   children,
 }: {
   ariaLabel: string;
@@ -33,6 +38,8 @@ function MockupWindow({
   windowTitle: string;
   status: string;
   statusAccent?: boolean;
+  titleSize?: number;
+  statusSize?: number;
   children: ReactNode;
 }) {
   return (
@@ -58,7 +65,7 @@ function MockupWindow({
         x="58"
         y="19"
         fontFamily={mono}
-        fontSize="9"
+        fontSize={titleSize}
         letterSpacing="1"
         fill="var(--ink-muted)"
       >
@@ -70,7 +77,7 @@ function MockupWindow({
         x="16"
         y="229"
         fontFamily={mono}
-        fontSize="9"
+        fontSize={statusSize}
         letterSpacing="0.5"
         fill={statusAccent ? "var(--accent-ink)" : "var(--ink-muted)"}
       >
@@ -90,13 +97,19 @@ export function LeaseLensAsset() {
       windowTitle={labels.window}
       status={labels.status}
       statusAccent
+      /* Diagram text at 10–11px (audit NICE): plate labels 11,
+         status strip 10 — 11px would push the German status
+         ("86.1% registrierte IoU — Einzelpaar-Wert, ohne
+         Basiswert", 58 chars) past the 400px frame. */
+      titleSize={11}
+      statusSize={10}
     >
       {/* plate labels */}
       <text
         x="16"
         y="42"
         fontFamily={mono}
-        fontSize="9"
+        fontSize="11"
         letterSpacing="1"
         fill="var(--ink-muted)"
       >
@@ -106,7 +119,7 @@ export function LeaseLensAsset() {
         x="208"
         y="42"
         fontFamily={mono}
-        fontSize="9"
+        fontSize="11"
         letterSpacing="1"
         fill="var(--ink-muted)"
       >
@@ -212,7 +225,7 @@ export function LeaseLensAsset() {
         x="32"
         y="168"
         fontFamily={mono}
-        fontSize="8"
+        fontSize="10"
         letterSpacing="1"
         fill="var(--ink-muted)"
       >
@@ -232,7 +245,7 @@ export function LeaseLensAsset() {
         x="152"
         y="168"
         fontFamily={mono}
-        fontSize="8"
+        fontSize="10"
         letterSpacing="1"
         fill="var(--ink-muted)"
       >
@@ -252,7 +265,7 @@ export function LeaseLensAsset() {
         x="272"
         y="168"
         fontFamily={mono}
-        fontSize="8"
+        fontSize="10"
         letterSpacing="1"
         fill="var(--ink-muted)"
       >

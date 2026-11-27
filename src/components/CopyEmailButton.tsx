@@ -40,9 +40,11 @@ function CheckIcon() {
   );
 }
 
-/** Copy-email action. Three shapes from one component: the outline
- *  button the footer uses, a high-contrast pill, and an icon-only
- *  pill. The label swaps inline to "Copied ✓" for 2 seconds with a
+/** Copy-email action. Four shapes from one component: the outline
+ *  button the footer uses, a high-contrast pill, an icon-only
+ *  pill, and a plain text link (the footer-links row, audit S3:
+ *  the whole row is one text treatment, no pills next to bare
+ *  links). The label swaps inline to "Copied ✓" for 2 seconds with a
  *  scale pop, and the icon morphs from envelope to check
  *  (transform/opacity only). An aria-live region announces the
  *  result. */
@@ -51,7 +53,7 @@ export function CopyEmailButton({
   iconOnly = false,
   className = "",
 }: {
-  variant?: "outline" | "pill";
+  variant?: "outline" | "pill" | "text";
   iconOnly?: boolean;
   className?: string;
 }) {

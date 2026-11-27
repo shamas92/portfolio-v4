@@ -1046,6 +1046,13 @@ footer[id],
 
 .hero-actions .btn-primary:hover {
   background: #000000;
+  /* The generic .btn-primary:hover sets color: var(--bg),
+     which in dark mode is the dark ground (#0c0c0b) — dark
+     text on this black button, so the label vanished on
+     hover. Pin the light label here; the hero rule wins on
+     specificity, and light mode is unchanged (#FAF9F7 is
+     the same colour var(--bg) already gave it there). */
+  color: #FAF9F7;
 }
 
 .btn-arrow {

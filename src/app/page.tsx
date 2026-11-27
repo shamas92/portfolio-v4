@@ -361,10 +361,14 @@ export default function Home() {
         tabIndex={-1}
       >
         <Reveal>
+          <p className="section-kicker">
+            <span className="section-number">02</span> {ui.skills.heading}
+          </p>
           <h2 className="section-head" id="skills-head">
             {ui.skills.heading}
           </h2>
         </Reveal>
+        <hr className="section-rule" aria-hidden="true" />
         <SkillsSection />
       </section>
     </div>

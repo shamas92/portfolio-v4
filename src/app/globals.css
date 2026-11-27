@@ -2089,6 +2089,10 @@ footer[id],
     background: var(--lime);
     transform: scaleX(var(--track-x, 0));
     transform-origin: left;
+    /* The fill sweeps between scroll steps instead of stepping:
+       a 100ms linear transition on transform only. The track
+       itself stays direct 1:1 — this touches the line alone. */
+    transition: transform 100ms linear;
   }
 
   .track {

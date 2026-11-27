@@ -3254,6 +3254,16 @@ footer[id],
   width: 100%;
 }
 
+/* Placeholders: without this they render as ink at 50%
+   opacity (Tailwind preflight), 3.46:1 in light mode.
+   --ink-muted at full opacity is 7.25:1 light and 7.76:1
+   dark. */
+.form-field input::placeholder,
+.form-field textarea::placeholder {
+  color: var(--ink-muted);
+  opacity: 1;
+}
+
 .form-field textarea {
   min-height: 120px;
   resize: vertical;

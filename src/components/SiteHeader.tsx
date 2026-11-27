@@ -5,7 +5,6 @@ import { usePathname } from "next/navigation";
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { useContent } from "@/i18n/LocaleProvider";
-import { deContent } from "@/content.de";
 import { DownloadCvButton } from "./DownloadCvButton";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
@@ -108,13 +107,12 @@ export function SiteHeader() {
   }
 
   const ui = content.ui;
-  /* On the German legal pages the header nav renders in German,
-     whatever the locale toggle says — the pages themselves are
-     German, so deContent.ui.nav ("Projekte / Werdegang /
-     Kontakt") replaces the locale strings there. */
-  const isLegalPage =
-    pathname === "/impressum" || pathname === "/datenschutz";
-  const nav = isLegalPage ? deContent.ui.nav : ui.nav;
+  /* The nav follows the active locale on every page, including
+     the German legal pages: their body text stays German, the
+     header chrome does not. An earlier deContent override forced
+     German nav on /impressum and /datenschutz whatever the
+     toggle said; it is gone. */
+  const nav = ui.nav;
   const sections = [
     { id: "work", label: nav.work, href: "/#work" },
     { id: "background", label: nav.background, href: "/#background" },

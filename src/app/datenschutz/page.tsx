@@ -51,7 +51,11 @@ export default function DatenschutzPage() {
         <Link className="case-back" href="/">
           ← Startseite
         </Link>
+        <p className="section-kicker">
+          <span className="section-number">Legal</span> Datenschutzerklärung
+        </p>
         <h1 className="case-title">Datenschutzerklärung</h1>
+        <hr className="section-rule" aria-hidden="true" />
       </div>
 
       <section className="case-block" aria-labelledby="verantwortlicher-head">

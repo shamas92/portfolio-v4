@@ -44,7 +44,11 @@ export default function ImpressumPage() {
         <Link className="case-back" href="/">
           ← Startseite
         </Link>
+        <p className="section-kicker">
+          <span className="section-number">Legal</span> Impressum
+        </p>
         <h1 className="case-title">Impressum</h1>
+        <hr className="section-rule" aria-hidden="true" />
       </div>
 
       <section className="case-block" aria-labelledby="angaben-head">

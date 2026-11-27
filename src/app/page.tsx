@@ -341,11 +341,16 @@ export default function Home() {
             Skills. The lead lives here, not in Background, so the
             header and its opening paragraph never drift apart. */}
         <Reveal>
+          <p className="section-kicker">
+            <span className="section-number">01</span>{" "}
+            {ui.background.heading}
+          </p>
           <h2 className="section-head" id="background-head">
             {ui.background.heading}
           </h2>
           <p className="about-lead">{content.background.about}</p>
         </Reveal>
+        <hr className="section-rule" aria-hidden="true" />
         <Background />
       </section>
 

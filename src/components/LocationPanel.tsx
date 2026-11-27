@@ -74,8 +74,8 @@ export function LocationPanel() {
               d={c.d}
               fill="none"
               stroke={c.accent ? "var(--accent)" : "var(--rule)"}
-              strokeWidth="1"
-              opacity={c.accent ? 1 : 0.7}
+              strokeWidth={c.accent ? 2 : 1.5}
+              opacity={1}
             />
           ))}
           <circle cx="200" cy="100" r="3" fill="var(--accent)" />

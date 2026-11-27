@@ -923,14 +923,21 @@ footer[id],
    slightly skewed rounded rectangle, like a highlighter stroke.
    The text on it is near-black in both themes — near-white text
    on lime is unreadable, and the headline is near-white in dark
-   mode, so the colour is set here, not inherited. */
+   mode, so the colour is set here, not inherited. The marker
+   draws in left-to-right shortly after load
+   (hero-highlight-draw): the lime is a gradient whose width
+   animates 0→100%, so only the background wipes — the text
+   stays fully visible from first paint and nothing moves. */
 .hero-highlight {
   display: inline-block;
-  background: var(--lime);
+  background: linear-gradient(var(--lime), var(--lime)) no-repeat left
+    center / 100% 100%;
   color: #111110;
   border-radius: 10px;
   padding: 0 0.08em;
   transform: rotate(-2deg);
+  animation: hero-highlight-draw 600ms cubic-bezier(0.22, 1, 0.36, 1)
+    300ms both;
   /* The -2deg rotation lets the marker's corners overhang the
      content edge by ~1px; at 375px that lime corner peeked out
      from behind the mobile menu card, whose left edge aligns
@@ -948,6 +955,19 @@ footer[id],
   hyphens: auto;
   box-decoration-break: clone;
   -webkit-box-decoration-break: clone;
+}
+
+/* The marker draw-in: the lime wipes left-to-right behind the
+   text. The from-state holds during the 300ms delay (fill mode
+   both), so the phrase reads plain at first paint, like the
+   reference — then the stroke lands in 600ms. */
+@keyframes hero-highlight-draw {
+  from {
+    background-size: 0% 100%;
+  }
+  to {
+    background-size: 100% 100%;
+  }
 }
 
 /* The ask: the role, the hours, the place, in grey — the one
@@ -3283,6 +3303,13 @@ footer[id],
      exit/enter). */
   .hero-caption-inner--exiting,
   .hero-caption-inner--entering {
+    animation: none;
+  }
+
+  /* The hero highlight renders fully drawn under reduced
+     motion (no draw-in): with the animation off, the base
+     background-size of 100% applies. */
+  .hero-highlight {
     animation: none;
   }
 

@@ -9,19 +9,19 @@ import { DownloadCvButton } from "./DownloadCvButton";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
 
-const SECTION_IDS = ["work", "background", "contact"] as const;
+const SECTION_IDS = ["work", "about", "skills", "contact"] as const;
 
-/** Scroll state: the pill morph starts at y >= 24px. The scroll
+/** Scroll state: the frosted pill appears at y >= 50px. The scroll
  *  position is external DOM state, so it is read with
  *  useSyncExternalStore (the same pattern ThemeToggle uses for
  *  data-theme): the first client render already has the correct
  *  value when the page is restored mid-scroll, instead of the
  *  server's `false` flipping after an effect runs. The
  *  subscription only notifies when the boolean flips across the
- *  24px threshold, so scrolling does not re-render on every
+ *  50px threshold, so scrolling does not re-render on every
  *  pixel. The server snapshot is false (at top). */
 function getScrolled(): boolean {
-  return typeof window !== "undefined" && window.scrollY >= 24;
+  return typeof window !== "undefined" && window.scrollY >= 50;
 }
 
 function getServerScrolled(): boolean {
@@ -29,9 +29,9 @@ function getServerScrolled(): boolean {
 }
 
 function subscribeScrolled(onChange: () => void): () => void {
-  let current = window.scrollY >= 24;
+  let current = window.scrollY >= 50;
   const onScroll = () => {
-    const next = window.scrollY >= 24;
+    const next = window.scrollY >= 50;
     if (next !== current) {
       current = next;
       onChange();
@@ -41,17 +41,26 @@ function subscribeScrolled(onChange: () => void): () => void {
   return () => window.removeEventListener("scroll", onScroll);
 }
 
-/** The global header, rebuilt: a fixed bar that is a full-width
- *  flush container at scroll top and morphs into a centered
- *  floating pill once the user scrolls past 24px. Three zones —
- *  wordmark, sliding-pill section nav, utility cluster — and a
- *  mobile dropdown menu below 1024px. Nav is Work, Background,
- *  Contact only; GitHub and LinkedIn live in Contact, not here.
+/** The global header, Noor-style (noorrehman.me, live-observed
+ *  2026-11-28): a fixed bar whose elements sit bare on the page
+ *  background at scroll top — no container at all — and gain a
+ *  frosted translucent pill around them once the user scrolls
+ *  past 50px. The pill never hides, shrinks, condenses or slides
+ *  away, and the content never changes: the wordmark (name +
+ *  role), the section nav, Download CV and both toggles stay
+ *  visible in both states. Three zones — wordmark, sliding-pill
+ *  section nav, utility cluster — and a mobile dropdown menu
+ *  below 1024px. Nav is Work, About, Skills, Contact; GitHub
+ *  and LinkedIn live in Contact, not here.
  *
  *  The header is fixed, so the layout reserves its at-top height
- *  with a .header-spacer div; the morph never moves page content.
- *  The active-section pill is a framer-motion shared-layout element
- *  (layoutId); everything else moves in CSS (transform/opacity). */
+ *  with a .header-spacer div; the pill appearing never moves
+ *  page content. The active-section pill is a framer-motion
+ *  shared-layout element (layoutId); everything else moves in
+ *  CSS (transform/opacity). This replaces the earlier morph
+ *  (full-width flush container at top → centered floating pill),
+ *  which also hid the wordmark words once scrolled; that hide
+ *  rule is deleted, see css-spec-header.md. */
 export function SiteHeader() {
   const content = useContent();
   const pathname = usePathname();
@@ -62,12 +71,12 @@ export function SiteHeader() {
     getScrolled,
     getServerScrolled,
   );
-  /* Mounted: false until the first effect after mount. The morph
+  /* Mounted: false until the first effect after mount. The pill
    *  transition only runs once mounted (see the
    *  .site-header.is-mounted rule in globals.css), so a state flip
    *  right after mount — e.g. the scroll position landing after
-   *  hydration — snaps instantly instead of animating the 200ms
-   *  morph. Normal user scrolling still animates smoothly. The
+   *  hydration — snaps instantly instead of animating the 150ms
+   *  pill transition. Normal user scrolling still animates. The
    *  nav pill's transition is likewise duration 0 until mounted. */
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
@@ -115,7 +124,8 @@ export function SiteHeader() {
   const nav = ui.nav;
   const sections = [
     { id: "work", label: nav.work, href: "/#work" },
-    { id: "background", label: nav.background, href: "/#background" },
+    { id: "about", label: nav.about, href: "/#about" },
+    { id: "skills", label: nav.skills, href: "/#skills" },
     { id: "contact", label: nav.contact, href: "/#contact" },
   ];
   const isCasePage = pathname?.startsWith("/work/") ?? false;
@@ -123,7 +133,7 @@ export function SiteHeader() {
    *  active by rule instead of by scroll-spy. */
   const activeSection = isCasePage ? "work" : active;
 
-  /* Scroll state: the pill morph starts at y >= 24px — read
+  /* Scroll state: the frosted pill appears at y >= 50px — read
    *  during render via useSyncExternalStore (see getScrolled
    *  above), not in an effect, so a mid-scroll reload renders
    *  the pill form on the first client render. */
@@ -371,10 +381,12 @@ export function SiteHeader() {
       >
       <div className="site-header-inner">
         <div className="header-left">
-          {/* The wordmark words are visually hidden (not
-              display: none) once scrolled, so they stay in the
-              accessibility tree and this link keeps its name —
-              see the .site-name-words rule in globals.css. */}
+          {/* The wordmark words stay visible in both states: the
+              Noor-style pill keeps the full row (name + role,
+              nav, Download CV, toggles) at every scroll
+              position. The earlier rule that visually hid
+              .site-name-words once scrolled is deleted — see
+              css-spec-header.md. */}
           <Link className="site-name" href="/">
             <span className="site-monogram" aria-hidden="true">
               SR

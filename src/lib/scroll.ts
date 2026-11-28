@@ -15,13 +15,18 @@ export function getLenis(): Lenis | null {
 
 /** Scroll to a target the way the page scrolls: through Lenis
  *  when it is running (lerp ~0.1), natively otherwise. The
- *  offset is the space left above the target's top — 96px
- *  clears the sticky header, the same value as the
- *  scroll-margin-top on sections and experience cards (which
- *  the native scrollIntoView path honours on its own, so it
- *  takes no offset). `immediate` skips the glide — for the
- *  skip link, where a keyboard reader expects to arrive at
- *  once. */
+ *  landing is 96px above the target's top — the sticky
+ *  header's clearance, the same value as the
+ *  scroll-margin-top on sections and experience cards. The
+ *  native scrollIntoView path honours scroll-margin-top on
+ *  its own, so it takes no offset — and neither does the
+ *  Lenis path: Lenis's scrollTo already subtracts the
+ *  element's scroll-margin-top before applying the offset,
+ *  so passing −96 double-counted it and every Lenis jump
+ *  landed at 192px. Offset 0 in the Lenis path lands at
+ *  96px, like the native path. `immediate` skips the glide
+ *  — for the skip link, where a keyboard reader expects to
+ *  arrive at once. */
 export function scrollToTarget(
   target: string | HTMLElement,
   opts?: { offset?: number; immediate?: boolean },
@@ -33,7 +38,7 @@ export function scrollToTarget(
   if (!el) return;
   if (lenis) {
     lenis.scrollTo(el, {
-      offset: opts?.offset ?? -96,
+      offset: opts?.offset ?? 0,
       immediate: opts?.immediate ?? false,
     });
     return;

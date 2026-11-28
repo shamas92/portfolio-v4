@@ -236,10 +236,18 @@ export function About() {
           {/* Timeline rail: a vertical line between the index
               dots, its lime fill following scroll progress
               through the cards (scaleY, origin top). No fill
-              under reduced motion — the plain line stays. */}
+              under reduced motion — the plain line stays. The
+              fill is also gated on `mounted`: useReducedMotion
+              is null on the server (fill rendered) but true on
+              the first client render under reduced motion
+              (fill omitted) — that mismatch was hydration
+              error #418 on every reduced-motion load. With
+              the mounted gate the server render and the first
+              client render both omit the fill, and it mounts
+              after hydration only when motion runs. */}
           <div className="about-rail" aria-hidden="true">
             <div className="about-rail-track" />
-            {!reduceMotion && (
+            {mounted && !reduceMotion && (
               <motion.div
                 className="about-rail-fill"
                 style={{ scaleY: railProgress }}

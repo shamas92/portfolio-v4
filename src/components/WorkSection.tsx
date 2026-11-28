@@ -22,12 +22,14 @@
  * a whole-card link to the /work index — that replaces the
  * "More on GitHub" link, which now lives on the /work page.
  *
- * Track navigation (S4): a "Skip the track" link at the track
- * start jumps to #about. The reference has no counter, but
- * it does have a green progress line below the section — a 3px
- * lime fill, full width, no rail, no label — that grows
- * left-to-right as the track scrolls, so the track carries
- * one (the .track-progress element in the viewport).
+ * Track navigation: the reference has no counter, but it does
+ *  have a green progress line below the section — a 3px lime
+ *  fill, full width, no rail, no label — that grows
+ *  left-to-right as the track scrolls, so the track carries
+ *  one (the .track-progress element in the viewport). The
+ *  "Skip the track" link is gone (removed 2026-11-28, premium
+ *  round): the track is the section, and the next section
+ *  follows it.
  *
  * Mobile (<1024px) and reduced motion: the track is a vertical
  * stack of the same cards (photo on top, text below), no sticky,
@@ -48,24 +50,6 @@ export function WorkSection() {
 
   return (
     <>
-      {/* S4: skip the track — at the track start, jumps to
-          #about. A text link, 44px target. */}
-      <a
-        href="#about"
-        className="track-skip"
-        style={{
-          display: "flex",
-          alignItems: "center",
-          width: "fit-content",
-          minHeight: "44px",
-          margin: "0 0 var(--space-3)",
-          fontWeight: 600,
-          color: "var(--accent-ink)",
-          textDecoration: "none",
-        }}
-      >
-        Skip the track <span aria-hidden="true">↓</span>
-      </a>
       <div className="track-scroll">
         <div className="track-viewport">
           <div className="track">

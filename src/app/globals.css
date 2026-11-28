@@ -1115,28 +1115,6 @@ html[data-scrolled="true"] .site-actions {
   }
 }
 
-/* "Or see the work first": a plain grey link under the buttons,
-   jumping to #work. */
-.hero-see-work {
-  margin-top: var(--space-3);
-  font-size: var(--text-small);
-  color: var(--ink-muted);
-}
-
-.hero-see-work a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  color: var(--ink-muted);
-  text-decoration: none;
-}
-
-.hero-see-work a:hover {
-  color: var(--ink);
-  text-decoration: underline;
-  text-underline-offset: 3px;
-}
-
 /* ---- Hero deck: all six projects' photos, fanned at rest,
  *  staying in the hero ----
  *  The deck is the hero's right column on desktop and stacks
@@ -2194,21 +2172,21 @@ html[data-scrolled="true"] .site-actions {
    prints. */
 @media screen and (min-width: 1024px) and (prefers-reduced-motion: no-preference) and (scripting: enabled) {
   .track-scroll {
-    /* Fallback height (no JS): ~610vh approximates the 1:1
-       ratio plus the 60vh dwell at a 900px viewport (trackMax
-       4044px + 540px dwell + 900px viewport = 5484px ≈
-       610vh). With JS, measure() in page.tsx sets the exact
-       height (trackMax + dwell + viewport height) so the
-       vertical range equals the horizontal travel at any
-       viewport. */
-    height: 610vh;
-    /* The track starts at the page container's edge, like the
-       reference's — the negative horizontal margins cancel the
-       .page's 24px padding, so the row is the full 1296px
-       container width instead of sitting 24px inside it. The
-       first card lands ~24px further left, matching the
-       reference's position. */
-    margin-inline: calc(-1 * var(--space-3));
+    /* Fallback height (no JS): ~550vh approximates the 1:1
+       ratio at a 900px viewport (trackMax 4044px + 900px
+       viewport = 4944px ≈ 550vh). With JS, measure() in
+       page.tsx sets the exact height (trackMax + viewport
+       height) so the vertical range equals the horizontal
+       travel at any viewport. No dwell: the reference releases
+       the moment the end card is fully in view. */
+    height: 550vh;
+    /* Full browser width, like the reference: the row breaks
+       out of the 1296px content column (100vw wide, negative
+       margins cancelling the page padding), so cards exit at
+       the far left edge of the screen (x=0) instead of
+       vanishing mid-page at the column edge. */
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
   }
 
   .track-viewport {
@@ -2247,6 +2225,17 @@ html[data-scrolled="true"] .site-actions {
   .track {
     flex-direction: row;
     gap: var(--space-3);
+    /* Symmetric inline padding, half the leftover viewport
+       width past the 1296px measure (clamped to 0 below it):
+       the row starts at the content column's left edge — the
+       reference's intro starts ~313px in at 1919 — and the
+       same padding trails the end card, so at the end of the
+       travel the last project card and the lime end card are
+       both fully visible with ~300px of empty space on the
+       right, exactly like the reference's end state. The
+       padding is part of scrollWidth, so the travel formula
+       (content minus viewport) needs no change. */
+    padding-inline: max(0px, calc((100vw - var(--measure)) / 2));
     /* translate3d keeps the track on the GPU (composited) so the
        scroll-driven motion stays jank-free. */
     transform: translate3d(calc(var(--track-x, 0) * var(--track-max, 0px) * -1), 0, 0);
@@ -2741,26 +2730,6 @@ html[data-scrolled="true"] .site-actions {
   color: var(--ink);
   margin: 0;
   max-width: 68ch;
-}
-
-.about-see-work {
-  margin: var(--space-3) 0 0;
-}
-
-.about-see-work a {
-  display: inline-flex;
-  align-items: center;
-  min-height: 44px;
-  font-weight: 600;
-  color: var(--ink);
-  text-decoration: underline;
-  text-decoration-color: var(--accent);
-  text-decoration-thickness: 1px;
-  text-underline-offset: 3px;
-}
-
-.about-see-work a:hover {
-  text-decoration-thickness: 2px;
 }
 
 /* ---- About experience: sticky role list + card stack ---- */

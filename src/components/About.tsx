@@ -11,8 +11,9 @@ import type { AboutEntry } from "@/content";
  *  CV) beside the big statement — the statement IS the section
  *  heading (h2, id="about-head"; page.tsx points
  *  aria-labelledby at it, and there is no separate "About"
- *  heading) — with hairline fact rows under it and the "See the
- *  projects" link below those. The statement's lime highlight
+ *  heading) — with hairline fact rows under it. (The "See the
+ *  projects" link below the fact rows is gone — removed
+ *  2026-11-28, premium round.) The statement's lime highlight
  *  reuses .hero-highlight; its draw-in animation runs at page
  *  load and is finished long before anyone scrolls here, so the
  *  word reads fully drawn (see the CSS spec).
@@ -128,12 +129,6 @@ export function About() {
                 </div>
               ))}
             </dl>
-            <p className="about-see-work">
-              <a href="#work">
-                {content.ui.hero.seeWorkFirst}{" "}
-                <span aria-hidden="true">↓</span>
-              </a>
-            </p>
           </div>
         </div>
       </Reveal>

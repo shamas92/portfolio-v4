@@ -75,15 +75,22 @@ export default function Home() {
   };
 
   /* Work track scroll — the track moves left as the user scrolls
-   *  vertically (desktop, 1024px and up), direct 1:1 like the
-   *  reference: one vertical pixel moves the track one
-   *  horizontal pixel, no smoothing, no lag. The scroll range
-   *  (.track-scroll) is set in measure() to --track-max + a
-   *  60vh dwell + viewport height: the vertical range for the
-   *  track itself equals the horizontal travel exactly, and
-   *  the dwell after it keeps the lime end card fully visible
-   *  for 60vh of scroll before the section unpins. The CSS
-   *  height (610vh) is only the no-JS fallback approximation.
+   *  vertically (desktop, 1024px and up). The scroll range
+   *  (.track-scroll) is set in measure() to --track-max +
+   *  viewport height: the vertical range for the track itself
+   *  equals the horizontal travel exactly, and the section
+   *  unpins the moment the end card is fully in view — no
+   *  dwell, like the reference. The viewport is the full
+   *  browser width (see the track CSS), so cards exit at the
+   *  far left edge of the screen (x=0) instead of vanishing
+   *  mid-page at the column edge. Under Lenis the scroll
+   *  position itself is smoothed (lerp ~0.1), so the track
+   *  glides instead of tracking the wheel exactly — accepted
+   *  by the user ("Build it with Lenis too", 2026-11-28). There
+   *  is no second smoothing stage here: sync() still writes
+   *  --track-x straight from scrollY, and the progress line
+   *  keeps its own 100ms sweep. The CSS height (550vh) is
+   *  only the no-JS fallback approximation.
    *  The viewport is sticky,
    *  and the scroll listener writes --track-x (0→1) straight
    *  from the scroll position — the track follows the wheel
@@ -136,19 +143,18 @@ export default function Home() {
     };
 
     /* Recompute the scroll target from scrollY and write it
-       directly — no easing, no smoothing loop: the track
-       follows the wheel 1:1, like the reference, and never
-       drifts after the scroll stops. The track's horizontal
-       progress: 0 until the track section arrives, 1 once it
-       has scrolled through. */
+       directly — no easing, no smoothing loop of its own. Under
+       Lenis the scrollY value itself is smoothed, so the track
+       glides; without Lenis it follows the wheel 1:1, like the
+       reference, and never drifts after the scroll stops. The
+       track's horizontal progress: 0 until the track section
+       arrives, 1 once it has scrolled through. */
     const sync = () => {
       const y = window.scrollY;
       /* Progress over the horizontal travel only: 0 until the
          track section arrives, 1 once it has scrolled through
-         (after trackMax of vertical scroll). During the dwell
-         that follows, the numerator keeps growing but clamp01
-         holds the progress at 1, so the track and the progress
-         line stay at their end values and never drift. */
+         (after trackMax of vertical scroll). The section
+         unpins at 1 — there is no dwell after it. */
       const progress =
         trackMaxRef.current > 0
           ? clamp01((y - trackTopRef.current) / trackMaxRef.current)
@@ -182,23 +188,19 @@ export default function Home() {
         track.scrollWidth - trackViewport.clientWidth,
       );
       track.style.setProperty("--track-max", `${max}px`);
-      /* 1:1 ratio + dwell: the vertical scroll range for the
+      /* 1:1 ratio, no dwell: the vertical scroll range for the
          track itself must equal the horizontal travel, so the
-         scroll container's height is set to trackMax + dwell
-         + viewport height (the range is height minus viewport
-         height). The dwell (60vh) is extra scroll AFTER the
-         track reaches 100%, during which the end card stays
-         fully visible before the section unpins — like the
-         reference, whose end panel gets ~64vh of its own. This
-         overrides the CSS fallback height with the exact value
-         for this viewport. */
-      const dwell = Math.round(window.innerHeight * 0.6);
-      trackScroll.style.height = `${max + dwell + window.innerHeight}px`;
+         scroll container's height is set to trackMax +
+         viewport height (the range is height minus viewport
+         height). The section unpins the moment the end card
+         is fully in view — like the reference, which has no
+         dwell. This overrides the CSS fallback height with the
+         exact value for this viewport. */
+      trackScroll.style.height = `${max + window.innerHeight}px`;
       /* Cache the track's top and horizontal travel for
          sync(). The progress denominator is the travel (max),
-         not the full range (max + dwell), so --track-x hits 1
-         at the end of the track and holds there through the
-         dwell. */
+         not the full range, so --track-x hits 1 at the end of
+         the track, exactly when the section unpins. */
       const y = window.scrollY;
       const trackRect = trackScroll.getBoundingClientRect();
       const trackTop = trackRect.top + y;
@@ -293,7 +295,8 @@ export default function Home() {
             {ui.hero.ask}
           </p>
           {/* CTA hierarchy: Email me (primary) > Download CV
-              (secondary) > "See the projects" (text link below). */}
+              (secondary). The "See the projects" text link is
+              gone — the track follows immediately below. */}
           <div className="hero-actions" data-entrance style={delay(180)}>
             <a
               className="btn btn-primary hero-btn"
@@ -306,12 +309,6 @@ export default function Home() {
             </a>
             <DownloadCvButton className="btn btn-secondary" />
           </div>
-          <p className="hero-see-work" data-entrance style={delay(240)}>
-            <a href="#work">
-              {ui.hero.seeWorkFirst}{" "}
-              <span aria-hidden="true">↓</span>
-            </a>
-          </p>
         </div>
         <HeroShowcase activeSlug={activeSlug} onSelect={handleTabSelect} />
       </header>

@@ -2,6 +2,7 @@
 
 import {
   useEffect,
+  useLayoutEffect,
   useRef,
   useState,
   type MouseEvent as ReactMouseEvent,
@@ -9,6 +10,8 @@ import {
 } from "react";
 import {
   motion,
+  useAnimationControls,
+  useInView,
   useReducedMotion,
   useScroll,
   useTransform,
@@ -45,9 +48,21 @@ import type { AboutEntry } from "@/content";
  *  children. Everything animates transform/opacity only.
  *  Under reduced motion the reveals are fades, the highlight
  *  is fully drawn, and there is no scroll-linked motion at
- *  all. The `mounted` gate keeps the hidden initial states
- *  out of the server render, so readers without JavaScript
- *  see the content as-is. */
+ *  all.
+ *
+ *  How the hidden states are applied (fix 2026-11-28): the
+ *  server render and the first client render are fully
+ *  visible — readers without JavaScript see the content
+ *  as-is, and hydration matches. Each motion element owns an
+ *  AnimationControls instance and sets its hidden state in a
+ *  layout effect after mount (`controls.set`), before first
+ *  paint, then starts the visible state when its own
+ *  useInView fires. Flipping framer-motion `initial` after
+ *  mount does NOT work — `initial` applies only at mount —
+ *  which is why the previous mounted-gate left every card
+ *  already visible and nothing animated. The one exception
+ *  is the statement word opacity, which is a live MotionValue
+ *  attached after mount (the `mounted` gate below). */
 
 const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
@@ -61,11 +76,14 @@ export function About() {
   const [activeId, setActiveId] = useState(entries[0]?.id ?? "");
   const cardRefs = useRef(new Map<string, HTMLElement>());
 
-  /* Mounted: false until the first effect after mount, so the
-     hidden initial states below never reach the server render
-     (no-JS readers see the content) and never animate on load
-     for elements already in view — they fade in once, on
-     arrival, instead. Same pattern as SiteHeader's mounted. */
+  /* Mounted: false until the first effect after mount. It
+     gates only the statement word opacity below (the live
+     MotionValue is attached after mount, so the server
+     render and the first client render both show the words
+     at full opacity). The card / hairline / highlight
+     hidden states do NOT use this gate — they are set by
+     AnimationControls in a layout effect, because flipping
+     framer-motion `initial` after mount is a no-op. */
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
     const t = setTimeout(() => setMounted(true), 0);
@@ -148,42 +166,12 @@ export function About() {
   const kindLabel = (kind: AboutEntry["kind"]) =>
     kind === "education" ? ui.education : ui.experience;
 
-  /* Card reveal: 24px rise (16px on phones) + opacity, 600ms,
-     children stagger 60ms (date → title → text → bullets →
-     chips). The children fade only — the rise belongs to the
-     card. Under reduced motion the reveal is a fade (no rise),
-     and before mount there is no hidden state at all. */
-  const revealY = isMobile ? 16 : 24;
-  const cardVariants: Variants = {
-    hidden: {
-      opacity: 0,
-      y: reduceMotion ? 0 : revealY,
-    },
-    visible: {
-      opacity: 1,
-      y: 0,
-      transition: {
-        duration: 0.6,
-        ease: EASE,
-        staggerChildren: 0.06,
-      },
-    },
-  };
-  const childVariants: Variants = {
-    hidden: { opacity: 0 },
-    visible: {
-      opacity: 1,
-      transition: { duration: 0.6, ease: EASE },
-    },
-  };
-  const squareVariants: Variants = {
-    hidden: { scale: 0 },
-    visible: {
-      scale: 1,
-      transition: { duration: 0.3, ease: EASE },
-    },
-  };
-  const cardInitial = mounted && !reduceMotion ? "hidden" : false;
+  /* Card reveal distances: 24px rise (16px on phones) +
+     opacity, 600ms, children stagger 60ms. The variants
+     live in AboutCard below — each card owns its controls
+     and sets its hidden state in a layout effect after
+     mount (see the header comment: `initial` flipped
+     after mount never applies). */
 
   /* Cursor-following spotlight: the card's ::after is a radial
      lime gradient centred on these CSS vars (~15% opacity).
@@ -228,24 +216,11 @@ export function About() {
           <dl className="about-facts">
             {about.factRows.map((row, i) => (
               <div className="about-fact" key={row.label}>
-                <motion.span
-                  className="about-fact-line"
-                  aria-hidden="true"
-                  initial={mounted && !reduceMotion ? { scaleX: 0 } : false}
-                  whileInView={{ scaleX: 1 }}
-                  viewport={{ once: true }}
-                  transition={{ duration: 0.6, ease: EASE }}
-                />
+                <FactLine reduceMotion={reduceMotion} />
                 {i === about.factRows.length - 1 && (
-                  <motion.span
+                  <FactLine
                     className="about-fact-line about-fact-line--bottom"
-                    aria-hidden="true"
-                    initial={
-                      mounted && !reduceMotion ? { scaleX: 0 } : false
-                    }
-                    whileInView={{ scaleX: 1 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.6, ease: EASE }}
+                    reduceMotion={reduceMotion}
                   />
                 )}
                 <dt className="about-fact-label">{row.label}</dt>
@@ -311,75 +286,18 @@ export function About() {
         </nav>
 
         <div className="about-cards" ref={cardsRef}>
-          {entries.map((entry) => {
-            const isActive = activeId === entry.id;
-            return (
-              <motion.article
-                className={`about-card${entry.lead ? " about-card--lead" : ""}${
-                  isActive ? " is-active" : ""
-                }`}
-                id={entry.id}
-                key={entry.id}
-                ref={setCardRef(entry.id)}
-                tabIndex={-1}
-                variants={cardVariants}
-                initial={cardInitial}
-                whileInView="visible"
-                viewport={{ once: true }}
-                onMouseMove={onCardMouseMove}
-              >
-                <motion.p
-                  className="about-card-date"
-                  variants={childVariants}
-                >
-                  <strong>{entry.period}</strong> ·{" "}
-                  <span className="about-kind">
-                    <KindIcon kind={entry.kind} />
-                    {kindLabel(entry.kind)}
-                  </span>
-                </motion.p>
-                <motion.h3
-                  className="about-card-title"
-                  variants={childVariants}
-                >
-                  {entry.role} — {entry.org}
-                </motion.h3>
-                <motion.p
-                  className="about-card-narrative"
-                  variants={childVariants}
-                >
-                  {entry.narrative}
-                </motion.p>
-                {entry.highlights.length > 0 && (
-                  <motion.ul
-                    className="about-highlights"
-                    variants={childVariants}
-                  >
-                    {entry.highlights.map((highlight, i) => (
-                      <motion.li key={i} variants={childVariants}>
-                        <motion.span
-                          className="about-hl-square"
-                          aria-hidden="true"
-                          variants={squareVariants}
-                        />
-                        {renderHighlight(highlight.text, highlight.bolds)}
-                      </motion.li>
-                    ))}
-                  </motion.ul>
-                )}
-                <motion.ul
-                  className="about-pills"
-                  variants={childVariants}
-                >
-                  {entry.pills.map((pill) => (
-                    <li className="about-pill" key={pill}>
-                      {pill}
-                    </li>
-                  ))}
-                </motion.ul>
-              </motion.article>
-            );
-          })}
+          {entries.map((entry) => (
+            <AboutCard
+              key={entry.id}
+              entry={entry}
+              isActive={activeId === entry.id}
+              reduceMotion={reduceMotion}
+              revealY={isMobile ? 16 : 24}
+              kindLabel={kindLabel}
+              setCardRef={setCardRef}
+              onMouseMove={onCardMouseMove}
+            />
+          ))}
         </div>
       </div>
 
@@ -405,6 +323,205 @@ export function About() {
             become links once the owner supplies them. */}
       </section>
     </>
+  );
+}
+
+/** One experience card. It owns its reveal controls: the
+ *  hidden state is set in a layout effect after mount (before
+ *  first paint), and the visible state starts when the card's
+ *  own useInView fires. Children stagger 60ms (date → title
+ *  → text → bullets → chips); the bullet squares scale in.
+ *  Under reduced motion no hidden state is ever set, so the
+ *  card is simply visible. */
+function AboutCard({
+  entry,
+  isActive,
+  reduceMotion,
+  revealY,
+  kindLabel,
+  setCardRef,
+  onMouseMove,
+}: {
+  entry: AboutEntry;
+  isActive: boolean;
+  reduceMotion: boolean;
+  revealY: number;
+  kindLabel: (kind: AboutEntry["kind"]) => string;
+  setCardRef: (
+    id: string,
+  ) => (el: HTMLElement | null) => void;
+  onMouseMove: (e: ReactMouseEvent<HTMLElement>) => void;
+}) {
+  const controls = useAnimationControls();
+  const localRef = useRef<HTMLElement | null>(null);
+  const inView = useInView(localRef, { once: true });
+  /* revealY is in the deps: isMobile resolves in an effect
+     after mount, so the first set uses 24px and the re-run
+     corrects it to 16px on phones before any card is in
+     view. The guard keeps a resize (or a late isMobile
+     flip) from hiding a card that already revealed — its
+     useInView fired once and will not start it again. */
+  const revealedRef = useRef(false);
+  useLayoutEffect(() => {
+    if (!reduceMotion && !revealedRef.current) controls.set("hidden");
+  }, [reduceMotion, controls, revealY]);
+  useEffect(() => {
+    if (inView) {
+      revealedRef.current = true;
+      controls.start("visible");
+    }
+  }, [inView, controls]);
+
+  const cardVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: reduceMotion ? 0 : revealY,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: EASE,
+        staggerChildren: 0.06,
+      },
+    },
+  };
+
+  return (
+    <motion.article
+      className={`about-card${entry.lead ? " about-card--lead" : ""}${
+        isActive ? " is-active" : ""
+      }`}
+      id={entry.id}
+      ref={(el) => {
+        localRef.current = el;
+        setCardRef(entry.id)(el);
+      }}
+      tabIndex={-1}
+      variants={cardVariants}
+      initial={false}
+      animate={controls}
+      onMouseMove={onMouseMove}
+    >
+      <motion.p className="about-card-date" variants={childVariants}>
+        <strong>{entry.period}</strong> ·{" "}
+        <span className="about-kind">
+          <KindIcon kind={entry.kind} />
+          {kindLabel(entry.kind)}
+        </span>
+      </motion.p>
+      <motion.h3 className="about-card-title" variants={childVariants}>
+        {entry.role} — {entry.org}
+      </motion.h3>
+      <motion.p className="about-card-narrative" variants={childVariants}>
+        {entry.narrative}
+      </motion.p>
+      {entry.highlights.length > 0 && (
+        <motion.ul className="about-highlights" variants={childVariants}>
+          {entry.highlights.map((highlight, i) => (
+            <motion.li key={i} variants={childVariants}>
+              <motion.span
+                className="about-hl-square"
+                aria-hidden="true"
+                variants={squareVariants}
+              />
+              {renderHighlight(highlight.text, highlight.bolds)}
+            </motion.li>
+          ))}
+        </motion.ul>
+      )}
+      <motion.ul className="about-pills" variants={childVariants}>
+        {entry.pills.map((pill) => (
+          <li className="about-pill" key={pill}>
+            {pill}
+          </li>
+        ))}
+      </motion.ul>
+    </motion.article>
+  );
+}
+
+/** Card children fade only — the rise belongs to the card.
+ *  Bullet squares scale in. */
+const childVariants: Variants = {
+  hidden: { opacity: 0 },
+  visible: {
+    opacity: 1,
+    transition: { duration: 0.6, ease: EASE },
+  },
+};
+const squareVariants: Variants = {
+  hidden: { scale: 0 },
+  visible: {
+    scale: 1,
+    transition: { duration: 0.3, ease: EASE },
+  },
+};
+
+/** A fact hairline that draws in left→right once on view,
+ *  600ms. Same controls pattern as the cards: hidden in a
+ *  layout effect after mount, drawn when its own useInView
+ *  fires. Under reduced motion it is simply drawn. */
+function FactLine({
+  className = "about-fact-line",
+  reduceMotion,
+}: {
+  className?: string;
+  reduceMotion: boolean;
+}) {
+  const controls = useAnimationControls();
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const inView = useInView(ref, { once: true });
+  useLayoutEffect(() => {
+    if (!reduceMotion) controls.set({ scaleX: 0 });
+  }, [reduceMotion, controls]);
+  useEffect(() => {
+    if (inView) {
+      controls.start({
+        scaleX: 1,
+        transition: { duration: 0.6, ease: EASE },
+      });
+    }
+  }, [inView, controls]);
+  return (
+    <motion.span
+      ref={ref}
+      className={className}
+      aria-hidden="true"
+      initial={false}
+      animate={controls}
+    />
+  );
+}
+
+/** The lime highlight behind "measure"/"messen": wipes in
+ *  left→right (scaleX, origin left) once on view, 600ms +
+ *  150ms delay. Same controls pattern as the cards. Under
+ *  reduced motion it is simply drawn. */
+function HighlightBg({ reduceMotion }: { reduceMotion: boolean }) {
+  const controls = useAnimationControls();
+  const ref = useRef<HTMLSpanElement | null>(null);
+  const inView = useInView(ref, { once: true });
+  useLayoutEffect(() => {
+    if (!reduceMotion) controls.set({ scaleX: 0 });
+  }, [reduceMotion, controls]);
+  useEffect(() => {
+    if (inView) {
+      controls.start({
+        scaleX: 1,
+        transition: { duration: 0.6, ease: EASE, delay: 0.15 },
+      });
+    }
+  }, [inView, controls]);
+  return (
+    <motion.span
+      ref={ref}
+      className="about-hl-bg"
+      aria-hidden="true"
+      initial={false}
+      animate={controls}
+    />
   );
 }
 
@@ -447,18 +564,7 @@ function StatementWord({
           <>
             {parts.pre}
             <span className="about-hl">
-              <motion.span
-                className="about-hl-bg"
-                aria-hidden="true"
-                initial={mounted && !reduceMotion ? { scaleX: 0 } : false}
-                whileInView={{ scaleX: 1 }}
-                viewport={{ once: true }}
-                transition={{
-                  duration: 0.6,
-                  ease: EASE,
-                  delay: 0.15,
-                }}
-              />
+              <HighlightBg reduceMotion={reduceMotion} />
               <span className="about-hl-text">{parts.mid}</span>
             </span>
             {parts.post}

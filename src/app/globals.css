@@ -2724,6 +2724,7 @@ html[data-scrolled="true"] .site-actions {
   position: absolute;
   inset: 0;
   background: var(--lime);
+  transform-origin: left;
 }
 
 .about-hl-text {

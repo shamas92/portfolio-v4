@@ -23,7 +23,7 @@
  * "More on GitHub" link, which now lives on the /work page.
  *
  * Track navigation (S4): a "Skip the track" link at the track
- * start jumps to #background. The reference has no counter, but
+ * start jumps to #about. The reference has no counter, but
  * it does have a green progress line below the section — a 3px
  * lime fill, full width, no rail, no label — that grows
  * left-to-right as the track scrolls, so the track carries
@@ -49,9 +49,9 @@ export function WorkSection() {
   return (
     <>
       {/* S4: skip the track — at the track start, jumps to
-          #background. A text link, 44px target. */}
+          #about. A text link, 44px target. */}
       <a
-        href="#background"
+        href="#about"
         className="track-skip"
         style={{
           display: "flex",

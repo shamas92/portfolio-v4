@@ -14,6 +14,10 @@
 //   English gloss is omitted here on purpose: the quote is already
 //   German, so a German gloss would repeat it word for word. The
 //   BGB §551 note around it is translated.
+// - Exception (About redesign, 2026-11-28): the About section
+//   uses German decimal commas — IELTS 7,5, CGPA 3,48/4,00,
+//   deutsche Note 1,7 — not the byte-identical dots used
+//   elsewhere in this file.
 // - Skill names, stack tags, course titles, the journal name and
 //   statute names are proper nouns and stay as they are.
 import type { SiteContent } from "./content";
@@ -349,49 +353,154 @@ export const deContent: SiteContent = {
     },
   ],
 
-  background: {
-    about:
-      "Ich studiere Informatik im Master an der TU Dresden, nach einem Bachelor in Software Engineering an der HITEC University in Pakistan. Sechs Monate habe ich in der IT-Abteilung einer Universität datenbankgestützte Webmodule und einen RAG-Chatbot gebaut; in meiner eigenen Zeit baue ich Datenpipelines und ML-Systeme — zuletzt LeaseLens, das Kautionsforderungen gegen Mietvertrag und Gesetz prüft. Ich suche eine Werkstudentenstelle im Data Engineering oder ML in Dresden, 20 Stunden pro Woche, und will Arbeit, deren Ergebnis man messen kann.",
-    timelineIntro:
-      "Neueste zuerst, vom Master in Dresden zurück zum Bachelor in Taxila.",
-    education: [
+  about: {
+    statement:
+      "Ich bin Data-Engineering-Student und mache aus unordentlichen Daten Systeme, deren Ergebnis man messen kann. Mir geht es um Pipelines, die halten, um Belege, die man prüfen kann, und um Arbeit, bei der am Ende eine Zahl steht, keine Behauptung.",
+    statementHighlight: "messen",
+    aboutLabel: "( ÜBER MICH )",
+    factRows: [
       {
-        degree: "MSc Informatik",
-        school: "TU Dresden",
-        period: "Okt. 2026 – heute",
-        note: "Scalable Data Engineering, Data Visualization, Requirements Engineering.",
+        label: "ABSCHLUSS",
+        value:
+          "MSc Computer Science, TU Dresden · BSc Software Engineering, HITEC University Taxila",
       },
       {
-        degree: "BSc Software Engineering",
-        school: "HITEC University Taxila",
-        period: "Sep. 2021 – Aug. 2025",
-        note: "CGPA 3.48/4.00 (deutsche Note 1.7).",
+        label: "SPRACHEN",
+        value: "Englisch C1 (IELTS 7,5) · Deutsch A1/A2 · Urdu Muttersprache",
+      },
+      {
+        label: "WOHNORT",
+        value:
+          "Dresden, Deutschland · offen für Werkstudentenstellen, 20 Stunden pro Woche",
       },
     ],
-    experience: [
+    entries: [
       {
+        id: "msc",
+        kind: "education",
+        role: "MSc Computer Science",
+        org: "TU Dresden",
+        period: "Okt. 2026 – heute",
+        narrative:
+          "Ich studiere seit Oktober 2026 Informatik im Master an der TU Dresden. Meine Kurse bisher: Scalable Data Engineering, Data Visualization und Requirements Engineering. Dort hat meine Gruppe einen On-Device-Beratungsbot für Gesundheit entworfen; ich war zuständig für Stakeholder-Akquise, technischen Kontext und Geschäftsprozesse. Ich suche eine Werkstudentenstelle in Data Engineering oder ML in Dresden, 20 Stunden pro Woche.",
+        highlights: [
+          {
+            text: "Kurse: Scalable Data Engineering, Data Visualization, Requirements Engineering",
+            bolds: [
+              "Scalable Data Engineering",
+              "Data Visualization",
+              "Requirements Engineering",
+            ],
+          },
+          {
+            text: "Requirements Engineering Exercise 03: On-Device-Beratungsbot für Gesundheit — Stakeholder-Akquise, technischer Kontext, Geschäftsprozesse (meine Folien 11–14)",
+            bolds: ["Requirements Engineering Exercise 03", "Folien 11–14"],
+          },
+        ],
+        pills: [
+          "Scalable Data Engineering",
+          "Data Visualization",
+          "Requirements Engineering",
+        ],
+      },
+      {
+        id: "tools420",
+        kind: "experience",
         role: "Freelance-Webentwickler",
         org: "Tools420",
         period: "Nov. 2025 – Aug. 2026",
-        note: "Freelance-WordPress/WooCommerce-Arbeit für einen kanadischen Onlineshop: eigene Backend-Architekturen und proprietäre Plugins in PHP, MySQL und JavaScript; Datenbankmigrationen und Deployments ohne ungeplante Ausfallzeiten.",
+        narrative:
+          "Ich war Freelance-Webentwickler für Tools420, einen kanadischen Onlineshop, der seit 2016 Vaporizer und Zubehör verkauft. Ich habe eigene WordPress-Backend-Architekturen und proprietäre Plugins in reinem PHP, MySQL und JavaScript gebaut und Datenbankmigrationen und Deployments ohne ungeplante Ausfallzeiten durchgeführt. Ich arbeitete als technischer Subunternehmer in einem Senior-Engineering-Team, über Frontend, Backend, Datenbank und Tests hinweg.",
+        highlights: [
+          {
+            text: "Eigene WordPress-Backend-Architekturen und proprietäre Plugins in reinem PHP, MySQL und JavaScript",
+            bolds: ["WordPress", "reinem PHP, MySQL und JavaScript"],
+          },
+          {
+            text: "Datenbankmigrationen und Deployments ohne ungeplante Ausfallzeiten",
+            bolds: ["ohne ungeplante Ausfallzeiten"],
+          },
+          {
+            text: "Technischer Subunternehmer in einem Senior-Engineering-Team — Frontend, Backend, Datenbank und Tests",
+            bolds: [
+              "Technischer Subunternehmer",
+              "Frontend, Backend, Datenbank und Tests",
+            ],
+          },
+        ],
+        pills: ["WordPress", "WooCommerce", "PHP", "MySQL", "JavaScript"],
       },
       {
+        id: "hitec",
+        kind: "experience",
         role: "Praktikant in der IT-Abteilung",
         org: "HITEC University",
         period: "Mai – Okt. 2025",
-        note: "C#/ASP.NET-MVC-Portalmodule; RAG-Support-Chatbot in Python/Hugging Face über Universitätsdokumente.",
+        narrative:
+          "Sechsmonatiges Praktikum in der IT-Abteilung der HITEC University. Ich habe datenbankgestützte Webmodule und ein CMS-Admin-Panel in C# und ASP.NET MVC auf SQL Server gebaut sowie einen RAG-Support-Chatbot in Python, der Fragen über Universitätsdokumente beantwortet. Die Systeme sind intern und archiviert; die öffentliche Website betreut ein anderes Team.",
+        highlights: [
+          {
+            text: "Datenbankgestützte Webmodule und ein CMS-Admin-Panel in C# / ASP.NET MVC auf SQL Server",
+            bolds: ["C# / ASP.NET MVC", "SQL Server"],
+          },
+          {
+            text: "RAG-Support-Chatbot in Python über Universitätsdokumente",
+            bolds: ["RAG", "Python"],
+          },
+          {
+            text: "Sechs Monate, Mai–Okt. 2025; Systeme intern und archiviert",
+            bolds: ["Sechs Monate, Mai–Okt. 2025"],
+          },
+        ],
+        pills: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
       },
       {
+        id: "hit",
+        kind: "experience",
         role: "Praktikant",
         org: "Heavy Industries Taxila",
         period: "Jul. – Aug. 2024",
-        note: "Echtzeit-Prozessmonitoring mit C#/.NET und SQL Server sowie Live-Dashboards aufgebaut und manuelle Logging-Fehler um 20% gesenkt.",
+        narrative:
+          "Zweimonatiges Praktikum bei Heavy Industries Taxila. Ich habe Echtzeit-Prozessmonitoring in C#/.NET auf SQL Server gebaut, mit Live-Dashboards für die Werkshalle, und manuelle Logging-Fehler um 20% gesenkt.",
+        highlights: [
+          {
+            text: "Echtzeit-Prozessmonitoring in C#/.NET auf SQL Server, mit Live-Dashboards",
+            bolds: ["C#/.NET auf SQL Server", "Live-Dashboards"],
+          },
+          {
+            text: "Manuelle Logging-Fehler um 20% gesenkt",
+            bolds: ["20%"],
+          },
+        ],
+        pills: ["C#", ".NET", "SQL Server"],
       },
-    ],
-    languages: [
-      { language: "Englisch", level: "C1 (IELTS 7.5)" },
-      { language: "Deutsch", level: "A1/A2 (Kurs an der TU Dresden)" },
-      { language: "Urdu", level: "Muttersprache" },
+      {
+        id: "bsc",
+        kind: "education",
+        role: "BSc Software Engineering",
+        org: "HITEC University Taxila",
+        period: "Sep. 2021 – Aug. 2025",
+        narrative:
+          "BSc Software Engineering an der HITEC University Taxila, abgeschlossen im August 2025 mit einem CGPA von 3,48 von 4,00 (deutsche Note 1,7). Aus meiner Abschlussarbeit wurde OratorPath, eine Trainingsplattform für öffentliches Sprechen, die ich als Co-Autor in ein veröffentlichtes Paper überführt habe. Zu früheren akademischen Arbeiten gehören ein Laravel/MySQL-CRM zur Defektverfolgung und UpliftU, ein NLP-Projekt mit Hugging Face.",
+        highlights: [
+          {
+            text: "CGPA 3,48/4,00 (deutsche Note 1,7)",
+            bolds: ["CGPA 3,48/4,00", "deutsche Note 1,7"],
+          },
+          {
+            text: "Aus der Abschlussarbeit wurde OratorPath — als Co-Autor in ein veröffentlichtes Paper überführt (Spectrum of Engineering Sciences, Vol. 3, Issue 7, 2025)",
+            bolds: ["OratorPath", "veröffentlichtes Paper"],
+          },
+          {
+            text: "Akademische Projekte: Laravel/MySQL-CRM zur Defektverfolgung · UpliftU (Python / Hugging-Face-NLP)",
+            bolds: [
+              "Laravel/MySQL-CRM zur Defektverfolgung",
+              "UpliftU (Python / Hugging-Face-NLP)",
+            ],
+          },
+        ],
+        pills: ["Laravel", "MySQL", "PHP", "Python", "Hugging Face"],
+      },
     ],
     certificates: {
       heading: "Google-Zertifikate",
@@ -480,7 +589,8 @@ export const deContent: SiteContent = {
     navLabel: "Bereiche",
     nav: {
       work: "Projekte",
-      background: "Werdegang",
+      about: "Über mich",
+      skills: "Skills",
       contact: "Kontakt",
     },
     header: {
@@ -529,15 +639,11 @@ export const deContent: SiteContent = {
       kickerNumber: "Arbeit",
       kickerText: "Alle Arbeiten — {count} Projekte",
     },
-    background: {
-      heading: "Werdegang",
+    about: {
+      kicker: "Über mich",
       experience: "Berufserfahrung",
       education: "Ausbildung",
-      languagesLabel: "Sprachen",
-      location: {
-        eyebrow: "Standort",
-        nowIn: "Jetzt in Dresden",
-      },
+      rolesLabel: "Berufserfahrung und Ausbildung",
     },
     skills: {
       heading: "Skills",

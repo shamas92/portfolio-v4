@@ -464,33 +464,54 @@ export const projects: Project[] = [
   },
 ];
 
-export type EducationEntry = {
-  degree: string;
-  school: string;
-  period: string;
-  note: string;
+/** One highlight line on an experience card. `bolds` lists
+ *  substrings of `text` that render bold — tech names,
+ *  metrics, outcomes only, never new words. The component
+ *  splits `text` on them; a bold that does not occur verbatim
+ *  renders plain (and warns in development). */
+export type Highlight = {
+  text: string;
+  bolds: string[];
 };
 
-export type ExperienceEntry = {
+export type AboutEntry = {
+  /** Stable slug for the card id and the role-list target. */
+  id: string;
+  kind: "education" | "experience";
+  /** Education: degree ("MSc Computer Science"); Experience:
+   *  role ("Freelance Web Developer"). */
   role: string;
+  /** Education: school ("TU Dresden"); Experience: company
+   *  ("Tools420"). The card title is `{role} — {org}`; the
+   *  role list shows the org bold. */
   org: string;
   period: string;
-  note: string;
+  narrative: string;
+  highlights: Highlight[];
+  /** Stack pills. The MSc pills are the three verified course
+   *  names only — Python/SQL are unverified for the MSc. */
+  pills: string[];
 };
 
-export type BackgroundContent = {
-  /** First-person introduction, 2–3 sentences, rendered as the
-   *  lead paragraph of the Background section. */
-  about: string;
-  /** One-line intro for the sticky timeline column (newest
-   *  first). Localised. */
-  timelineIntro: string;
-  education: EducationEntry[];
-  experience: ExperienceEntry[];
-  languages: { language: string; level: string }[];
-  /** Certificates as a headed chip block: the shared heading
-   *  and period, plus one item per certificate. Replaces the
-   *  old single-line `certifications` string. */
+export type AboutContent = {
+  /** The big statement, rendered as the section heading (h2,
+   *  id="about-head"). The statement IS the heading; there is
+   *  no separate "About" heading. */
+  statement: string;
+  /** Word inside statement highlighted in lime. Must occur
+   *  verbatim inside statement. */
+  statementHighlight: string;
+  /** Mono label above the name in the left column. */
+  aboutLabel: string;
+  /** Hairline-separated fact rows under the statement. */
+  factRows: { label: string; value: string }[];
+  /** Experience + education, newest first, in display order:
+   *  MSc, Tools420, HITEC intern, Heavy Industries intern,
+   *  BSc. One card per entry; the role list follows this order. */
+  entries: AboutEntry[];
+  /** Certificates as a headed chip block under the experience
+   *  cards. Replaces the old single-line `certifications`
+   *  string. */
   certificates: {
     heading: string;
     period: string;
@@ -498,49 +519,154 @@ export type BackgroundContent = {
   };
 };
 
-export const background: BackgroundContent = {
-  about:
-    "I am an MSc Computer Science student at TU Dresden, after a BSc in Software Engineering from HITEC University in Pakistan. I spent six months in a university IT department building database-backed web modules and a RAG chatbot, and I build data pipelines and ML systems in my own time — most recently LeaseLens, which checks rental deposit claims against the lease and the law. I am looking for a working-student role in data engineering or ML in Dresden, 20 hours a week, and I want work where the result can be measured.",
-  timelineIntro:
-    "Newest first, from the MSc in Dresden back to the BSc in Taxila.",
-  education: [
+export const about: AboutContent = {
+  statement:
+    "I'm a data engineering student who turns messy data into systems people can measure. I care about pipelines that hold up, evidence you can check, and work where the result is a number, not a claim.",
+  statementHighlight: "measure",
+  aboutLabel: "( ABOUT ME )",
+  factRows: [
     {
-      degree: "MSc Computer Science",
-      school: "TU Dresden",
-      period: "Oct 2026 – present",
-      note: "Scalable Data Engineering, Data Visualization, Requirements Engineering.",
+      label: "DEGREE",
+      value:
+        "MSc Computer Science, TU Dresden · BSc Software Engineering, HITEC University Taxila",
     },
     {
-      degree: "BSc Software Engineering",
-      school: "HITEC University Taxila",
-      period: "Sep 2021 – Aug 2025",
-      note: "CGPA 3.48/4.00 (German grade 1.7).",
+      label: "LANGUAGES",
+      value: "English C1 (IELTS 7.5) · German A1/A2 · Urdu native",
+    },
+    {
+      label: "BASED IN",
+      value:
+        "Dresden, Germany · open to working-student roles, 20 hours a week",
     },
   ],
-  experience: [
+  entries: [
     {
+      id: "msc",
+      kind: "education",
+      role: "MSc Computer Science",
+      org: "TU Dresden",
+      period: "Oct 2026 – present",
+      narrative:
+        "MSc Computer Science at TU Dresden since October 2026. Coursework so far: Scalable Data Engineering, Data Visualization, and Requirements Engineering, where my group designed an on-device health consulting bot and I owned the stakeholder, technical-context and business-process work. I am looking for a working-student role in data engineering or ML in Dresden, 20 hours a week.",
+      highlights: [
+        {
+          text: "Coursework: Scalable Data Engineering, Data Visualization, Requirements Engineering",
+          bolds: [
+            "Scalable Data Engineering",
+            "Data Visualization",
+            "Requirements Engineering",
+          ],
+        },
+        {
+          text: "Requirements Engineering Exercise 03: on-device health consulting bot — stakeholder acquisition, technical context, business processes (my slides 11–14)",
+          bolds: ["Requirements Engineering Exercise 03", "slides 11–14"],
+        },
+      ],
+      pills: [
+        "Scalable Data Engineering",
+        "Data Visualization",
+        "Requirements Engineering",
+      ],
+    },
+    {
+      id: "tools420",
+      kind: "experience",
       role: "Freelance Web Developer",
       org: "Tools420",
       period: "Nov 2025 – Aug 2026",
-      note: "Freelance WordPress/WooCommerce work for a Canadian online store: custom backend architectures and proprietary plugins in PHP, MySQL and JavaScript; database migrations and deployments with zero unplanned downtime.",
+      narrative:
+        "Freelance web developer for Tools420, a Canadian online store selling vaporizers and accessories since 2016. I built custom WordPress backend architectures and proprietary plugins in raw PHP, MySQL and JavaScript, and ran database migrations and deployments with zero unplanned downtime. I worked as a technical sub-contractor under a senior engineering team, across frontend, backend, database and tests.",
+      highlights: [
+        {
+          text: "Custom WordPress backend architectures and proprietary plugins in raw PHP, MySQL and JavaScript",
+          bolds: ["WordPress", "raw PHP, MySQL and JavaScript"],
+        },
+        {
+          text: "Database migrations and deployments with zero unplanned downtime",
+          bolds: ["zero unplanned downtime"],
+        },
+        {
+          text: "Technical sub-contractor under a senior engineering team — frontend, backend, database and tests",
+          bolds: [
+            "Technical sub-contractor",
+            "frontend, backend, database and tests",
+          ],
+        },
+      ],
+      pills: ["WordPress", "WooCommerce", "PHP", "MySQL", "JavaScript"],
     },
     {
+      id: "hitec",
+      kind: "experience",
       role: "IT Department Intern",
       org: "HITEC University",
       period: "May – Oct 2025",
-      note: "C#/ASP.NET MVC portal modules; RAG support chatbot in Python/Hugging Face over university docs.",
+      narrative:
+        "Six-month internship in HITEC University's IT department. I built database-backed web modules and a CMS admin panel in C# and ASP.NET MVC on SQL Server, and a RAG support chatbot in Python that answers questions over university documents. The systems are internal and archived; the public site is maintained by another team.",
+      highlights: [
+        {
+          text: "Database-backed web modules and a CMS admin panel in C# / ASP.NET MVC on SQL Server",
+          bolds: ["C# / ASP.NET MVC", "SQL Server"],
+        },
+        {
+          text: "RAG support chatbot in Python over university documents",
+          bolds: ["RAG", "Python"],
+        },
+        {
+          text: "Six months, May–Oct 2025; systems internal and archived",
+          bolds: ["Six months, May–Oct 2025"],
+        },
+      ],
+      pills: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
     },
     {
+      id: "hit",
+      kind: "experience",
       role: "Intern",
       org: "Heavy Industries Taxila",
       period: "Jul – Aug 2024",
-      note: "Built real-time C#/.NET and SQL Server process monitoring with live dashboards, cutting manual logging errors by 20%.",
+      narrative:
+        "Two-month internship at Heavy Industries Taxila. I built real-time process monitoring in C#/.NET on SQL Server, with live dashboards for the shop floor, cutting manual logging errors by 20%.",
+      highlights: [
+        {
+          text: "Real-time process monitoring in C#/.NET on SQL Server, with live dashboards",
+          bolds: ["C#/.NET on SQL Server", "live dashboards"],
+        },
+        {
+          text: "Cutting manual logging errors by 20%",
+          bolds: ["20%"],
+        },
+      ],
+      pills: ["C#", ".NET", "SQL Server"],
     },
-  ],
-  languages: [
-    { language: "English", level: "C1 (IELTS 7.5)" },
-    { language: "German", level: "A1/A2 (TU Dresden course)" },
-    { language: "Urdu", level: "Native" },
+    {
+      id: "bsc",
+      kind: "education",
+      role: "BSc Software Engineering",
+      org: "HITEC University Taxila",
+      period: "Sep 2021 – Aug 2025",
+      narrative:
+        "BSc Software Engineering at HITEC University Taxila, finished August 2025 with a CGPA of 3.48 out of 4.00 (German grade 1.7). My thesis became OratorPath, a public-speaking training platform, co-authored into a published paper. Earlier academic work includes a Laravel/MySQL defect-tracking CRM and UpliftU, an NLP project on Hugging Face.",
+      highlights: [
+        {
+          text: "CGPA 3.48/4.00 (German grade 1.7)",
+          bolds: ["CGPA 3.48/4.00", "German grade 1.7"],
+        },
+        {
+          text: "Thesis became OratorPath — co-authored into a published paper (Spectrum of Engineering Sciences, Vol. 3, Issue 7, 2025)",
+          bolds: ["OratorPath", "published paper"],
+        },
+        {
+          text: "Academic projects: Laravel/MySQL defect-tracking CRM · UpliftU (Python / Hugging Face NLP)",
+          bolds: [
+            "Laravel/MySQL defect-tracking CRM",
+            "UpliftU (Python / Hugging Face NLP)",
+          ],
+        },
+      ],
+      pills: ["Laravel", "MySQL", "PHP", "Python", "Hugging Face"],
+    },
   ],
   certificates: {
     heading: "Google certificates",
@@ -652,7 +778,7 @@ export const skills: Skills = {
 export type UiStrings = {
   skipLink: string;
   navLabel: string;
-  nav: { work: string; background: string; contact: string };
+  nav: { work: string; about: string; skills: string; contact: string };
   header: {
     menuOpen: string;
     menuClose: string;
@@ -705,15 +831,15 @@ export type UiStrings = {
      *  zero-padded to two digits by the component. */
     kickerText: string;
   };
-  background: {
-    heading: string;
+  about: {
+    /** Kicker text above the statement ("01 About"). The
+     *  statement is the section heading; there is no separate
+     *  "About" heading string. */
+    kicker: string;
     experience: string;
     education: string;
-    languagesLabel: string;
-    location: {
-      eyebrow: string;
-      nowIn: string;
-    };
+    /** Accessible label for the sticky role list. */
+    rolesLabel: string;
   };
   skills: {
     heading: string;
@@ -854,7 +980,8 @@ export const ui: UiStrings = {
   navLabel: "Sections",
   nav: {
     work: "Projects",
-    background: "Background",
+    about: "About",
+    skills: "Skills",
     contact: "Contact",
   },
   header: {
@@ -903,15 +1030,11 @@ export const ui: UiStrings = {
     kickerNumber: "Work",
     kickerText: "All work — {count} projects",
   },
-  background: {
-    heading: "Background",
+  about: {
+    kicker: "About",
     experience: "Experience",
     education: "Education",
-    languagesLabel: "Spoken languages",
-    location: {
-      eyebrow: "Location",
-      nowIn: "Now in Dresden",
-    },
+    rolesLabel: "Experience and education",
   },
   skills: {
     heading: "Skills",
@@ -1053,7 +1176,7 @@ export const ui: UiStrings = {
 export type SiteContent = {
   profile: Profile;
   projects: Project[];
-  background: BackgroundContent;
+  about: AboutContent;
   skills: Skills;
   ui: UiStrings;
 };
@@ -1062,7 +1185,7 @@ export type SiteContent = {
 export const enContent: SiteContent = {
   profile,
   projects,
-  background,
+  about,
   skills,
   ui,
 };

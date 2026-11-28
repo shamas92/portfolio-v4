@@ -7,7 +7,7 @@ import { Reveal } from "@/components/Reveal";
 import { HeroShowcase } from "@/components/HeroShowcase";
 import { DownloadCvButton } from "@/components/DownloadCvButton";
 import { WorkSection } from "@/components/WorkSection";
-import { Background } from "@/components/Background";
+import { About } from "@/components/About";
 import { SkillsSection } from "@/components/SkillsSection";
 
 /** Entrance delays: the profile row and the h1 rise first (the
@@ -25,8 +25,8 @@ const clamp01 = (v: number) => Math.min(Math.max(v, 0), 1);
  *  caption) in a two-column split, Work (four full projects in
  *  a horizontal scroll-driven track; the earlier projects live
  *  on the /work index, linked from the track's lime end card),
- *  Background (with the first-person
- *  About as its lead), Skills, Contact (the footer). The work
+ *  About (the statement is its heading, then the experience
+ *  list + cards), Skills, Contact (the footer). The work
  *  is the first thing after the hero; the "View More Projects"
  *  link sits after the track, so the first project is visible
  *  in the first viewport. The hero deck stays in the hero: it
@@ -332,26 +332,20 @@ export default function Home() {
 
       <section
         className="section"
-        id="background"
-        aria-labelledby="background-head"
+        id="about"
+        aria-labelledby="about-head"
         tabIndex={-1}
       >
-        {/* The section header block — head plus lead — animates
-            together in one Reveal, the same pattern as Work and
-            Skills. The lead lives here, not in Background, so the
-            header and its opening paragraph never drift apart. */}
+        {/* The kicker lives here; the statement is the section
+            heading (h2, id="about-head") and lives in About, so
+            the heading and the section never drift apart. */}
         <Reveal>
           <p className="section-kicker">
-            <span className="section-number">01</span>{" "}
-            {ui.background.heading}
+            <span className="section-number">01</span> {ui.about.kicker}
           </p>
-          <h2 className="section-head" id="background-head">
-            {ui.background.heading}
-          </h2>
-          <p className="about-lead">{content.background.about}</p>
         </Reveal>
         <hr className="section-rule" aria-hidden="true" />
-        <Background />
+        <About />
       </section>
 
       <section

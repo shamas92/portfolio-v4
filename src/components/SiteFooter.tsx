@@ -175,7 +175,7 @@ function HomeFooter() {
               <Link href="/#work">{ui.nav.work}</Link>
             </li>
             <li>
-              <Link href="/#background">{ui.nav.background}</Link>
+              <Link href="/#about">{ui.nav.about}</Link>
             </li>
             <li>
               <Link href="/#contact">{ui.nav.contact}</Link>

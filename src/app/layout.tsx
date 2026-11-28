@@ -106,6 +106,29 @@ const personJsonLd = {
  *  data-theme and data-locale/lang before React hydrates. */
 const themeScript = `(function(){try{var t=localStorage.getItem('theme');if(t==='light'||t==='dark'){document.documentElement.setAttribute('data-theme',t);}var l=localStorage.getItem('locale');if(l==='de'||l==='en'){document.documentElement.setAttribute('data-locale',l);document.documentElement.setAttribute('lang',l);}}catch(e){}})();`;
 
+/* Scrolled-header no-flash script: the same parser-blocking
+ *  inline <script> in the head as the theme script, so the
+ *  frosted pill is already showing on a mid-scroll reload at
+ *  first paint instead of appearing ~100ms later when React
+ *  hydrates. It cannot add .is-scrolled to the header itself —
+ *  the body is not parsed yet when this runs — so it marks
+ *  <html data-scrolled="true"> and the header CSS has a
+ *  parallel html[data-scrolled="true"] selector. The mark is
+ *  read three ways, because no single one is certain before
+ *  first paint: a section hash in the URL always lands past
+ *  the 50px threshold, so it sets the mark at once; a
+ *  requestAnimationFrame loop checks window.scrollY every
+ *  frame — rAF runs before paint in the same frame, so the
+ *  check lands before the first paint that follows a scroll
+ *  restore; and a passive scroll listener catches any scroll
+ *  that happens before hydration. The loop stops at
+ *  readyState complete; React owns the mark from hydration
+ *  onward (SiteHeader mirrors its scrolled state onto the
+ *  attribute), so it clears when the reader scrolls back to
+ *  the top. At scroll 0 nothing is set — a top reload stays
+ *  bare with no pill flash. */
+const scrollScript = `(function(){try{var d=document.documentElement;var h=location.hash.replace(/^#/,'');if(h==='work'||h==='about'||h==='skills'||h==='contact'){d.setAttribute('data-scrolled','true');}if(window.scrollY>=50){d.setAttribute('data-scrolled','true');}function check(){if(d.hasAttribute('data-scrolled')){return;}if(window.scrollY>=50){d.setAttribute('data-scrolled','true');return;}if(document.readyState==='complete'){return;}requestAnimationFrame(check);}requestAnimationFrame(check);window.addEventListener('scroll',function(){if(window.scrollY>=50){d.setAttribute('data-scrolled','true');}},{passive:true});}catch(e){}})();`;
+
 export default function RootLayout({
   children,
 }: {
@@ -121,6 +144,7 @@ export default function RootLayout({
     >
       <head>
         <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+        <script dangerouslySetInnerHTML={{ __html: scrollScript }} />
       </head>
       <body>
         <script

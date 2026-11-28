@@ -71,6 +71,21 @@ export function SiteHeader() {
     getScrolled,
     getServerScrolled,
   );
+  /* Mirror the scrolled state onto <html data-scrolled>: the
+   *  blocking head script sets it before first paint on a
+   *  scrolled reload (the header element does not exist yet
+   *  when that script runs); React owns it from hydration
+   *  onward, so it clears when the reader scrolls back to the
+   *  top. The attribute is never rendered by React, so it
+   *  cannot cause a hydration mismatch. */
+  useEffect(() => {
+    const doc = document.documentElement;
+    if (scrolled) {
+      doc.setAttribute("data-scrolled", "true");
+    } else {
+      doc.removeAttribute("data-scrolled");
+    }
+  }, [scrolled]);
   /* Mounted: false until the first effect after mount. The pill
    *  transition only runs once mounted (see the
    *  .site-header.is-mounted rule in globals.css), so a state flip

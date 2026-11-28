@@ -410,7 +410,15 @@ footer[id],
    margin on viewports between 1024px and 1080px. Dark mode
    needs no separate rule: every value resolves through the
    theme tokens. */
-.site-header.is-scrolled .site-header-inner {
+/* The html[data-scrolled="true"] variant is the pre-hydration
+   twin of .is-scrolled: the blocking head script sets the mark
+   before first paint on a scrolled reload, so the pill is
+   already showing when the page first paints; React adds
+   .is-scrolled to the header itself once it hydrates and owns
+   the mark from then on (SiteHeader mirrors its scrolled
+   state). Both selectors must stay in step. */
+.site-header.is-scrolled .site-header-inner,
+html[data-scrolled="true"] .site-header-inner {
   max-width: min(1080px, calc(100vw - 32px));
   margin-top: 12px;
   padding: 10px 16px;
@@ -430,16 +438,19 @@ footer[id],
    padding), tighter zone gaps, narrower nav-link padding,
    tighter actions gap. No control shrinks below its 44px tap
    target; the at-top layout is untouched. */
-.site-header.is-scrolled .site-header-inner {
+.site-header.is-scrolled .site-header-inner,
+html[data-scrolled="true"] .site-header-inner {
   padding-inline: 12px;
   column-gap: 12px;
 }
 
-.site-header.is-scrolled .site-nav a {
+.site-header.is-scrolled .site-nav a,
+html[data-scrolled="true"] .site-nav a {
   padding-inline: 8px;
 }
 
-.site-header.is-scrolled .site-actions {
+.site-header.is-scrolled .site-actions,
+html[data-scrolled="true"] .site-actions {
   gap: 4px;
 }
 
@@ -833,7 +844,8 @@ footer[id],
       max(var(--space-2), env(safe-area-inset-right));
   }
 
-  .site-header.is-scrolled .site-header-inner {
+  .site-header.is-scrolled .site-header-inner,
+  html[data-scrolled="true"] .site-header-inner {
     padding-inline: 12px;
   }
 }

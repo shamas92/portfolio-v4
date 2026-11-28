@@ -1,46 +1,87 @@
 "use client";
 
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import {
+  useEffect,
+  useRef,
+  useState,
+  type MouseEvent as ReactMouseEvent,
+  type ReactNode,
+} from "react";
+import {
+  motion,
+  useReducedMotion,
+  useScroll,
+  useTransform,
+  type MotionValue,
+  type Variants,
+} from "framer-motion";
 import { useContent } from "@/i18n/LocaleProvider";
-import { DownloadCvButton } from "./DownloadCvButton";
-import { Reveal } from "./Reveal";
 import { scrollToTarget } from "@/lib/scroll";
 import type { AboutEntry } from "@/content";
 
-/** About, rebuilt on the Rossi About + Aahil "Where I've been"
- *  devices: a left column (mono label, name, place, Download
- *  CV) beside the big statement — the statement IS the section
- *  heading (h2, id="about-head"; page.tsx points
- *  aria-labelledby at it, and there is no separate "About"
- *  heading) — with hairline fact rows under it. (The "See the
- *  projects" link below the fact rows is gone — removed
- *  2026-11-28, premium round.) The statement's lime highlight
- *  reuses .hero-highlight; its draw-in animation runs at page
- *  load and is finished long before anyone scrolls here, so the
- *  word reads fully drawn (see the CSS spec).
+/** About, premium round (2026-11-28): Rossi About intro +
+ *  Aahil "Where I've been" experience, with motion.
  *
- *  Experience is a sticky left role list beside a PRE-RENDERED
- *  stack of detail cards — no swap, fade or slide. Clicking a
- *  role scrolls to its card (scroll-margin-top on the card
- *  keeps the date line out from under the sticky header);
- *  scrolling moves the active marker both ways via the
- *  IntersectionObserver below. Cards use our surface, 1px
- *  var(--rule) border and radius language — not Aahil's hard
- *  offset shadow or yellow; lime square markers + lime active
- *  dot are the accent. The certificates block sits under the
- *  experience grid, full width, as before. The location panel
- *  and the meta-strip are gone: the place lives in the BASED IN
- *  fact row, the languages in the LANGUAGES row. Every fact is
- *  rendered from the locale content verbatim. */
+ *  Layout: the left column is two sticky pieces that hand
+ *  off — the side (label, name, place) sticks at 96px while
+ *  the statement and facts are read, then scrolls away as the
+ *  experience arrives and the role list sticks at the same
+ *  96px — so the column never sits empty. The statement is
+ *  the section heading (h2, id="about-head"; page.tsx points
+ *  aria-labelledby at it, and there is no separate "About"
+ *  heading). The MSc card is the larger "lead" card
+ *  (entry.lead in the content). Kind is marked by shape, not
+ *  only text — Education is a ring + cap icon, Experience a
+ *  filled disc + briefcase icon — in the role list and the
+ *  card date lines alike. Every fact is rendered from the
+ *  locale content verbatim; the bullets are the deduped set
+ *  (only msc and bsc keep one bullet each — the rest repeated
+ *  the narrative verbatim).
+ *
+ *  Motion (Framer Motion; Lenis runs the page scroll): the
+ *  statement splits by word with scroll-linked opacity, the
+ *  lime highlight wipes in once, the timeline rail fills with
+ *  scroll progress, cards reveal once with staggered
+ *  children. Everything animates transform/opacity only.
+ *  Under reduced motion the reveals are fades, the highlight
+ *  is fully drawn, and there is no scroll-linked motion at
+ *  all. The `mounted` gate keeps the hidden initial states
+ *  out of the server render, so readers without JavaScript
+ *  see the content as-is. */
+
+const EASE: [number, number, number, number] = [0.16, 1, 0.3, 1];
 
 export function About() {
   const content = useContent();
   const about = content.about;
   const ui = content.ui.about;
   const entries = about.entries;
+  const reduceMotion = useReducedMotion() === true;
 
   const [activeId, setActiveId] = useState(entries[0]?.id ?? "");
   const cardRefs = useRef(new Map<string, HTMLElement>());
+
+  /* Mounted: false until the first effect after mount, so the
+     hidden initial states below never reach the server render
+     (no-JS readers see the content) and never animate on load
+     for elements already in view — they fade in once, on
+     arrival, instead. Same pattern as SiteHeader's mounted. */
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setMounted(true), 0);
+    return () => clearTimeout(t);
+  }, []);
+
+  /* Narrower reveal distance on phones (brief: same reveals,
+     shorter distances). */
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 767px)");
+    const update = () => setIsMobile(mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
+  }, []);
 
   /* Scroll-spy, both directions: the observer watches the
      cards through a narrow band around 40–45% of the viewport
@@ -85,118 +126,269 @@ export function About() {
     scrollToTarget(el);
   };
 
+  /* Statement scroll progress: 0 as the statement's top edge
+     enters at 85% of the viewport, 1 once its bottom edge has
+     risen to 35%. Each word fades 0.25 → 1 across its own
+     slice of that range. */
+  const statementRef = useRef<HTMLHeadingElement>(null);
+  const { scrollYProgress: statementProgress } = useScroll({
+    target: statementRef,
+    offset: ["start 0.85", "end 0.35"],
+  });
+
+  /* Timeline rail fill: 0 as the card stack's top edge enters
+     at 65% of the viewport, 1 once its bottom edge has risen
+     to 55% — the fill follows the reader through the cards. */
+  const cardsRef = useRef<HTMLDivElement>(null);
+  const { scrollYProgress: railProgress } = useScroll({
+    target: cardsRef,
+    offset: ["start 0.65", "end 0.55"],
+  });
+
   const kindLabel = (kind: AboutEntry["kind"]) =>
     kind === "education" ? ui.education : ui.experience;
 
-  /* The statement, with its highlight word wrapped in the lime
-     marker span — the same split the hero headline uses
-     (statementHighlight, verbatim inside the statement). */
-  const renderStatement = (): ReactNode => {
-    const s = about.statement;
-    const hl = about.statementHighlight;
-    const i = s.indexOf(hl);
-    if (i < 0) return s;
-    return (
-      <>
-        {s.slice(0, i)}
-        <span className="hero-highlight">{hl}</span>
-        {s.slice(i + hl.length)}
-      </>
-    );
+  /* Card reveal: 24px rise (16px on phones) + opacity, 600ms,
+     children stagger 60ms (date → title → text → bullets →
+     chips). The children fade only — the rise belongs to the
+     card. Under reduced motion the reveal is a fade (no rise),
+     and before mount there is no hidden state at all. */
+  const revealY = isMobile ? 16 : 24;
+  const cardVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: reduceMotion ? 0 : revealY,
+    },
+    visible: {
+      opacity: 1,
+      y: 0,
+      transition: {
+        duration: 0.6,
+        ease: EASE,
+        staggerChildren: 0.06,
+      },
+    },
   };
+  const childVariants: Variants = {
+    hidden: { opacity: 0 },
+    visible: {
+      opacity: 1,
+      transition: { duration: 0.6, ease: EASE },
+    },
+  };
+  const squareVariants: Variants = {
+    hidden: { scale: 0 },
+    visible: {
+      scale: 1,
+      transition: { duration: 0.3, ease: EASE },
+    },
+  };
+  const cardInitial = mounted && !reduceMotion ? "hidden" : false;
+
+  /* Cursor-following spotlight: the card's ::after is a radial
+     lime gradient centred on these CSS vars (~15% opacity).
+     Pointer position only — no layout, no scroll listener. */
+  const onCardMouseMove = (e: ReactMouseEvent<HTMLElement>) => {
+    const el = e.currentTarget;
+    const r = el.getBoundingClientRect();
+    el.style.setProperty("--mx", `${e.clientX - r.left}px`);
+    el.style.setProperty("--my", `${e.clientY - r.top}px`);
+  };
+
+  const words = about.statement.split(" ");
 
   return (
     <>
-      <Reveal>
-        <div className="about-layout">
-          <div className="about-side">
-            <p className="about-label">{about.aboutLabel}</p>
-            <p className="about-name">{content.profile.name}</p>
-            <p className="about-place">{content.profile.location}</p>
-            <DownloadCvButton className="btn btn-secondary" />
-          </div>
-          <div className="about-main">
-            <h2 className="about-statement" id="about-head">
-              {renderStatement()}
-            </h2>
-            <dl className="about-facts">
-              {about.factRows.map((row) => (
-                <div className="about-fact" key={row.label}>
-                  <dt className="about-fact-label">{row.label}</dt>
-                  <dd className="about-fact-value">{row.value}</dd>
-                </div>
-              ))}
-            </dl>
-          </div>
+      <div className="about-layout">
+        <div className="about-side">
+          <p className="about-label">{about.aboutLabel}</p>
+          <p className="about-name">{content.profile.name}</p>
+          <p className="about-place">{content.profile.location}</p>
         </div>
-      </Reveal>
+        <div className="about-main">
+          <h2
+            className="about-statement"
+            id="about-head"
+            ref={statementRef}
+            aria-label={about.statement}
+          >
+            {words.map((word, i) => (
+              <StatementWord
+                key={`${word}-${i}`}
+                word={word}
+                index={i}
+                total={words.length}
+                progress={statementProgress}
+                highlight={about.statementHighlight}
+                reduceMotion={reduceMotion}
+                mounted={mounted}
+              />
+            ))}
+          </h2>
+          <dl className="about-facts">
+            {about.factRows.map((row, i) => (
+              <div className="about-fact" key={row.label}>
+                <motion.span
+                  className="about-fact-line"
+                  aria-hidden="true"
+                  initial={mounted && !reduceMotion ? { scaleX: 0 } : false}
+                  whileInView={{ scaleX: 1 }}
+                  viewport={{ once: true }}
+                  transition={{ duration: 0.6, ease: EASE }}
+                />
+                {i === about.factRows.length - 1 && (
+                  <motion.span
+                    className="about-fact-line about-fact-line--bottom"
+                    aria-hidden="true"
+                    initial={
+                      mounted && !reduceMotion ? { scaleX: 0 } : false
+                    }
+                    whileInView={{ scaleX: 1 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.6, ease: EASE }}
+                  />
+                )}
+                <dt className="about-fact-label">{row.label}</dt>
+                <dd className="about-fact-value">{row.value}</dd>
+              </div>
+            ))}
+          </dl>
+        </div>
+      </div>
 
       <div className="about-exp">
         <nav className="about-roles" aria-label={ui.rolesLabel}>
+          {/* Timeline rail: a vertical line between the index
+              dots, its lime fill following scroll progress
+              through the cards (scaleY, origin top). No fill
+              under reduced motion — the plain line stays. */}
+          <div className="about-rail" aria-hidden="true">
+            <div className="about-rail-track" />
+            {!reduceMotion && (
+              <motion.div
+                className="about-rail-fill"
+                style={{ scaleY: railProgress }}
+              />
+            )}
+          </div>
           <ol className="about-role-list">
-            {entries.map((entry) => (
-              <li key={entry.id}>
-                <button
-                  type="button"
-                  className="about-role"
-                  aria-current={
-                    activeId === entry.id ? "true" : undefined
-                  }
-                  onClick={() => scrollToCard(entry.id)}
-                >
-                  <span className="about-role-dot" aria-hidden="true" />
-                  <span className="about-role-text">
-                    <span className="about-role-meta">
-                      {entry.period} · {kindLabel(entry.kind)}
+            {entries.map((entry) => {
+              const isActive = activeId === entry.id;
+              return (
+                <li key={entry.id}>
+                  <button
+                    type="button"
+                    className="about-role"
+                    aria-current={isActive ? "true" : undefined}
+                    onClick={() => scrollToCard(entry.id)}
+                  >
+                    <RoleDot
+                      kind={entry.kind}
+                      active={isActive}
+                      reduceMotion={reduceMotion}
+                    />
+                    <span className="about-role-text">
+                      <span className="about-role-meta">
+                        {entry.period} ·{" "}
+                        <span className="about-kind">
+                          <KindIcon kind={entry.kind} />
+                          {kindLabel(entry.kind)}
+                        </span>
+                      </span>
+                      <span className="about-role-title">
+                        <strong>{entry.org}</strong>
+                        <span className="about-role-title-role">
+                          {" "}
+                          · {entry.role}
+                        </span>
+                      </span>
                     </span>
-                    <span className="about-role-title">
-                      <strong>{entry.org}</strong> · {entry.role}
-                    </span>
-                  </span>
-                </button>
-              </li>
-            ))}
+                  </button>
+                </li>
+              );
+            })}
           </ol>
         </nav>
 
-        <div className="about-cards">
-          {entries.map((entry) => (
-            <article
-              className="about-card"
-              id={entry.id}
-              key={entry.id}
-              ref={setCardRef(entry.id)}
-              tabIndex={-1}
-            >
-              <p className="about-card-date">
-                <strong>{entry.period}</strong> · {kindLabel(entry.kind)}
-              </p>
-              <h3 className="about-card-title">
-                {entry.role} — {entry.org}
-              </h3>
-              <p className="about-card-narrative">{entry.narrative}</p>
-              <ul className="about-highlights">
-                {entry.highlights.map((highlight, i) => (
-                  <li key={i}>
-                    {renderHighlight(highlight.text, highlight.bolds)}
-                  </li>
-                ))}
-              </ul>
-              <ul className="about-pills">
-                {entry.pills.map((pill) => (
-                  <li className="about-pill" key={pill}>
-                    {pill}
-                  </li>
-                ))}
-              </ul>
-            </article>
-          ))}
+        <div className="about-cards" ref={cardsRef}>
+          {entries.map((entry) => {
+            const isActive = activeId === entry.id;
+            return (
+              <motion.article
+                className={`about-card${entry.lead ? " about-card--lead" : ""}${
+                  isActive ? " is-active" : ""
+                }`}
+                id={entry.id}
+                key={entry.id}
+                ref={setCardRef(entry.id)}
+                tabIndex={-1}
+                variants={cardVariants}
+                initial={cardInitial}
+                whileInView="visible"
+                viewport={{ once: true }}
+                onMouseMove={onCardMouseMove}
+              >
+                <motion.p
+                  className="about-card-date"
+                  variants={childVariants}
+                >
+                  <strong>{entry.period}</strong> ·{" "}
+                  <span className="about-kind">
+                    <KindIcon kind={entry.kind} />
+                    {kindLabel(entry.kind)}
+                  </span>
+                </motion.p>
+                <motion.h3
+                  className="about-card-title"
+                  variants={childVariants}
+                >
+                  {entry.role} — {entry.org}
+                </motion.h3>
+                <motion.p
+                  className="about-card-narrative"
+                  variants={childVariants}
+                >
+                  {entry.narrative}
+                </motion.p>
+                {entry.highlights.length > 0 && (
+                  <motion.ul
+                    className="about-highlights"
+                    variants={childVariants}
+                  >
+                    {entry.highlights.map((highlight, i) => (
+                      <motion.li key={i} variants={childVariants}>
+                        <motion.span
+                          className="about-hl-square"
+                          aria-hidden="true"
+                          variants={squareVariants}
+                        />
+                        {renderHighlight(highlight.text, highlight.bolds)}
+                      </motion.li>
+                    ))}
+                  </motion.ul>
+                )}
+                <motion.ul
+                  className="about-pills"
+                  variants={childVariants}
+                >
+                  {entry.pills.map((pill) => (
+                    <li className="about-pill" key={pill}>
+                      {pill}
+                    </li>
+                  ))}
+                </motion.ul>
+              </motion.article>
+            );
+          })}
         </div>
       </div>
 
       <section className="cert-block" aria-labelledby="certificates-head">
         <h3 className="cert-head" id="certificates-head">
           {about.certificates.heading}{" "}
+          <span className="cert-count">
+            · {about.certificates.items.length}
+          </span>{" "}
           <span className="cert-period">
             ({about.certificates.period})
           </span>
@@ -213,6 +405,154 @@ export function About() {
             become links once the owner supplies them. */}
       </section>
     </>
+  );
+}
+
+/** One statement word. Its opacity is scroll-linked: 0.25
+ *  until the scroll progress reaches the word's slice of the
+ *  statement, 1 after it. The word is its own component so
+ *  the useTransform hook count is stable per word (the word
+ *  count differs between locales). The h2 carries the full
+ *  statement in aria-label; every word is aria-hidden. */
+function StatementWord({
+  word,
+  index,
+  total,
+  progress,
+  highlight,
+  reduceMotion,
+  mounted,
+}: {
+  word: string;
+  index: number;
+  total: number;
+  progress: MotionValue<number>;
+  highlight: string;
+  reduceMotion: boolean;
+  mounted: boolean;
+}) {
+  const start = index / total;
+  const end = (index + 1) / total;
+  const opacity = useTransform(progress, [start, end], [0.25, 1]);
+  const parts = splitHighlight(word, highlight);
+  return (
+    <>
+      <motion.span
+        aria-hidden="true"
+        style={
+          reduceMotion || !mounted ? undefined : { opacity }
+        }
+      >
+        {parts ? (
+          <>
+            {parts.pre}
+            <span className="about-hl">
+              <motion.span
+                className="about-hl-bg"
+                aria-hidden="true"
+                initial={mounted && !reduceMotion ? { scaleX: 0 } : false}
+                whileInView={{ scaleX: 1 }}
+                viewport={{ once: true }}
+                transition={{
+                  duration: 0.6,
+                  ease: EASE,
+                  delay: 0.15,
+                }}
+              />
+              <span className="about-hl-text">{parts.mid}</span>
+            </span>
+            {parts.post}
+          </>
+        ) : (
+          word
+        )}
+      </motion.span>
+      {index < total - 1 ? " " : ""}
+    </>
+  );
+}
+
+/** Split a word on the highlight substring, if the word
+ *  contains it (the EN highlight sits inside "measure." —
+ *  the period stays outside the lime). */
+function splitHighlight(
+  word: string,
+  hl: string,
+): { pre: string; mid: string; post: string } | null {
+  const i = word.indexOf(hl);
+  if (i < 0) return null;
+  return {
+    pre: word.slice(0, i),
+    mid: hl,
+    post: word.slice(i + hl.length),
+  };
+}
+
+/** The index dot. Kind is shape: Education is a ring,
+ *  Experience a filled disc (see the CSS). The active dot
+ *  scales up and settles once — a single pulse when its row
+ *  becomes active — and stays still under reduced motion. */
+function RoleDot({
+  kind,
+  active,
+  reduceMotion,
+}: {
+  kind: AboutEntry["kind"];
+  active: boolean;
+  reduceMotion: boolean;
+}) {
+  const className = `about-role-dot about-role-dot--${kind}`;
+  if (reduceMotion) {
+    return <span className={className} aria-hidden="true" />;
+  }
+  return (
+    <motion.span
+      className={className}
+      aria-hidden="true"
+      animate={active ? { scale: [1.45, 1] } : { scale: 1 }}
+      transition={{ duration: 0.4, ease: "easeOut" }}
+    />
+  );
+}
+
+/** Kind icon, 14px, currentColor: a graduation cap for
+ *  Education, a briefcase for Experience. */
+function KindIcon({ kind }: { kind: AboutEntry["kind"] }) {
+  if (kind === "education") {
+    return (
+      <svg
+        viewBox="0 0 16 16"
+        width="14"
+        height="14"
+        aria-hidden="true"
+        fill="none"
+        stroke="currentColor"
+        strokeWidth="1.5"
+        strokeLinejoin="round"
+        strokeLinecap="round"
+      >
+        <path d="M8 1.5 15 5 8 8.5 1 5 8 1.5Z" />
+        <path d="M4.5 6.8v2.7c0 1.2 1.6 2 3.5 2s3.5-.8 3.5-2V6.8" />
+        <path d="M13.5 5.5v3" />
+      </svg>
+    );
+  }
+  return (
+    <svg
+      viewBox="0 0 16 16"
+      width="14"
+      height="14"
+      aria-hidden="true"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+      strokeLinecap="round"
+    >
+      <rect x="2" y="5.5" width="12" height="7" rx="1" />
+      <path d="M5.5 5.5v-1a2 2 0 0 1 2-2h1a2 2 0 0 1 2 2v1" />
+      <path d="M2 8.5h12" />
+    </svg>
   );
 }
 

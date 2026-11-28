@@ -407,7 +407,7 @@ footer[id],
 }
 
 /* Scrolled pill: frosted, not solid — 80% surface over the
-   page ground plus a 12px blur turns anything behind it into
+   page ground plus an 18px blur turns anything behind it into
    an unreadable smear, so header text never competes with page
    text. The border is ink at 12% (not var(--rule), which
    disappears on a translucent pill over arbitrary page
@@ -432,8 +432,8 @@ html[data-scrolled="true"] .site-header-inner {
   margin-top: 12px;
   padding: 10px 16px;
   background: color-mix(in srgb, var(--surface) 80%, transparent);
-  -webkit-backdrop-filter: blur(12px) saturate(1.2);
-  backdrop-filter: blur(12px) saturate(1.2);
+  -webkit-backdrop-filter: blur(18px) saturate(1.2);
+  backdrop-filter: blur(18px) saturate(1.2);
   border-color: color-mix(in srgb, var(--ink) 12%, transparent);
   border-radius: 999px;
   box-shadow: var(--shadow);
@@ -2563,6 +2563,9 @@ html[data-scrolled="true"] .site-actions {
 /* ---- Certificates: headed chip block (Direction A) ---- */
 .cert-block {
   margin-top: var(--space-4);
+  /* 96px+ before Skills: the section padding (64px desktop /
+     48px mobile) plus this bottom margin. */
+  margin-bottom: var(--space-4);
 }
 
 .cert-head {
@@ -2577,6 +2580,15 @@ html[data-scrolled="true"] .site-actions {
   font-size: var(--text-mono-sm);
   font-weight: 400;
   color: var(--ink-muted);
+}
+
+/* The count in the labelled row ("Google certificates · 4"):
+   mono, muted, like the period. */
+.cert-count {
+  font-family: var(--font-mono);
+  font-size: var(--text-mono-sm);
+  font-weight: 500;
+  color: var(--accent-ink);
 }
 
 .cert-chips {
@@ -2596,6 +2608,7 @@ html[data-scrolled="true"] .site-actions {
   font-size: var(--text-small);
   line-height: 1.4;
   color: var(--ink);
+  transition: transform var(--dur-fast) var(--ease);
 }
 
 /* ---- Direction A spine device: mono kicker + hairline rule ----
@@ -2642,10 +2655,15 @@ html[data-scrolled="true"] .site-actions {
   margin-top: var(--space-3);
 }
 
-/* Not sticky: the left column is short (label + name + place +
-   button), unlike the role list below. */
+/* Sticky: the left column stays put at 96px (72px scrolled pill
+   + 24px) while the statement and facts are read, then hands
+   off to the sticky role list below — the column never sits
+   empty. */
 .about-side {
   min-width: 0;
+  position: sticky;
+  top: 96px;
+  align-self: start;
 }
 
 /* Right column: no styling of its own — it is a plain grid
@@ -2681,12 +2699,6 @@ html[data-scrolled="true"] .site-actions {
   margin: 2px 0 0;
 }
 
-/* The Download CV button keeps the existing .btn styles; this
-   is only its placement margin. */
-.about-side .btn {
-  margin-top: var(--space-3);
-}
-
 .about-statement {
   font-family: var(--font-display);
   font-weight: 600;
@@ -2698,12 +2710,24 @@ html[data-scrolled="true"] .site-actions {
   margin: 0;
 }
 
-/* The highlight reuses .hero-highlight verbatim; its draw-in
-   animation runs at page load and is finished long before
-   anyone scrolls here, so the word reads fully drawn. Only the
-   statement's Newsreader italic is added (the family is
-   inherited). */
-.about-statement .hero-highlight {
+/* The statement's lime highlight: a wipe, not the hero's
+   page-load draw. The word sits on an absolutely-positioned
+   lime layer that scales X 0→1 from the left once (Framer
+   Motion in About.tsx); the text stays put above it,
+   Newsreader italic. */
+.about-hl {
+  position: relative;
+  white-space: nowrap;
+}
+
+.about-hl-bg {
+  position: absolute;
+  inset: 0;
+  background: var(--lime);
+}
+
+.about-hl-text {
+  position: relative;
   font-style: italic;
 }
 
@@ -2712,15 +2736,35 @@ html[data-scrolled="true"] .site-actions {
 }
 
 .about-fact {
+  position: relative;
   display: grid;
   grid-template-columns: 140px minmax(0, 1fr);
   gap: var(--space-1) var(--space-3);
   padding-block: var(--space-2);
-  border-top: 1px solid var(--rule);
+  padding-inline: var(--space-1);
+  margin-inline: calc(-1 * var(--space-1));
+  border-radius: 4px;
 }
 
-.about-fact:last-child {
-  border-bottom: 1px solid var(--rule);
+/* The hairline is a motion span (About.tsx) that draws in
+   left-to-right on view, 600ms — not a static border. */
+.about-fact-line {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: var(--rule);
+  transform-origin: left;
+}
+
+.about-fact-line--bottom {
+  top: auto;
+  bottom: 0;
+}
+
+.about-fact:hover {
+  background: var(--pill-fill);
 }
 
 .about-fact-label {
@@ -2734,11 +2778,11 @@ html[data-scrolled="true"] .site-actions {
 }
 
 .about-fact-value {
-  font-size: var(--text-small);
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.65;
   color: var(--ink);
   margin: 0;
-  max-width: 68ch;
+  max-width: 62ch;
 }
 
 /* ---- About experience: sticky role list + card stack ---- */
@@ -2751,7 +2795,7 @@ html[data-scrolled="true"] .site-actions {
 
 .about-roles {
   position: sticky;
-  top: 108px;
+  top: 96px;
   align-self: start;
 }
 
@@ -2762,6 +2806,35 @@ html[data-scrolled="true"] .site-actions {
   display: flex;
   flex-direction: column;
   gap: 4px;
+}
+
+/* Timeline rail: the line runs down the dots' centre line
+   (12px button padding + 5px half-dot = 17px from the list
+   edge), from the first dot's centre to the last's (22px
+   each end: 12px padding + 5px dot margin + 5px half-dot).
+   The track is the muted rule; the fill is lime, scaled by
+   scroll progress in About.tsx. Hidden on the mobile chip
+   bar, which has no vertical rail. */
+.about-rail {
+  position: absolute;
+  left: 17px;
+  top: 22px;
+  bottom: 22px;
+  width: 2px;
+  pointer-events: none;
+}
+
+.about-rail-track {
+  position: absolute;
+  inset: 0;
+  background: var(--rule);
+}
+
+.about-rail-fill {
+  position: absolute;
+  inset: 0;
+  background: var(--lime);
+  transform-origin: top;
 }
 
 .about-role {
@@ -2777,6 +2850,10 @@ html[data-scrolled="true"] .site-actions {
   border-radius: 8px;
   cursor: pointer;
   color: var(--ink-muted);
+  transition:
+    background-color 250ms var(--ease),
+    border-color 250ms var(--ease),
+    color 250ms var(--ease);
 }
 
 .about-role[aria-current="true"] {
@@ -2805,6 +2882,29 @@ html[data-scrolled="true"] .site-actions {
   border-color: var(--lime);
 }
 
+/* Kind is shape: Education is a ring (hollow), Experience a
+   filled disc. Active fills lime in both cases — the ring
+   keeps its hollow centre, tinted. */
+.about-role-dot--education {
+  background: transparent;
+  border-color: var(--ink-muted);
+}
+
+.about-role-dot--experience {
+  background: var(--ink-muted);
+  border-color: var(--ink-muted);
+}
+
+.about-role[aria-current="true"] .about-role-dot--education {
+  background: color-mix(in srgb, var(--lime) 25%, transparent);
+  border-color: var(--lime);
+}
+
+.about-role[aria-current="true"] .about-role-dot--experience {
+  background: var(--lime);
+  border-color: var(--lime);
+}
+
 .about-role-text {
   display: flex;
   flex-direction: column;
@@ -2812,13 +2912,24 @@ html[data-scrolled="true"] .site-actions {
   min-width: 0;
 }
 
+/* Kind icon + label: one inline unit, icon 14px, 4px gap. */
+.about-kind {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.about-kind svg {
+  flex: none;
+}
+
 /* Same "period · kind" line as the card date, in the same mono
    treatment; it stays muted in both row states. */
 .about-role-meta {
   font-family: var(--font-mono);
-  font-size: var(--text-mono-sm);
+  font-size: 0.9375rem;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   line-height: 1.5;
   color: var(--ink-muted);
@@ -2838,6 +2949,7 @@ html[data-scrolled="true"] .site-actions {
 }
 
 .about-card {
+  position: relative;
   background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -2845,11 +2957,64 @@ html[data-scrolled="true"] .site-actions {
   scroll-margin-top: 96px;
 }
 
+/* Lead card (the current MSc): larger, with a subtle lime
+   border — more padding and a larger title. The other cards
+   stay compact. */
+.about-card--lead {
+  padding: var(--space-4);
+  border-color: color-mix(in srgb, var(--lime) 45%, transparent);
+}
+
+.about-card--lead .about-card-title {
+  font-size: var(--text-title-md);
+}
+
+/* The lead card keeps its stronger border when active. */
+.about-card--lead.is-active {
+  border-color: color-mix(in srgb, var(--lime) 45%, transparent);
+}
+
+/* Active card: its border goes lime at 30%. */
+.about-card.is-active {
+  border-color: color-mix(in srgb, var(--lime) 30%, transparent);
+}
+
+/* Cursor-following spotlight: a radial lime glow centred on
+   --mx/--my (set from the card's mousemove in About.tsx),
+   ~15% opacity, fading in on hover. Hover-capable pointers
+   only; it never intercepts input, and the card's children
+   sit above it. */
+.about-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-card::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: radial-gradient(
+      240px circle at var(--mx, 50%) var(--my, 50%),
+      color-mix(in srgb, var(--lime) 15%, transparent),
+      transparent 70%
+    );
+    opacity: 0;
+    transition: opacity var(--dur-med) var(--ease);
+    pointer-events: none;
+  }
+
+  .about-card:hover::after {
+    opacity: 1;
+  }
+}
+
 .about-card-date {
   font-family: var(--font-mono);
-  font-size: var(--text-mono-sm);
+  font-size: 0.9375rem;
   font-weight: 400;
-  letter-spacing: 0.08em;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--ink-muted);
   margin: 0;
@@ -2870,10 +3035,10 @@ html[data-scrolled="true"] .site-actions {
 }
 
 .about-card-narrative {
-  font-size: var(--text-small);
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.65;
   color: var(--ink);
-  max-width: 68ch;
+  max-width: 62ch;
   margin: var(--space-1) 0 0;
 }
 
@@ -2889,15 +3054,17 @@ html[data-scrolled="true"] .site-actions {
 .about-highlights li {
   position: relative;
   padding-left: 20px;
-  font-size: var(--text-small);
-  line-height: 1.6;
+  font-size: 1rem;
+  line-height: 1.65;
   color: var(--ink);
+  max-width: 62ch;
 }
 
 /* Lime square marker — square, not round: the marker is the
-   square device, distinct from the round role-list dots. */
-.about-highlights li::before {
-  content: "";
+   square device, distinct from the round role-list dots. A
+   real span (not ::before) so it can scale in with the
+   stagger in About.tsx. */
+.about-hl-square {
   position: absolute;
   left: 0;
   top: 0.55em;
@@ -2923,6 +3090,14 @@ html[data-scrolled="true"] .site-actions {
   font-size: var(--text-small);
   line-height: 1.4;
   color: var(--ink);
+  transition: transform var(--dur-fast) var(--ease);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .about-pill:hover,
+  .cert-chip:hover {
+    transform: translateY(-2px);
+  }
 }
 
 /* Certificates sit full-width below the experience grid; the
@@ -2936,7 +3111,7 @@ html[data-scrolled="true"] .site-actions {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Mobile only: room between the Download CV button and the
+  /* Mobile only: room between the name/place and the
      statement, which stack in source order. */
   .about-statement {
     margin-top: var(--space-4);
@@ -2951,10 +3126,69 @@ html[data-scrolled="true"] .site-actions {
     grid-template-columns: minmax(0, 1fr);
   }
 
-  /* Stacked full-width rows above the cards, not sticky. */
+  /* The index becomes a horizontal sticky chip bar with
+     scroll-snap under the nav (top 96px clears the pill). It
+     bleeds full-width with a frosted surface so cards slide
+     under it readably; the rail is gone, and each chip shows
+     the org only (meta + role hidden). The bar sticks for the
+     whole experience block, because .about-roles is a grid
+     item of .about-exp. */
   .about-roles {
-    position: static;
+    position: sticky;
+    top: 96px;
+    z-index: 20;
+    width: 100vw;
+    margin-inline: calc(50% - 50vw);
     margin-bottom: var(--space-3);
+    padding: var(--space-1)
+      max(var(--space-2), env(safe-area-inset-left))
+      var(--space-1)
+      max(var(--space-2), env(safe-area-inset-right));
+    background: color-mix(in srgb, var(--surface) 92%, transparent);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--rule);
+  }
+
+  .about-role-list {
+    flex-direction: row;
+    gap: var(--space-1);
+    overflow-x: auto;
+    scroll-snap-type: x mandatory;
+    scrollbar-width: none;
+  }
+
+  .about-role-list::-webkit-scrollbar {
+    display: none;
+  }
+
+  .about-role {
+    flex: none;
+    width: auto;
+    scroll-snap-align: start;
+  }
+
+  .about-role-meta,
+  .about-role-title-role {
+    display: none;
+  }
+
+  .about-rail {
+    display: none;
+  }
+
+  /* Touch targets >= 44px on the chips. */
+  .about-pill,
+  .cert-chip {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+
+  /* 96px before Skills on phones too (48px section padding
+     + 48px here); desktop keeps 64 + 32 = 96px. */
+  .cert-block {
+    margin-bottom: var(--space-6);
   }
 }
 
@@ -4289,7 +4523,12 @@ html[data-scrolled="true"] .site-actions {
   .cta-panel .copy-btn,
   .copy-btn--text,
   .footer-links a,
-  .footer-col-links a {
+  .footer-col-links a,
+  .about-card::after,
+  .about-pill,
+  .cert-chip,
+  .about-role,
+  .about-role-dot {
     transition: none;
   }
 }

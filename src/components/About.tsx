@@ -4,6 +4,7 @@ import { useEffect, useRef, useState, type ReactNode } from "react";
 import { useContent } from "@/i18n/LocaleProvider";
 import { DownloadCvButton } from "./DownloadCvButton";
 import { Reveal } from "./Reveal";
+import { scrollToTarget } from "@/lib/scroll";
 import type { AboutEntry } from "@/content";
 
 /** About, rebuilt on the Rossi About + Aahil "Where I've been"
@@ -71,20 +72,17 @@ export function About() {
       else cardRefs.current.delete(id);
     };
 
-  /* A role click scrolls to its card: smooth unless the user
-     asked for reduced motion. Focus stays on the button — the
-     scroll-spy updates aria-current as the card arrives, and
-     moving focus would fight the smooth scroll. */
+  /* A role click scrolls to its card through Lenis when it runs
+     (the glide), natively otherwise — scrollIntoView smooth
+     would fight Lenis's scroll loop. The 96px offset is the
+     card's scroll-margin-top, which the native fallback honours
+     on its own. Focus stays on the button — the scroll-spy
+     updates aria-current as the card arrives, and moving focus
+     would fight the smooth scroll. */
   const scrollToCard = (id: string) => {
     const el = cardRefs.current.get(id);
     if (!el) return;
-    const reduceMotion = window.matchMedia(
-      "(prefers-reduced-motion: reduce)",
-    ).matches;
-    el.scrollIntoView({
-      behavior: reduceMotion ? "auto" : "smooth",
-      block: "start",
-    });
+    scrollToTarget(el);
   };
 
   const kindLabel = (kind: AboutEntry["kind"]) =>

@@ -8,6 +8,7 @@ import { useContent } from "@/i18n/LocaleProvider";
 import { DownloadCvButton } from "./DownloadCvButton";
 import { ThemeToggle } from "./ThemeToggle";
 import { LanguageToggle } from "./LanguageToggle";
+import { scrollToTarget } from "@/lib/scroll";
 
 const SECTION_IDS = ["work", "about", "skills", "contact"] as const;
 
@@ -128,6 +129,14 @@ export function SiteHeader() {
       topAtClick: el ? el.getBoundingClientRect().top : 0,
     };
     setActive(id);
+    /* The jump goes through Lenis when it runs (the delegated
+       anchor handler in LenisRoot never sees this click — the
+       onClick below stops it), natively otherwise. The hash is
+       set with pushState so back/forward and the head script's
+       hash branch still see it, without a native jump fighting
+       the glide. */
+    scrollToTarget(id);
+    window.history.pushState(null, "", `#${id}`);
   }
 
   const ui = content.ui;
@@ -422,8 +431,15 @@ export function SiteHeader() {
                 href={s.href}
                 aria-current={isActive ? "true" : undefined}
                 /* Highlight at once: goTo names the destination
-                 * and holds it while the smooth scroll runs. */
-                onClick={() => goTo(s.id)}
+                 * and holds it while the smooth scroll runs.
+                 * The click is stopped here so the delegated
+                 * anchor handler in LenisRoot does not scroll
+                 * the same target a second time. */
+                onClick={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  goTo(s.id);
+                }}
               >
                 {isActive && (
                   <motion.span
@@ -488,7 +504,9 @@ export function SiteHeader() {
                   href={s.href}
                   className="mobile-menu-link"
                   aria-current={activeSection === s.id ? "true" : undefined}
-                  onClick={() => {
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
                     goTo(s.id);
                     closeMenu();
                   }}

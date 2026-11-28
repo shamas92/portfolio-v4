@@ -4,6 +4,7 @@ import "./globals.css";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import { SkipLink } from "@/components/SkipLink";
+import { LenisRoot } from "@/components/LenisRoot";
 import { LocaleProvider } from "@/i18n/LocaleProvider";
 import { profile, siteUrl } from "@/content";
 
@@ -152,6 +153,7 @@ export default function RootLayout({
           dangerouslySetInnerHTML={{ __html: JSON.stringify(personJsonLd) }}
         />
         <LocaleProvider>
+          <LenisRoot />
           <SkipLink />
           <SiteHeader />
           <div className="header-spacer" aria-hidden="true" />

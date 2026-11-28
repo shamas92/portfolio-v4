@@ -186,6 +186,15 @@ html[data-theme="dark"] {
   }
 }
 
+/* While Lenis runs, the CSS smooth scroll is off: a jump would
+   otherwise double-animate (native smooth + Lenis). LenisRoot
+   sets data-lenis="on" only when it creates the instance, so
+   this never applies under reduced motion (no Lenis there) or
+   without JavaScript. */
+html[data-lenis="on"] {
+  scroll-behavior: auto;
+}
+
 /* Clip horizontal overflow at the root too, so the document's
    scrollWidth stays the viewport width and the page is not
    horizontally scrollable: scrollWidth counts clipped content,

@@ -378,20 +378,13 @@ export const deContent: SiteContent = {
       {
         id: "msc",
         kind: "education",
+        lead: true,
         role: "MSc Computer Science",
         org: "TU Dresden",
         period: "Okt. 2026 – heute",
         narrative:
           "Ich studiere seit Oktober 2026 Informatik im Master an der TU Dresden. Meine Kurse bisher: Scalable Data Engineering, Data Visualization und Requirements Engineering. Dort hat meine Gruppe einen On-Device-Beratungsbot für Gesundheit entworfen; ich war zuständig für Stakeholder-Akquise, technischen Kontext und Geschäftsprozesse. Ich suche eine Werkstudentenstelle in Data Engineering oder ML in Dresden, 20 Stunden pro Woche.",
         highlights: [
-          {
-            text: "Kurse: Scalable Data Engineering, Data Visualization, Requirements Engineering",
-            bolds: [
-              "Scalable Data Engineering",
-              "Data Visualization",
-              "Requirements Engineering",
-            ],
-          },
           {
             text: "Requirements Engineering Exercise 03: On-Device-Beratungsbot für Gesundheit — Stakeholder-Akquise, technischer Kontext, Geschäftsprozesse (meine Folien 11–14)",
             bolds: ["Requirements Engineering Exercise 03", "Folien 11–14"],
@@ -411,23 +404,9 @@ export const deContent: SiteContent = {
         period: "Nov. 2025 – Aug. 2026",
         narrative:
           "Ich war Freelance-Webentwickler für Tools420, einen kanadischen Onlineshop, der seit 2016 Vaporizer und Zubehör verkauft. Ich habe eigene WordPress-Backend-Architekturen und proprietäre Plugins in reinem PHP, MySQL und JavaScript gebaut und Datenbankmigrationen und Deployments ohne ungeplante Ausfallzeiten durchgeführt. Ich arbeitete als technischer Subunternehmer in einem Senior-Engineering-Team, über Frontend, Backend, Datenbank und Tests hinweg.",
-        highlights: [
-          {
-            text: "Eigene WordPress-Backend-Architekturen und proprietäre Plugins in reinem PHP, MySQL und JavaScript",
-            bolds: ["WordPress", "reinem PHP, MySQL und JavaScript"],
-          },
-          {
-            text: "Datenbankmigrationen und Deployments ohne ungeplante Ausfallzeiten",
-            bolds: ["ohne ungeplante Ausfallzeiten"],
-          },
-          {
-            text: "Technischer Subunternehmer in einem Senior-Engineering-Team — Frontend, Backend, Datenbank und Tests",
-            bolds: [
-              "Technischer Subunternehmer",
-              "Frontend, Backend, Datenbank und Tests",
-            ],
-          },
-        ],
+        /* Keine Stichpunkte: alle drei wiederholten die
+           Erzählung wortwörtlich (Dedupe, Premium-Runde). */
+        highlights: [],
         pills: ["WordPress", "WooCommerce", "PHP", "MySQL", "JavaScript"],
       },
       {
@@ -438,20 +417,9 @@ export const deContent: SiteContent = {
         period: "Mai – Okt. 2025",
         narrative:
           "Sechsmonatiges Praktikum in der IT-Abteilung der HITEC University. Ich habe datenbankgestützte Webmodule und ein CMS-Admin-Panel in C# und ASP.NET MVC auf SQL Server gebaut sowie einen RAG-Support-Chatbot in Python, der Fragen über Universitätsdokumente beantwortet. Die Systeme sind intern und archiviert; die öffentliche Website betreut ein anderes Team.",
-        highlights: [
-          {
-            text: "Datenbankgestützte Webmodule und ein CMS-Admin-Panel in C# / ASP.NET MVC auf SQL Server",
-            bolds: ["C# / ASP.NET MVC", "SQL Server"],
-          },
-          {
-            text: "RAG-Support-Chatbot in Python über Universitätsdokumente",
-            bolds: ["RAG", "Python"],
-          },
-          {
-            text: "Sechs Monate, Mai–Okt. 2025; Systeme intern und archiviert",
-            bolds: ["Sechs Monate, Mai–Okt. 2025"],
-          },
-        ],
+        /* Keine Stichpunkte: alle drei wiederholten die
+           Erzählung wortwörtlich (Dedupe, Premium-Runde). */
+        highlights: [],
         pills: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
       },
       {
@@ -462,16 +430,9 @@ export const deContent: SiteContent = {
         period: "Jul. – Aug. 2024",
         narrative:
           "Zweimonatiges Praktikum bei Heavy Industries Taxila. Ich habe Echtzeit-Prozessmonitoring in C#/.NET auf SQL Server gebaut, mit Live-Dashboards für die Werkshalle, und manuelle Logging-Fehler um 20% gesenkt.",
-        highlights: [
-          {
-            text: "Echtzeit-Prozessmonitoring in C#/.NET auf SQL Server, mit Live-Dashboards",
-            bolds: ["C#/.NET auf SQL Server", "Live-Dashboards"],
-          },
-          {
-            text: "Manuelle Logging-Fehler um 20% gesenkt",
-            bolds: ["20%"],
-          },
-        ],
+        /* Keine Stichpunkte: beide wiederholten die Erzählung
+           wortwörtlich (Dedupe, Premium-Runde). */
+        highlights: [],
         pills: ["C#", ".NET", "SQL Server"],
       },
       {
@@ -484,19 +445,8 @@ export const deContent: SiteContent = {
           "BSc Software Engineering an der HITEC University Taxila, abgeschlossen im August 2025 mit einem CGPA von 3,48 von 4,00 (deutsche Note 1,7). Aus meiner Abschlussarbeit wurde OratorPath, eine Trainingsplattform für öffentliches Sprechen, die ich als Co-Autor in ein veröffentlichtes Paper überführt habe. Zu früheren akademischen Arbeiten gehören ein Laravel/MySQL-CRM zur Defektverfolgung und UpliftU, ein NLP-Projekt mit Hugging Face.",
         highlights: [
           {
-            text: "CGPA 3,48/4,00 (deutsche Note 1,7)",
-            bolds: ["CGPA 3,48/4,00", "deutsche Note 1,7"],
-          },
-          {
             text: "Aus der Abschlussarbeit wurde OratorPath — als Co-Autor in ein veröffentlichtes Paper überführt (Spectrum of Engineering Sciences, Vol. 3, Issue 7, 2025)",
             bolds: ["OratorPath", "veröffentlichtes Paper"],
-          },
-          {
-            text: "Akademische Projekte: Laravel/MySQL-CRM zur Defektverfolgung · UpliftU (Python / Hugging-Face-NLP)",
-            bolds: [
-              "Laravel/MySQL-CRM zur Defektverfolgung",
-              "UpliftU (Python / Hugging-Face-NLP)",
-            ],
           },
         ],
         pills: ["Laravel", "MySQL", "PHP", "Python", "Hugging Face"],

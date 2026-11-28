@@ -478,6 +478,9 @@ export type AboutEntry = {
   /** Stable slug for the card id and the role-list target. */
   id: string;
   kind: "education" | "experience";
+  /** The current MSc card renders as the larger "lead" card
+   *  (premium round). Only one entry carries it. */
+  lead?: boolean;
   /** Education: degree ("MSc Computer Science"); Experience:
    *  role ("Freelance Web Developer"). */
   role: string;
@@ -544,20 +547,13 @@ export const about: AboutContent = {
     {
       id: "msc",
       kind: "education",
+      lead: true,
       role: "MSc Computer Science",
       org: "TU Dresden",
       period: "Oct 2026 – present",
       narrative:
         "MSc Computer Science at TU Dresden since October 2026. Coursework so far: Scalable Data Engineering, Data Visualization, and Requirements Engineering, where my group designed an on-device health consulting bot and I owned the stakeholder, technical-context and business-process work. I am looking for a working-student role in data engineering or ML in Dresden, 20 hours a week.",
       highlights: [
-        {
-          text: "Coursework: Scalable Data Engineering, Data Visualization, Requirements Engineering",
-          bolds: [
-            "Scalable Data Engineering",
-            "Data Visualization",
-            "Requirements Engineering",
-          ],
-        },
         {
           text: "Requirements Engineering Exercise 03: on-device health consulting bot — stakeholder acquisition, technical context, business processes (my slides 11–14)",
           bolds: ["Requirements Engineering Exercise 03", "slides 11–14"],
@@ -577,23 +573,9 @@ export const about: AboutContent = {
       period: "Nov 2025 – Aug 2026",
       narrative:
         "Freelance web developer for Tools420, a Canadian online store selling vaporizers and accessories since 2016. I built custom WordPress backend architectures and proprietary plugins in raw PHP, MySQL and JavaScript, and ran database migrations and deployments with zero unplanned downtime. I worked as a technical sub-contractor under a senior engineering team, across frontend, backend, database and tests.",
-      highlights: [
-        {
-          text: "Custom WordPress backend architectures and proprietary plugins in raw PHP, MySQL and JavaScript",
-          bolds: ["WordPress", "raw PHP, MySQL and JavaScript"],
-        },
-        {
-          text: "Database migrations and deployments with zero unplanned downtime",
-          bolds: ["zero unplanned downtime"],
-        },
-        {
-          text: "Technical sub-contractor under a senior engineering team — frontend, backend, database and tests",
-          bolds: [
-            "Technical sub-contractor",
-            "frontend, backend, database and tests",
-          ],
-        },
-      ],
+      /* No bullets: all three repeated the narrative verbatim
+         (premium round dedupe) — narrative + chips carry it. */
+      highlights: [],
       pills: ["WordPress", "WooCommerce", "PHP", "MySQL", "JavaScript"],
     },
     {
@@ -604,20 +586,9 @@ export const about: AboutContent = {
       period: "May – Oct 2025",
       narrative:
         "Six-month internship in HITEC University's IT department. I built database-backed web modules and a CMS admin panel in C# and ASP.NET MVC on SQL Server, and a RAG support chatbot in Python that answers questions over university documents. The systems are internal and archived; the public site is maintained by another team.",
-      highlights: [
-        {
-          text: "Database-backed web modules and a CMS admin panel in C# / ASP.NET MVC on SQL Server",
-          bolds: ["C# / ASP.NET MVC", "SQL Server"],
-        },
-        {
-          text: "RAG support chatbot in Python over university documents",
-          bolds: ["RAG", "Python"],
-        },
-        {
-          text: "Six months, May–Oct 2025; systems internal and archived",
-          bolds: ["Six months, May–Oct 2025"],
-        },
-      ],
+      /* No bullets: all three repeated the narrative verbatim
+         (premium round dedupe) — narrative + chips carry it. */
+      highlights: [],
       pills: ["C#", "ASP.NET MVC", "SQL Server", "Python", "RAG"],
     },
     {
@@ -628,16 +599,9 @@ export const about: AboutContent = {
       period: "Jul – Aug 2024",
       narrative:
         "Two-month internship at Heavy Industries Taxila. I built real-time process monitoring in C#/.NET on SQL Server, with live dashboards for the shop floor, cutting manual logging errors by 20%.",
-      highlights: [
-        {
-          text: "Real-time process monitoring in C#/.NET on SQL Server, with live dashboards",
-          bolds: ["C#/.NET on SQL Server", "live dashboards"],
-        },
-        {
-          text: "Cutting manual logging errors by 20%",
-          bolds: ["20%"],
-        },
-      ],
+      /* No bullets: both repeated the narrative verbatim
+         (premium round dedupe) — narrative + chips carry it. */
+      highlights: [],
       pills: ["C#", ".NET", "SQL Server"],
     },
     {
@@ -650,19 +614,8 @@ export const about: AboutContent = {
         "BSc Software Engineering at HITEC University Taxila, finished August 2025 with a CGPA of 3.48 out of 4.00 (German grade 1.7). My thesis became OratorPath, a public-speaking training platform, co-authored into a published paper. Earlier academic work includes a Laravel/MySQL defect-tracking CRM and UpliftU, an NLP project on Hugging Face.",
       highlights: [
         {
-          text: "CGPA 3.48/4.00 (German grade 1.7)",
-          bolds: ["CGPA 3.48/4.00", "German grade 1.7"],
-        },
-        {
           text: "Thesis became OratorPath — co-authored into a published paper (Spectrum of Engineering Sciences, Vol. 3, Issue 7, 2025)",
           bolds: ["OratorPath", "published paper"],
-        },
-        {
-          text: "Academic projects: Laravel/MySQL defect-tracking CRM · UpliftU (Python / Hugging Face NLP)",
-          bolds: [
-            "Laravel/MySQL defect-tracking CRM",
-            "UpliftU (Python / Hugging Face NLP)",
-          ],
         },
       ],
       pills: ["Laravel", "MySQL", "PHP", "Python", "Hugging Face"],
